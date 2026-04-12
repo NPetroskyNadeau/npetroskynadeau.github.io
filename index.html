@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Nicolas Petrosky-Nadeau - Vice President for Macroeconomic Research at the Federal Reserve Bank of San Francisco. Research in labor economics, unemployment, and monetary policy.">
+    <meta name="author" content="Nicolas Petrosky-Nadeau">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Nicolas Petrosky-Nadeau - Economist">
+    <meta property="og:description" content="Vice President for Macroeconomic Research at the Federal Reserve Bank of San Francisco">
+
+    <title>Nicolas Petrosky-Nadeau - Economist</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1XR01WLXJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Y1XR01WLXJ', {
+            'anonymize_ip': true,
+            'cookie_flags': 'SameSite=None;Secure'
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="site-title">Nicolas Petrosky-Nadeau</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html" class="active">Home</a></li>
+                    <li><a href="research.html">Research</a></li>
+                    <li><a href="writing.html">Writing</a></li>
+                    <li><a href="teaching.html">Teaching</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero hero-split">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-left">
+                    <img src="assets/images/profile-photo.jpg" alt="Nicolas Petrosky-Nadeau" class="profile-photo">
+                    <div class="hero-info">
+                        <h1>Nicolas Petrosky-Nadeau</h1>
+                        <p class="hero-title">Vice President for Macroeconomic Research</p>
+                        <p class="hero-affiliation">Federal Reserve Bank of San Francisco</p>
+                    </div>
+                </div>
+                <div class="hero-right">
+                    <h2>About</h2>
+                    <p>I am Vice President and head of the macroeconomic group at the Economic Research Department of the Federal Reserve Bank of San Francisco. I serve on the policy advisory group for the SF Fed President, where I co-coordinate research briefings and consult on monetary policy strategies for FOMC meetings. I also manage the SF Fed Data Explorer, a public interactive data application.</p>
+
+                    <p>My research focuses on long-run trends and business cycle dynamics of labor markets. I use search and matching models to examine fluctuations in unemployment, job vacancies, and wages, incorporating product and credit market frictions. I have published in leading journals including the American Economic Review and co-authored a graduate textbook with MIT Press.</p>
+
+                    <p>Prior to joining the Federal Reserve in 2014, I was on the faculty at Carnegie Mellon University's Tepper School of Business. I received my PhD in economics from the University of Quebec at Montreal.</p>
+
+                    <div class="research-interests-compact">
+                        <h3>Research Interests</h3>
+                        <p>Macroeconomic labor markets, search and matching models, unemployment dynamics, job vacancies, wage determination, business cycle fluctuations, product market frictions, credit market frictions, monetary policy implications</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main>
+
+        <section class="quick-links section-gray">
+            <div class="container">
+                <div class="links-grid">
+                    <a href="https://www.frbsf.org/research-and-insights/data-and-indicators/sf-fed-data-explorer/app/" target="_blank" class="link-card">
+                        <h3>SF Data Explorer</h3>
+                    </a>
+                    <a href="assets/documents/CV_PetroskyNadeau.pdf" target="_blank" class="link-card">
+                        <h3>CV</h3>
+                    </a>
+                    <a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank" class="link-card">
+                        <h3>Google Scholar</h3>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Federal Reserve Bank of San Francisco</p>
+                    <p>Economic Research Department</p>
+                    <p>Email: <a href="mailto:nicolas.petrosky-nadeau@sf.frb.org">nicolas.petrosky-nadeau@sf.frb.org</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="research.html">Research</a></li>
+                        <li><a href="writing.html">Writing</a></li>
+                        <li><a href="assets/documents/CV_PetroskyNadeau.pdf" target="_blank">CV (PDF)</a></li>
+                        <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a></li>
+                        <li><a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <p>The views expressed on this website do not necessarily reflect the views of the Federal Reserve Bank of San Francisco or the Federal Reserve System.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.875rem;">This site uses Google Analytics to understand visitor behavior and improve content.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Analytics Event Tracking -->
+    <script>
+        // Track CV downloads
+        document.querySelectorAll('a[href*="CV_PetroskyNadeau.pdf"]').forEach(link => {
+            link.addEventListener('click', function() {
+                gtag('event', 'file_download', {
+                    'file_name': 'CV_PetroskyNadeau.pdf',
+                    'link_text': this.textContent.trim()
+                });
+            });
+        });
+
+        // Track external links
+        document.querySelectorAll('a[target="_blank"]').forEach(link => {
+            link.addEventListener('click', function() {
+                const url = this.href;
+                let category = 'external_link';
+
+                if (url.includes('scholar.google.com')) category = 'google_scholar';
+                else if (url.includes('orcid.org')) category = 'orcid';
+                else if (url.includes('frbsf.org')) category = 'sf_fed';
+
+                gtag('event', 'click', {
+                    'event_category': category,
+                    'event_label': url,
+                    'link_text': this.textContent.trim()
+                });
+            });
+        });
+
+        // Track scroll depth
+        let scrollDepths = [25, 50, 75, 100];
+        let scrollTracked = [];
+
+        window.addEventListener('scroll', function() {
+            const scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+
+            scrollDepths.forEach(depth => {
+                if (scrollPercent >= depth && !scrollTracked.includes(depth)) {
+                    scrollTracked.push(depth);
+                    gtag('event', 'scroll_depth', {
+                        'percent': depth,
+                        'page': window.location.pathname
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
