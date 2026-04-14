@@ -6,6 +6,4 @@ Allow: /
 # Sitemap
 Sitemap: https://npetroskynadeau.github.io/sitemap.xml
 
-# Disallow support files (optional - they're already excluded from sitemap)
-Disallow: /Claude support files/
-Disallow: /Sources materials/
+
