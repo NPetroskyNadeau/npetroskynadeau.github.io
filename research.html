@@ -28,7 +28,14 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="research.html" class="active">Research</a></li>
                     <li><a href="writing.html">Writing</a></li>
-                    <li><a href="teaching.html">Teaching</a></li>
+                    <li class="dropdown">
+                        <a href="#">Teaching ▼</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="teaching-textbook.html">Textbook</a></li>
+                            <li><a href="teaching-macro-labor.html">Macro-Labor at Central Banks</a></li>
+                            <li><a href="teaching-ras.html">Research Associates</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -48,6 +55,11 @@
                     <svg width="24" height="24" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
                         <path fill="#A6CE39" d="M256 128c0 70.7-57.3 128-128 128S0 198.7 0 128 57.3 0 128 0s128 57.3 128 128z"/>
                         <path fill="#FFF" d="M86.3 186.2H70.9V79.1h15.4v107.1zM108.9 79.1h41.6c39.6 0 57 28.3 57 53.6 0 27.5-21.5 53.6-56.8 53.6h-41.8V79.1zm15.4 93.3h24.5c34.9 0 42.9-26.5 42.9-39.7C191.7 111.2 178 93 148 93h-23.7v79.4zM71.3 54.8c0-5.2 4.2-9.4 9.4-9.4s9.4 4.2 9.4 9.4c0 5.1-4.2 9.4-9.4 9.4s-9.4-4.3-9.4-9.4z"/>
+                    </svg>
+                </a>
+                <a href="https://www.linkedin.com/in/nicolas-petrosky-nadeau-a0331333" target="_blank" class="hero-icon" title="LinkedIn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" fill="currentColor"/>
                     </svg>
                 </a>
             </p>
@@ -250,7 +262,7 @@
         </section>
 
         <!-- Policy & Archived Papers Section -->
-        <section class="section section-white">
+        <section class="section section-gray">
             <div class="container">
                 <div class="research-section">
                     <h2>Policy Papers & Other Work</h2>
@@ -309,8 +321,8 @@
                         <li><a href="research.html">Research</a></li>
                         <li><a href="writing.html">Writing</a></li>
                         <li><a href="assets/documents/CV_PetroskyNadeau.pdf" target="_blank">CV (PDF)</a></li>
-                        <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a></li>
-                        <li><a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
+                        <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a> / <a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
+                        <li><a href="https://www.linkedin.com/in/nicolas-petrosky-nadeau-a0331333" target="_blank">LinkedIn</a></li>
                     </ul>
                 </div>
             </div>
@@ -380,6 +392,7 @@
 
                 if (url.includes('scholar.google.com')) category = 'google_scholar';
                 else if (url.includes('orcid.org')) category = 'orcid';
+                else if (url.includes('linkedin.com')) category = 'linkedin';
                 else if (url.includes('aeaweb.org')) category = 'journal_link_aer';
                 else if (url.includes('sciencedirect.com')) category = 'journal_link_elsevier';
                 else if (url.includes('journals.uchicago.edu')) category = 'journal_link_uchicago';
@@ -453,6 +466,24 @@
                 'page': 'research'
             });
         });
+
+        // Mobile dropdown toggle
+        function initMobileDropdown() {
+            const dropdown = document.querySelector('.dropdown');
+            const dropdownLink = dropdown.querySelector('a');
+
+            dropdownLink.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('open');
+                }
+            });
+        }
+
+        // Initialize on load
+        if (document.querySelector('.dropdown')) {
+            initMobileDropdown();
+        }
     </script>
 </body>
 </html>

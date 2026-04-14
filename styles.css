@@ -73,6 +73,92 @@ nav {
     border-bottom: 2px solid #ffffff;
 }
 
+/* Dropdown Menu */
+.nav-links .dropdown {
+    position: relative;
+    padding-bottom: 0.5rem; /* Extend hover area downward */
+}
+
+.nav-links .dropdown > a {
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #2c3e50;
+    min-width: 240px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    margin-top: 0;  /* Removed gap - was 0.5rem */
+    padding: 0.5rem 0;
+    list-style: none;
+    z-index: 1000;
+}
+
+.dropdown-menu li {
+    padding: 0;
+}
+
+.dropdown-menu a {
+    display: block;
+    padding: 0.75rem 1.25rem;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+    border-bottom: none !important;
+}
+
+.dropdown-menu a:hover {
+    background-color: #34495e;
+    opacity: 1;
+}
+
+.dropdown-menu a.active {
+    background-color: #1a2332;
+    border-left: 3px solid #ffffff;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block;
+    animation: fadeIn 0.15s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile dropdown adjustments */
+@media (max-width: 768px) {
+    .dropdown-menu {
+        position: static;
+        box-shadow: none;
+        margin-top: 0;
+        background-color: #2c3e50;
+        border-radius: 0;
+    }
+
+    .dropdown:hover .dropdown-menu,
+    .dropdown .dropdown-menu {
+        display: none;
+    }
+
+    .dropdown.open .dropdown-menu {
+        display: block;
+    }
+}
+
 /* Hero Section */
 .hero {
     position: relative;
@@ -439,6 +525,19 @@ main {
     }
 }
 
+/* Research Associates Grid - Two Column Layout */
+.ras-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 900px) {
+    .ras-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .paper-card {
     background-color: #ffffff;
     padding: 1.25rem;
@@ -475,6 +574,11 @@ main {
     font-weight: 500;
 }
 
+/* Badge Styles */
+.badge {
+    white-space: nowrap;  /* Prevents awkward line breaks */
+}
+
 .journal-link {
     color: #2c5aa0;
     text-decoration: none;
@@ -509,13 +613,12 @@ main {
 }
 
 .abstract-toggle {
-    margin-top: 0.5rem;
     padding: 0.5rem 1.25rem;
     background-color: #f0f0f0;
     color: #333;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -530,6 +633,48 @@ main {
     background-color: #2c5aa0;
     color: #ffffff;
     border-color: #2c5aa0;
+}
+
+/* Collaboration List Styles */
+.collaboration-list {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #555;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.collab-items {
+    list-style: none;
+    margin: 0.75rem 0 0 0;
+    padding: 0;
+    line-height: 1.8;
+}
+
+.collab-items li {
+    margin-bottom: 0.75rem;
+}
+
+.collab-items a {
+    color: #2c5aa0;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.collab-items a:hover {
+    color: #1a4070;
+    text-decoration: underline;
+}
+
+.collab-venue {
+    display: block;
+    font-size: 0.9rem;
+    color: #888;
+    margin-top: 0.2rem;
+    font-style: italic;
 }
 
 /* Compact Paper Cards (for Economic Letters) */

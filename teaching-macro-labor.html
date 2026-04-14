@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Macro-labor economics course for central bank economists covering unemployment models, business cycles, and monetary policy.">
+    <title>Macro-Labor at Central Banks - Nicolas Petrosky-Nadeau</title>
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1XR01WLXJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Y1XR01WLXJ', {
+            'anonymize_ip': true,
+            'cookie_flags': 'SameSite=None;Secure'
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="site-title">Nicolas Petrosky-Nadeau</a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="research.html">Research</a></li>
+                    <li><a href="writing.html">Writing</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="active">Teaching ▼</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="teaching-textbook.html">Textbook</a></li>
+                            <li><a href="teaching-macro-labor.html" class="active">Macro-Labor at Central Banks</a></li>
+                            <li><a href="teaching-ras.html">Research Associates</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero hero-compact">
+        <div class="hero-content">
+            <h1>Macro-Labor at Central Banks</h1>
+            <p class="hero-title">Short Course in Labor Market Analysis for Policy Practitioners</p>
+        </div>
+    </section>
+
+    <main>
+        <!-- Course Overview -->
+        <section class="section section-white">
+            <div class="container">
+                <h2>Course Overview</h2>
+
+                <div class="about-content">
+                    <p style="font-size: 1.125rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                        This course provides an overview of core aggregate labor market facts, from employment and unemployment rates, flows across labor force states and the dynamics of earnings, along with prevailing tools for modeling these outcomes in both the long run and over the business cycle. The course also examines the relation between unemployment and price inflation, and treats within that context recent issues concerning the conduct of monetary policy.
+                    </p>
+
+                    <p style="font-size: 1.125rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                        In addition to lecture notes with suggested readings, the course provides computer codes to perform covered data and numerical analysis using Stata and Matlab.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Four Core Parts -->
+        <section class="section section-gray">
+            <div class="container">
+                <h2>Course Structure: Four Core Parts</h2>
+
+                <!-- Part 1 -->
+                <div class="paper-card">
+                    <div class="paper-header">
+                        <h3 class="paper-title">Part 1: Introduction — Characterizing the State of the Labor Market</h3>
+                    </div>
+                    <div class="paper-meta">
+                        <span class="paper-journal">Labor Market Measurement and Facts</span>
+                    </div>
+                    <div class="paper-description">
+                        <p>Covers the main concepts, measures and facts commonly used to characterize the labor market in both the long run and over the business cycle. This includes:</p>
+                        <ul style="margin-left: 2rem; margin-top: 0.75rem; line-height: 1.8;">
+                            <li>Prevailing measures of labor market slack</li>
+                            <li>Demand for labor indicators</li>
+                            <li>Earnings dynamics and measurement challenges</li>
+                            <li>Indicators of turnover</li>
+                            <li>Approaches to control for slow-moving demographic trends when comparing labor market statistics over long periods</li>
+                        </ul>
+                        <p style="margin-top: 0.75rem;">The section concludes by introducing the stocks and flows approach to analyzing labor dynamics, a first step toward the search and matching approach to understanding unemployment in equilibrium.</p>
+                    </div>
+                </div>
+
+                <!-- Part 2 -->
+                <div class="paper-card">
+                    <div class="paper-header">
+                        <h3 class="paper-title">Part 2: Search and Matching Models of Equilibrium Unemployment</h3>
+                    </div>
+                    <div class="paper-meta">
+                        <span class="paper-journal">Introduction and Application to Policy</span>
+                    </div>
+                    <div class="paper-description">
+                        <p>The analysis focuses on the intuition for the main drivers of unemployment in steady state:</p>
+                        <ul style="margin-left: 2rem; margin-top: 0.75rem; line-height: 1.8;">
+                            <li>Costs of creating jobs</li>
+                            <li>Determinants of equilibrium wages</li>
+                            <li>Steady-state welfare implications of labor market policies</li>
+                            <li>Extensions allowing for endogenous job search effort and job destruction</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Part 3 -->
+                <div class="paper-card">
+                    <div class="paper-header">
+                        <h3 class="paper-title">Part 3: Business Cycles in the Labor Market</h3>
+                    </div>
+                    <div class="paper-meta">
+                        <span class="paper-journal">Dynamic Models and Numerical Methods</span>
+                    </div>
+                    <div class="paper-description">
+                        <p>Develops the framework to study the business cycle dynamics of unemployment and job vacancies. Topics include:</p>
+                        <ul style="margin-left: 2rem; margin-top: 0.75rem; line-height: 1.8;">
+                            <li>Numerical methods for solving and simulating equilibrium models of unemployment</li>
+                            <li>Computing moments of interest and impulse response functions</li>
+                            <li>The challenge of generating internal propagation of exogenous shocks</li>
+                            <li>Prominent solutions in the literature</li>
+                            <li>Alternative assumptions for wage determination between workers and firms</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Part 4 -->
+                <div class="paper-card">
+                    <div class="paper-header">
+                        <h3 class="paper-title">Part 4: Labor Markets, Price Inflation, and Monetary Policy</h3>
+                    </div>
+                    <div class="paper-meta">
+                        <span class="paper-journal">The Inflation-Unemployment Trade-off</span>
+                    </div>
+                    <div class="paper-description">
+                        <p>The inflation-unemployment trade-off, central to monetary policy, is the focus of the final section:</p>
+                        <ul style="margin-left: 2rem; margin-top: 0.75rem; line-height: 1.8;">
+                            <li>Dynamics of inflation and unemployment in a New Keynesian environment with equilibrium unemployment</li>
+                            <li>Issues arising with an effective lower bound on the central bank's policy rate</li>
+                            <li>Themes emerging since the onset of the COVID-19 pandemic</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Special Topics -->
+        <section class="section section-white">
+            <div class="container">
+                <h2>Special Topics</h2>
+
+                <!-- Topic 1 -->
+                <div class="conference-card">
+                    <h3 class="conference-title">Credit and Goods Market Frictions</h3>
+                    <div class="conference-description">
+                        <p><strong>Credit Market Frictions:</strong> Following the lessons of the global financial crisis, this section introduces credit market frictions to the analysis, studying interactions with labor markets and focusing on implications for business cycles. Credit market frictions principally affect the cost of job creation.</p>
+
+                        <p style="margin-top: 1rem;"><strong>Goods Market Frictions:</strong> The structure of the product market governs the payoffs to recruiting for the firm. This section focuses on the effects of goods market frictions for the demand for labor and unemployment in equilibrium.</p>
+                    </div>
+                </div>
+
+                <!-- Topic 2 -->
+                <div class="conference-card">
+                    <h3 class="conference-title">Labor Force Participation</h3>
+                    <div class="conference-description">
+                        <p>Analysis of labor force participation dynamics and their interaction with unemployment and labor market slack measures.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Course Materials -->
+        <section class="section section-gray">
+            <div class="container">
+                <h2>Course Materials</h2>
+
+                <div class="about-content">
+                    <div class="research-interests">
+                        <h3>Resources Provided</h3>
+                        <ul style="font-size: 1.125rem; line-height: 1.8; margin-left: 2rem;">
+                            <li>Lecture notes with suggested readings</li>
+                            <li>Stata code for data analysis</li>
+                            <li>Matlab code for numerical analysis and model simulation</li>
+                        </ul>
+
+                        <h3 style="margin-top: 2rem;">Target Audience</h3>
+                        <p style="font-size: 1.125rem; line-height: 1.8;">
+                            Central bank economists, policy practitioners, and researchers interested in applying modern labor market analysis to monetary policy questions. The course is designed for those with graduate-level training in economics.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <p>Federal Reserve Bank of San Francisco</p>
+                    <p>Economic Research Department</p>
+                    <p>Email: <a href="mailto:nicolas.petrosky-nadeau@sf.frb.org">nicolas.petrosky-nadeau@sf.frb.org</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="research.html">Research</a></li>
+                        <li><a href="writing.html">Writing</a></li>
+                        <li><a href="assets/documents/CV_PetroskyNadeau.pdf" target="_blank">CV (PDF)</a></li>
+                        <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a> / <a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
+                        <li><a href="https://www.linkedin.com/in/nicolas-petrosky-nadeau-a0331333" target="_blank">LinkedIn</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="disclaimer">
+                <p>The views expressed on this website do not necessarily reflect the views of the Federal Reserve Bank of San Francisco or the Federal Reserve System.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.875rem;">This site uses Google Analytics to understand visitor behavior and improve content.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Analytics Event Tracking -->
+    <script>
+        let pageStartTime = Date.now();
+        window.addEventListener('beforeunload', function() {
+            const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
+            gtag('event', 'page_engagement', {
+                'time_seconds': timeSpent,
+                'page': 'teaching_macro_labor'
+            });
+        });
+
+        // Mobile dropdown toggle
+        function initMobileDropdown() {
+            const dropdown = document.querySelector('.dropdown');
+            const dropdownLink = dropdown.querySelector('a');
+
+            dropdownLink.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('open');
+                }
+            });
+        }
+
+        // Initialize on load
+        if (document.querySelector('.dropdown')) {
+            initMobileDropdown();
+        }
+    </script>
+</body>
+</html>

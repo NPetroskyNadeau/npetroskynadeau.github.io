@@ -6,6 +6,18 @@
     <meta name="description" content="Public writing by Nicolas Petrosky-Nadeau - FRBSF Economic Letters explaining research to broad audiences.">
     <title>Writing for the Public - Nicolas Petrosky-Nadeau</title>
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1XR01WLXJ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-Y1XR01WLXJ', {
+            'anonymize_ip': true,
+            'cookie_flags': 'SameSite=None;Secure'
+        });
+    </script>
 </head>
 <body>
     <header>
@@ -16,7 +28,14 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="research.html">Research</a></li>
                     <li><a href="writing.html" class="active">Writing</a></li>
-                    <li><a href="teaching.html">Teaching</a></li>
+                    <li class="dropdown">
+                        <a href="#">Teaching ▼</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="teaching-textbook.html">Textbook</a></li>
+                            <li><a href="teaching-macro-labor.html">Macro-Labor at Central Banks</a></li>
+                            <li><a href="teaching-ras.html">Research Associates</a></li>
+                        </ul>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -155,15 +174,85 @@
                         <li><a href="research.html">Research</a></li>
                         <li><a href="writing.html">Writing</a></li>
                         <li><a href="assets/documents/CV_PetroskyNadeau.pdf" target="_blank">CV (PDF)</a></li>
-                        <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a></li>
-                        <li><a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
+                        <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a> / <a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
+                        <li><a href="https://www.linkedin.com/in/nicolas-petrosky-nadeau-a0331333" target="_blank">LinkedIn</a></li>
                     </ul>
                 </div>
             </div>
             <div class="disclaimer">
                 <p>The views expressed on this website do not necessarily reflect the views of the Federal Reserve Bank of San Francisco or the Federal Reserve System.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.875rem;">This site uses Google Analytics to understand visitor behavior and improve content.</p>
             </div>
         </div>
     </footer>
+
+    <!-- Analytics Event Tracking -->
+    <script>
+        // Track Economic Letter clicks
+        document.querySelectorAll('a[target="_blank"]').forEach(link => {
+            link.addEventListener('click', function() {
+                const url = this.href;
+                gtag('event', 'click', {
+                    'event_category': 'economic_letter',
+                    'event_label': url,
+                    'link_text': this.textContent.trim()
+                });
+            });
+        });
+
+        // Track CV downloads
+        document.querySelectorAll('a[href*="CV_PetroskyNadeau.pdf"]').forEach(link => {
+            link.addEventListener('click', function() {
+                gtag('event', 'file_download', {
+                    'file_name': 'CV_PetroskyNadeau.pdf',
+                    'link_text': this.textContent.trim()
+                });
+            });
+        });
+
+        // Track page engagement
+        let pageStartTime = Date.now();
+        window.addEventListener('beforeunload', function() {
+            const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
+            gtag('event', 'page_engagement', {
+                'time_seconds': timeSpent,
+                'page': 'writing'
+            });
+        });
+
+        // Track scroll depth
+        let scrollDepths = [25, 50, 75, 100];
+        let scrollTracked = [];
+        window.addEventListener('scroll', function() {
+            const scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+            scrollDepths.forEach(depth => {
+                if (scrollPercent >= depth && !scrollTracked.includes(depth)) {
+                    scrollTracked.push(depth);
+                    gtag('event', 'scroll_depth', {
+                        'percent': depth,
+                        'page': 'writing'
+                    });
+                }
+            });
+        });
+
+        // Mobile dropdown toggle
+        function initMobileDropdown() {
+            const dropdown = document.querySelector('.dropdown');
+            const dropdownLink = dropdown.querySelector('a');
+
+            dropdownLink.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    dropdown.classList.toggle('open');
+                }
+            });
+        }
+
+        // Initialize on load
+        if (document.querySelector('.dropdown')) {
+            initMobileDropdown();
+        }
+    </script>
 </body>
 </html>
