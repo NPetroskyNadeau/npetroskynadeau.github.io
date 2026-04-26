@@ -1,0 +1,497 @@
+# Beveridge Curve Data - "Fourteen Months in Place"
+# Nicolas Petrosky-Nadeau, April 2026
+#
+# Monthly data: Vacancy rate = JOLTS job openings / civilian labor force;
+#   Unemployment rate = unemployed / civilian labor force.
+#   Source: Bureau of Labor Statistics via FRED (series JTSJOL, CLF16OV, UNEMPLOY).
+#
+# Fitted curve: Estimated Beveridge curve from
+#   Bok, Petrosky-Nadeau, Valletta, and Yilma,
+#   "Finding a Soft Landing along the Beveridge Curve,"
+#   FRBSF Economic Letter 2022-24, August 2022.
+#   https://www.frbsf.org/research-and-insights/publications/economic-letter/2022/08/finding-soft-landing-along-beveridge-curve/
+#
+series,date,unemployment_rate,vacancy_rate,period
+monthly,2001-01,3.93,3.55,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-02,4.19,3.64,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-03,4.24,3.55,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-04,4.27,3.31,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-05,4.37,3.21,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-06,4.34,3.09,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-07,4.52,3.04,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-08,4.58,3.1,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-09,4.91,2.81,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-10,4.96,2.83,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-11,5.34,2.57,Normal times (Jan 2001 - Dec 2017)
+monthly,2001-12,5.55,2.62,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-01,5.72,2.55,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-02,5.69,2.57,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-03,5.68,2.38,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-04,5.75,2.5,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-05,5.94,2.4,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-06,5.79,2.39,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-07,5.8,2.36,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-08,5.79,2.33,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-09,5.73,2.43,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-10,5.67,2.27,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-11,5.72,2.39,Normal times (Jan 2001 - Dec 2017)
+monthly,2002-12,5.87,2.42,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-01,5.96,2.18,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-02,5.84,2.36,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-03,5.9,2.21,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-04,5.88,2.12,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-05,6.04,2.12,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-06,6.11,2.25,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-07,6.3,2.31,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-08,6.15,2.04,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-09,6.07,2.18,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-10,6.09,2.11,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-11,5.95,2.25,Normal times (Jan 2001 - Dec 2017)
+monthly,2003-12,5.83,2.26,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-01,5.67,2.33,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-02,5.7,2.33,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-03,5.57,2.41,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-04,5.78,2.4,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-05,5.56,2.39,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-06,5.58,2.52,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-07,5.62,2.26,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-08,5.51,2.58,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-09,5.41,2.4,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-10,5.38,2.59,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-11,5.45,2.67,Normal times (Jan 2001 - Dec 2017)
+monthly,2004-12,5.35,2.34,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-01,5.36,2.75,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-02,5.26,2.57,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-03,5.38,2.67,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-04,5.21,2.73,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-05,5.15,2.79,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-06,5.13,2.54,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-07,5.04,2.72,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-08,4.96,2.85,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-09,4.9,2.77,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-10,5.04,2.9,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-11,4.97,2.79,Normal times (Jan 2001 - Dec 2017)
+monthly,2005-12,5.04,2.83,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-01,4.85,2.85,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-02,4.7,2.93,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-03,4.77,2.87,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-04,4.69,3.14,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-05,4.72,3.17,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-06,4.62,2.95,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-07,4.63,3.05,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-08,4.74,2.9,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-09,4.67,3.1,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-10,4.51,3.12,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-11,4.42,3.02,Normal times (Jan 2001 - Dec 2017)
+monthly,2006-12,4.51,3.05,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-01,4.43,3.02,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-02,4.65,3.11,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-03,4.53,3.07,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-04,4.4,3.24,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-05,4.49,3.08,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-06,4.43,3.05,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-07,4.56,3.17,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-08,4.67,3.0,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-09,4.63,2.98,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-10,4.67,3.03,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-11,4.72,3.03,Normal times (Jan 2001 - Dec 2017)
+monthly,2007-12,4.71,3.02,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-01,4.97,2.95,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-02,4.99,3.0,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-03,4.88,2.78,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-04,5.08,2.75,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-05,4.97,2.62,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-06,5.44,2.72,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-07,5.56,2.48,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-08,5.79,2.43,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-09,6.1,2.38,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-10,6.14,2.08,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-11,6.5,2.18,Normal times (Jan 2001 - Dec 2017)
+monthly,2008-12,6.81,2.09,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-01,7.3,2.03,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-02,7.82,1.78,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-03,8.35,1.85,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-04,8.71,1.64,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-05,8.97,1.49,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-06,9.37,1.65,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-07,9.51,1.62,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-08,9.45,1.44,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-09,9.6,1.52,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-10,9.76,1.62,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-11,9.98,1.56,Normal times (Jan 2001 - Dec 2017)
+monthly,2009-12,9.89,1.63,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-01,9.86,1.68,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-02,9.8,1.85,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-03,9.83,1.73,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-04,9.87,1.74,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-05,9.91,2.04,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-06,9.64,1.94,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-07,9.42,1.82,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-08,9.44,2.01,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-09,9.51,1.95,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-10,9.47,1.9,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-11,9.45,2.11,Normal times (Jan 2001 - Dec 2017)
+monthly,2010-12,9.78,2.08,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-01,9.34,1.99,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-02,9.14,2.03,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-03,9.02,2.11,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-04,8.96,2.13,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-05,9.09,2.12,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-06,9.03,2.07,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-07,9.1,2.25,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-08,8.98,2.36,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-09,8.99,2.17,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-10,9.05,2.45,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-11,8.83,2.35,Normal times (Jan 2001 - Dec 2017)
+monthly,2011-12,8.63,2.31,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-01,8.5,2.45,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-02,8.29,2.53,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-03,8.28,2.34,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-04,8.22,2.57,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-05,8.18,2.45,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-06,8.17,2.48,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-07,8.18,2.52,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-08,8.17,2.41,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-09,8.06,2.46,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-10,7.81,2.5,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-11,7.79,2.43,Normal times (Jan 2001 - Dec 2017)
+monthly,2012-12,7.73,2.5,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-01,7.9,2.55,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-02,8.01,2.52,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-03,7.69,2.58,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-04,7.54,2.63,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-05,7.57,2.57,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-06,7.49,2.66,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-07,7.54,2.66,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-08,7.28,2.5,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-09,7.25,2.63,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-10,7.24,2.65,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-11,7.2,2.73,Normal times (Jan 2001 - Dec 2017)
+monthly,2013-12,6.95,2.65,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-01,6.7,2.66,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-02,6.57,2.66,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-03,6.66,2.81,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-04,6.65,2.81,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-05,6.24,2.94,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-06,6.33,3.05,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-07,6.08,3.2,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-08,6.16,3.11,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-09,6.15,3.43,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-10,5.94,3.15,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-11,5.75,3.2,Normal times (Jan 2001 - Dec 2017)
+monthly,2014-12,5.81,3.09,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-01,5.58,3.28,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-02,5.66,3.4,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-03,5.49,3.49,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-04,5.44,3.33,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-05,5.44,3.56,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-06,5.6,3.53,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-07,5.25,3.34,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-08,5.2,3.86,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-09,5.08,3.48,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-10,5.04,3.5,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-11,5.04,3.67,Normal times (Jan 2001 - Dec 2017)
+monthly,2015-12,5.08,3.62,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-01,5.0,3.7,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-02,4.82,3.8,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-03,4.86,3.64,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-04,5.0,3.85,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-05,5.07,3.65,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-06,4.82,3.64,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-07,4.87,3.61,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-08,4.8,3.75,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-09,4.88,3.56,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-10,4.98,3.67,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-11,4.89,3.5,Normal times (Jan 2001 - Dec 2017)
+monthly,2016-12,4.74,3.74,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-01,4.71,3.74,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-02,4.68,3.52,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-03,4.62,3.71,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-04,4.42,3.63,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-05,4.42,3.8,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-06,4.37,3.64,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-07,4.29,3.94,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-08,4.3,3.89,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-09,4.41,3.91,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-10,4.25,3.92,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-11,4.18,4.0,Normal times (Jan 2001 - Dec 2017)
+monthly,2017-12,4.22,3.91,Normal times (Jan 2001 - Dec 2017)
+monthly,2018-01,4.13,3.95,Transition (Jan 2018 - Feb 2022)
+monthly,2018-02,4.03,4.11,Transition (Jan 2018 - Feb 2022)
+monthly,2018-03,4.07,4.05,Transition (Jan 2018 - Feb 2022)
+monthly,2018-04,4.0,4.22,Transition (Jan 2018 - Feb 2022)
+monthly,2018-05,3.99,4.25,Transition (Jan 2018 - Feb 2022)
+monthly,2018-06,3.83,4.33,Transition (Jan 2018 - Feb 2022)
+monthly,2018-07,3.97,4.46,Transition (Jan 2018 - Feb 2022)
+monthly,2018-08,3.82,4.43,Transition (Jan 2018 - Feb 2022)
+monthly,2018-09,3.81,4.46,Transition (Jan 2018 - Feb 2022)
+monthly,2018-10,3.75,4.57,Transition (Jan 2018 - Feb 2022)
+monthly,2018-11,3.82,4.49,Transition (Jan 2018 - Feb 2022)
+monthly,2018-12,3.76,4.66,Transition (Jan 2018 - Feb 2022)
+monthly,2019-01,3.91,4.59,Transition (Jan 2018 - Feb 2022)
+monthly,2019-02,3.97,4.6,Transition (Jan 2018 - Feb 2022)
+monthly,2019-03,3.76,4.33,Transition (Jan 2018 - Feb 2022)
+monthly,2019-04,3.81,4.49,Transition (Jan 2018 - Feb 2022)
+monthly,2019-05,3.67,4.47,Transition (Jan 2018 - Feb 2022)
+monthly,2019-06,3.64,4.47,Transition (Jan 2018 - Feb 2022)
+monthly,2019-07,3.64,4.41,Transition (Jan 2018 - Feb 2022)
+monthly,2019-08,3.7,4.3,Transition (Jan 2018 - Feb 2022)
+monthly,2019-09,3.63,4.38,Transition (Jan 2018 - Feb 2022)
+monthly,2019-10,3.51,4.34,Transition (Jan 2018 - Feb 2022)
+monthly,2019-11,3.57,4.43,Transition (Jan 2018 - Feb 2022)
+monthly,2019-12,3.57,4.19,Transition (Jan 2018 - Feb 2022)
+monthly,2020-01,3.55,4.07,Transition (Jan 2018 - Feb 2022)
+monthly,2020-02,3.57,4.33,Transition (Jan 2018 - Feb 2022)
+monthly,2020-03,3.5,4.24,Transition (Jan 2018 - Feb 2022)
+monthly,2020-04,4.43,3.63,Transition (Jan 2018 - Feb 2022)
+monthly,2020-05,14.77,2.95,Transition (Jan 2018 - Feb 2022)
+monthly,2020-06,13.24,3.55,Transition (Jan 2018 - Feb 2022)
+monthly,2020-07,11.03,3.83,Transition (Jan 2018 - Feb 2022)
+monthly,2020-08,10.21,4.08,Transition (Jan 2018 - Feb 2022)
+monthly,2020-09,8.38,4.0,Transition (Jan 2018 - Feb 2022)
+monthly,2020-10,7.84,4.06,Transition (Jan 2018 - Feb 2022)
+monthly,2020-11,6.88,4.22,Transition (Jan 2018 - Feb 2022)
+monthly,2020-12,6.66,4.25,Transition (Jan 2018 - Feb 2022)
+monthly,2021-01,6.7,4.21,Transition (Jan 2018 - Feb 2022)
+monthly,2021-02,6.41,4.47,Transition (Jan 2018 - Feb 2022)
+monthly,2021-03,6.25,4.88,Transition (Jan 2018 - Feb 2022)
+monthly,2021-04,6.09,5.3,Transition (Jan 2018 - Feb 2022)
+monthly,2021-05,6.07,5.81,Transition (Jan 2018 - Feb 2022)
+monthly,2021-06,5.76,6.19,Transition (Jan 2018 - Feb 2022)
+monthly,2021-07,5.88,6.4,Transition (Jan 2018 - Feb 2022)
+monthly,2021-08,5.4,6.8,Transition (Jan 2018 - Feb 2022)
+monthly,2021-09,5.12,6.73,Transition (Jan 2018 - Feb 2022)
+monthly,2021-10,4.71,6.71,Transition (Jan 2018 - Feb 2022)
+monthly,2021-11,4.49,6.95,Transition (Jan 2018 - Feb 2022)
+monthly,2021-12,4.15,6.9,Transition (Jan 2018 - Feb 2022)
+monthly,2022-01,3.95,7.09,Transition (Jan 2018 - Feb 2022)
+monthly,2022-02,3.99,6.85,Transition (Jan 2018 - Feb 2022)
+monthly,2022-03,3.86,7.13,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-04,3.67,7.49,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-05,3.66,7.24,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-06,3.64,7.02,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-07,3.64,6.88,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-08,3.52,7.06,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-09,3.59,6.13,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-10,3.49,6.56,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-11,3.61,6.35,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2022-12,3.6,6.47,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-01,3.5,6.61,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-02,3.48,6.22,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-03,3.6,5.92,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-04,3.51,5.79,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-05,3.45,5.98,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-06,3.65,5.61,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-07,3.58,5.5,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-08,3.54,5.18,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-09,3.74,5.52,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-10,3.74,5.52,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-11,3.85,5.12,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2023-12,3.7,5.12,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-01,3.78,5.09,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-02,3.69,5.01,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-03,3.87,5.04,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-04,3.88,4.89,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-05,3.86,4.48,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-06,3.95,4.64,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-07,4.1,4.41,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-08,4.22,4.41,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-09,4.19,4.46,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-10,4.06,4.12,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-11,4.13,4.38,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2024-12,4.21,4.5,Steep tradeoff (Mar 2022 - Dec 2024)
+monthly,2025-01,4.11,4.33,Recent (Jan 2025 - present)
+monthly,2025-02,4.02,4.35,Recent (Jan 2025 - present)
+monthly,2025-03,4.17,4.25,Recent (Jan 2025 - present)
+monthly,2025-04,4.18,4.07,Recent (Jan 2025 - present)
+monthly,2025-05,4.18,4.15,Recent (Jan 2025 - present)
+monthly,2025-06,4.25,4.29,Recent (Jan 2025 - present)
+monthly,2025-07,4.14,4.23,Recent (Jan 2025 - present)
+monthly,2025-08,4.27,4.16,Recent (Jan 2025 - present)
+monthly,2025-09,4.32,4.05,Recent (Jan 2025 - present)
+monthly,2025-10,4.44,4.19,Recent (Jan 2025 - present)
+monthly,2025-11,4.54,3.99,Recent (Jan 2025 - present)
+monthly,2025-12,4.38,3.82,Recent (Jan 2025 - present)
+monthly,2026-01,4.32,4.25,Recent (Jan 2025 - present)
+monthly,2026-02,4.44,4.04,Recent (Jan 2025 - present)
+fitted_curve,,3.28,9.85,
+fitted_curve,,3.29,9.81,
+fitted_curve,,3.29,9.76,
+fitted_curve,,3.29,9.71,
+fitted_curve,,3.29,9.67,
+fitted_curve,,3.3,9.62,
+fitted_curve,,3.3,9.58,
+fitted_curve,,3.3,9.53,
+fitted_curve,,3.3,9.49,
+fitted_curve,,3.31,9.44,
+fitted_curve,,3.31,9.4,
+fitted_curve,,3.31,9.35,
+fitted_curve,,3.32,9.31,
+fitted_curve,,3.32,9.26,
+fitted_curve,,3.32,9.21,
+fitted_curve,,3.32,9.17,
+fitted_curve,,3.33,9.12,
+fitted_curve,,3.33,9.08,
+fitted_curve,,3.33,9.03,
+fitted_curve,,3.34,8.99,
+fitted_curve,,3.34,8.94,
+fitted_curve,,3.34,8.9,
+fitted_curve,,3.35,8.85,
+fitted_curve,,3.35,8.8,
+fitted_curve,,3.35,8.76,
+fitted_curve,,3.36,8.71,
+fitted_curve,,3.36,8.67,
+fitted_curve,,3.36,8.62,
+fitted_curve,,3.37,8.58,
+fitted_curve,,3.37,8.53,
+fitted_curve,,3.37,8.49,
+fitted_curve,,3.38,8.44,
+fitted_curve,,3.38,8.4,
+fitted_curve,,3.38,8.35,
+fitted_curve,,3.39,8.3,
+fitted_curve,,3.39,8.26,
+fitted_curve,,3.39,8.21,
+fitted_curve,,3.4,8.17,
+fitted_curve,,3.4,8.12,
+fitted_curve,,3.41,8.08,
+fitted_curve,,3.41,8.03,
+fitted_curve,,3.41,7.99,
+fitted_curve,,3.42,7.94,
+fitted_curve,,3.42,7.9,
+fitted_curve,,3.43,7.85,
+fitted_curve,,3.43,7.8,
+fitted_curve,,3.43,7.76,
+fitted_curve,,3.44,7.71,
+fitted_curve,,3.44,7.67,
+fitted_curve,,3.45,7.62,
+fitted_curve,,3.45,7.58,
+fitted_curve,,3.46,7.53,
+fitted_curve,,3.46,7.49,
+fitted_curve,,3.47,7.44,
+fitted_curve,,3.47,7.4,
+fitted_curve,,3.48,7.35,
+fitted_curve,,3.48,7.3,
+fitted_curve,,3.49,7.26,
+fitted_curve,,3.49,7.21,
+fitted_curve,,3.5,7.17,
+fitted_curve,,3.5,7.12,
+fitted_curve,,3.51,7.08,
+fitted_curve,,3.51,7.03,
+fitted_curve,,3.52,6.99,
+fitted_curve,,3.52,6.94,
+fitted_curve,,3.53,6.89,
+fitted_curve,,3.54,6.85,
+fitted_curve,,3.54,6.8,
+fitted_curve,,3.55,6.76,
+fitted_curve,,3.55,6.71,
+fitted_curve,,3.56,6.67,
+fitted_curve,,3.57,6.62,
+fitted_curve,,3.57,6.58,
+fitted_curve,,3.58,6.53,
+fitted_curve,,3.59,6.48,
+fitted_curve,,3.59,6.44,
+fitted_curve,,3.6,6.39,
+fitted_curve,,3.61,6.35,
+fitted_curve,,3.62,6.3,
+fitted_curve,,3.62,6.26,
+fitted_curve,,3.63,6.21,
+fitted_curve,,3.64,6.17,
+fitted_curve,,3.65,6.12,
+fitted_curve,,3.65,6.08,
+fitted_curve,,3.66,6.03,
+fitted_curve,,3.67,5.98,
+fitted_curve,,3.68,5.94,
+fitted_curve,,3.69,5.89,
+fitted_curve,,3.7,5.85,
+fitted_curve,,3.7,5.8,
+fitted_curve,,3.71,5.76,
+fitted_curve,,3.72,5.71,
+fitted_curve,,3.73,5.67,
+fitted_curve,,3.74,5.62,
+fitted_curve,,3.75,5.57,
+fitted_curve,,3.76,5.53,
+fitted_curve,,3.77,5.48,
+fitted_curve,,3.78,5.44,
+fitted_curve,,3.79,5.39,
+fitted_curve,,3.8,5.35,
+fitted_curve,,3.82,5.3,
+fitted_curve,,3.83,5.25,
+fitted_curve,,3.84,5.21,
+fitted_curve,,3.85,5.16,
+fitted_curve,,3.86,5.12,
+fitted_curve,,3.88,5.07,
+fitted_curve,,3.89,5.03,
+fitted_curve,,3.9,4.98,
+fitted_curve,,3.92,4.94,
+fitted_curve,,3.93,4.89,
+fitted_curve,,3.95,4.84,
+fitted_curve,,3.96,4.8,
+fitted_curve,,3.98,4.75,
+fitted_curve,,3.99,4.71,
+fitted_curve,,4.01,4.66,
+fitted_curve,,4.02,4.62,
+fitted_curve,,4.04,4.57,
+fitted_curve,,4.06,4.52,
+fitted_curve,,4.08,4.48,
+fitted_curve,,4.09,4.43,
+fitted_curve,,4.11,4.39,
+fitted_curve,,4.13,4.34,
+fitted_curve,,4.15,4.3,
+fitted_curve,,4.17,4.25,
+fitted_curve,,4.2,4.2,
+fitted_curve,,4.22,4.16,
+fitted_curve,,4.24,4.11,
+fitted_curve,,4.26,4.07,
+fitted_curve,,4.29,4.02,
+fitted_curve,,4.31,3.98,
+fitted_curve,,4.34,3.93,
+fitted_curve,,4.37,3.88,
+fitted_curve,,4.39,3.84,
+fitted_curve,,4.42,3.79,
+fitted_curve,,4.45,3.75,
+fitted_curve,,4.49,3.7,
+fitted_curve,,4.52,3.65,
+fitted_curve,,4.55,3.61,
+fitted_curve,,4.59,3.56,
+fitted_curve,,4.62,3.52,
+fitted_curve,,4.66,3.47,
+fitted_curve,,4.7,3.42,
+fitted_curve,,4.74,3.38,
+fitted_curve,,4.79,3.33,
+fitted_curve,,4.83,3.29,
+fitted_curve,,4.88,3.24,
+fitted_curve,,4.93,3.19,
+fitted_curve,,4.98,3.15,
+fitted_curve,,5.04,3.1,
+fitted_curve,,5.1,3.06,
+fitted_curve,,5.16,3.01,
+fitted_curve,,5.22,2.96,
+fitted_curve,,5.29,2.92,
+fitted_curve,,5.36,2.87,
+fitted_curve,,5.44,2.82,
+fitted_curve,,5.52,2.78,
+fitted_curve,,5.61,2.73,
+fitted_curve,,5.7,2.68,
+fitted_curve,,5.8,2.64,
+fitted_curve,,5.91,2.59,
+fitted_curve,,6.02,2.54,
+fitted_curve,,6.14,2.49,
+fitted_curve,,6.27,2.45,
+fitted_curve,,6.42,2.4,
+fitted_curve,,6.57,2.35,
+fitted_curve,,6.74,2.3,
+fitted_curve,,6.93,2.26,
+fitted_curve,,7.13,2.21,
+fitted_curve,,7.36,2.16,
+fitted_curve,,7.61,2.11,
+fitted_curve,,7.89,2.06,
+fitted_curve,,8.2,2.01,
+fitted_curve,,8.56,1.96,
+fitted_curve,,8.97,1.91,
+fitted_curve,,9.44,1.86,
+fitted_curve,,9.98,1.8,
+fitted_curve,,10.63,1.75,
+fitted_curve,,11.4,1.69,
+fitted_curve,,12.34,1.63,
+fitted_curve,,13.52,1.57,
+fitted_curve,,15.02,1.5,

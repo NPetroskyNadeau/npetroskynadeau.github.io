@@ -366,15 +366,33 @@
             });
         });
 
+        // Track scroll depth
+        let scrollDepths = [25, 50, 75, 100];
+        let scrollTracked = [];
+        window.addEventListener('scroll', function() {
+            const scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+            scrollDepths.forEach(depth => {
+                if (scrollPercent >= depth && !scrollTracked.includes(depth)) {
+                    scrollTracked.push(depth);
+                    gtag('event', 'scroll_depth', { 'percent': depth, 'page': 'teaching_ras' });
+                }
+            });
+        });
+
         // Toggle collaboration list
         function toggleCollaboration(button) {
             const paperCard = button.closest('.paper-card');
             const collabList = paperCard.querySelector('.collaboration-list');
+            const raName = paperCard.querySelector('h3')?.textContent || 'unknown';
 
             if (collabList.style.display === 'none') {
                 collabList.style.display = 'block';
                 button.textContent = button.textContent.replace('Collaborations', 'Hide Collaborations');
                 button.classList.add('active');
+                gtag('event', 'view_collaborations', {
+                    'ra_name': raName,
+                    'action': 'open'
+                });
             } else {
                 collabList.style.display = 'none';
                 button.textContent = button.textContent.replace('Hide Collaborations', 'Collaborations');

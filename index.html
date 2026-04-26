@@ -61,12 +61,17 @@
                     </div>
                 </div>
                 <div class="hero-right">
-                    <h2>About</h2>
-                    <p>I am Vice President and head of the macroeconomic group at the Economic Research Department of the Federal Reserve Bank of San Francisco. I serve on the policy advisory group for the SF Fed President, where I co-coordinate research briefings and consult on monetary policy strategies for FOMC meetings. I also manage the SF Fed Data Explorer, a public interactive data application.</p>
+                    <p>I lead the macroeconomic research group at the Federal Reserve Bank of San Francisco, where I advise the Bank President on monetary policy for FOMC meetings. My research focuses on labor market dynamics using search and matching models, with publications in leading journals.</p>
 
-                    <p>My research focuses on long-run trends and business cycle dynamics of labor markets. I use search and matching models to examine fluctuations in unemployment, job vacancies, and wages, incorporating product and credit market frictions. I have published in leading journals including the American Economic Review and co-authored a graduate textbook with MIT Press.</p>
+                    <button class="bio-toggle" onclick="toggleBio(this)">Read More</button>
 
-                    <p>Prior to joining the Federal Reserve in 2014, I was on the faculty at Carnegie Mellon University's Tepper School of Business. I received my PhD in economics from the University of Quebec at Montreal.</p>
+                    <div id="hero-bio-full" class="hero-bio-expanded" style="display: none;">
+                        <p>I serve on the policy advisory group for the SF Fed President, where I co-coordinate research briefings and consult on monetary policy strategies for FOMC meetings. I also manage the SF Fed Data Explorer, a public interactive data application, and organize the annual Micro-Macro Labor Economics Conference.</p>
+
+                        <p>My research uses search and matching models to examine fluctuations in unemployment, job vacancies, and wages, incorporating product and credit market frictions. I have published in the <em>American Economic Review</em>, the <em>Journal of Monetary Economics</em>, the <em>Journal of Economic Theory</em>, and the <em>Journal of Political Economy: Macroeconomics</em>, among others, and co-authored a graduate textbook with MIT Press. I have served as Associate Editor of the <em>European Economic Review</em> and was a National Fellow at the Hoover Institution at Stanford.</p>
+
+                        <p>Prior to joining the Federal Reserve in 2014, I was on the faculty at Carnegie Mellon University's Tepper School of Business. I hold a PhD in economics from the University of Quebec at Montreal and Sciences Po Paris, and an M.A. from the Graduate Institute in Geneva.</p>
+                    </div>
 
                     <div class="research-interests-compact">
                         <h3>Research Interests</h3>
@@ -78,6 +83,51 @@
     </section>
 
     <main>
+
+        <section class="recent-work">
+            <div class="container">
+                <h2 class="recent-work-heading">Recent Work</h2>
+                <div class="recent-work-grid">
+
+                    <!-- REPLACE MAY 1: Swap this Beveridge card for Economic Note 2026-01 card
+                    <a href="writing.html#econ-note-2026-01" class="recent-work-card">
+                        <div class="recent-work-thumb">
+                            <img src="assets/charts/labor_market_concentration_2026.png" alt="Stacked bar chart showing employment growth concentration in education and health services">
+                        </div>
+                        <div class="recent-work-text">
+                            <span class="recent-work-label">Economic Note 2026-01</span>
+                            <h3>One Sector Carries the Labor Market</h3>
+                            <p>Education and health services are essentially carrying the entire labor market while most other major sectors contract or stagnate.</p>
+                        </div>
+                    </a>
+                    END REPLACE -->
+
+                    <a href="writing.html" class="recent-work-card">
+                        <div class="recent-work-thumb">
+                            <img src="assets/charts/beveridge_standstill_2026.png" alt="Beveridge curve showing job vacancy rate vs unemployment rate">
+                        </div>
+                        <div class="recent-work-text">
+                            <span class="recent-work-label">Economic Post · April 2026</span>
+                            <h3>Fourteen Months in Place</h3>
+                            <p>The labor market has been stuck at the same point on the Beveridge curve since January 2025. Now we wait to see which direction it breaks.</p>
+                        </div>
+                    </a>
+
+                    <a href="research.html#deviations-shortfalls" class="recent-work-card">
+                        <div class="recent-work-thumb recent-work-journal">
+                            <span class="journal-badge">AEJ: Macroeconomics</span>
+                            <span class="journal-year">January 2026</span>
+                        </div>
+                        <div class="recent-work-text">
+                            <span class="recent-work-label">Published Paper</span>
+                            <h3>From Deviations to Shortfalls: The Effects of the FOMC's New Employment Objective</h3>
+                            <p>Brent Bundick, Nicolas Petrosky-Nadeau</p>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+        </section>
 
         <section class="quick-links section-gray">
             <div class="container">
@@ -126,6 +176,37 @@
 
     <!-- Analytics Event Tracking -->
     <script>
+        // Bio toggle
+        function toggleBio(btn) {
+            const bioSection = document.getElementById('hero-bio-full');
+            if (bioSection.style.display === 'none') {
+                bioSection.style.display = 'block';
+                btn.textContent = 'Read Less';
+                btn.classList.add('active');
+                gtag('event', 'click', {
+                    'event_category': 'bio_toggle',
+                    'event_label': 'expand',
+                    'page': 'home'
+                });
+            } else {
+                bioSection.style.display = 'none';
+                btn.textContent = 'Read More';
+                btn.classList.remove('active');
+            }
+        }
+
+        // Track Recent Work card clicks
+        document.querySelectorAll('.recent-work-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const title = this.querySelector('h3').textContent;
+                gtag('event', 'click', {
+                    'event_category': 'recent_work',
+                    'event_label': title,
+                    'page': 'home'
+                });
+            });
+        });
+
         // Track CV downloads
         document.querySelectorAll('a[href*="CV_PetroskyNadeau.pdf"]').forEach(link => {
             link.addEventListener('click', function() {
@@ -155,6 +236,16 @@
             });
         });
 
+        // Track page engagement
+        let pageStartTime = Date.now();
+        window.addEventListener('beforeunload', function() {
+            const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
+            gtag('event', 'page_engagement', {
+                'time_seconds': timeSpent,
+                'page': 'home'
+            });
+        });
+
         // Track scroll depth
         let scrollDepths = [25, 50, 75, 100];
         let scrollTracked = [];
@@ -167,7 +258,7 @@
                     scrollTracked.push(depth);
                     gtag('event', 'scroll_depth', {
                         'percent': depth,
-                        'page': window.location.pathname
+                        'page': 'home'
                     });
                 }
             });

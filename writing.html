@@ -44,16 +44,96 @@
     <section class="hero hero-compact">
         <div class="hero-content">
             <h1>Writing for the Public</h1>
-            <p class="hero-title">FRBSF Economic Letters and accessible research summaries</p>
+            <p class="hero-title">Economic Notes and FRBSF Economic Letters</p>
         </div>
     </section>
 
     <main>
+        <!-- Economic Notes Tiles Section -->
+        <section class="section section-gray">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2>Economic Notes</h2>
+                    <p class="section-subtitle">Brief insights on the economy with key charts</p>
+                    <div class="tile-nav">
+                        <button class="tile-arrow tile-arrow-left" aria-label="Scroll left">‹</button>
+                        <button class="tile-arrow tile-arrow-right" aria-label="Scroll right">›</button>
+                    </div>
+                </div>
+
+                <div class="tiles-container">
+                    <div class="tiles-scroll">
+                        <!-- UNCOMMENT MAY 1: Economic Note 2026-01 tile
+                        <div class="note-tile" id="econ-note-2026-01">
+                            <div class="note-tile-top">
+                                <div class="note-chart">
+                                    <img src="assets/charts/labor_market_concentration_2026.png" alt="Stacked bar chart showing monthly payroll employment growth by industry sector from 2023 H1 through March 2026. Red bars (education and health) and pink bars (leisure and hospitality) dominate recent periods, while most other sectors show near-zero or negative contributions. Black diamond markers show net totals.">
+                                </div>
+                                <div class="note-content">
+                                    <h3>One Sector Carries the Labor Market</h3>
+                                    <p>2026's first three months of payroll data come on the heels of concerns that job gains have been driven by a single sector in recent years. While headlines focus on overall numbers, the underlying pattern shows education and health services essentially carrying the entire labor market. Most other major sectors are either contracting or stagnant.</p>
+                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
+                                    <p class="note-date">May 2026 · Economic Note 2026-01</p>
+                                </div>
+                            </div>
+                            <div class="note-full" style="display: none;">
+                                <p>2026's first three months of payroll data come on the heels of concerns that job gains have been driven by a single sector in recent years. While headlines focus on overall numbers, the underlying pattern shows education and health services essentially carrying the entire labor market. Most other major sectors are either contracting or stagnant.</p>
+                                <p>What comes next depends on whether other sectors stabilize and resume hiring, and whether education and health services can continue shouldering the entire burden of job creation. March's data offer some hope: several sectors that contracted in February are back to growth. But until job growth broadens convincingly beyond education and health services, the labor market feels uncomfortably balanced on a narrow base.</p>
+                                <h4>From Broad-Based to Narrow</h4>
+                                <p>Industry-level employment data from the Bureau of Labor Statistics show how the breadth of job growth has narrowed since the robust gains of 2023. Payroll gains averaged 256,000 per month in the first half of that year, with broad contributions across multiple sectors. By late 2025, that growth had disappeared—the second half saw average net monthly losses of 16,000 jobs as sectors shed workers simultaneously.</p>
+                                <h4>Volatility Masks the Trends</h4>
+                                <p>Early 2026 shows large swings that cloud our view of underlying trends in sectoral job growth. January's 156,000 gain collapsed to a 125,000 loss in February before rebounding to 168,000 in March. This illustrates the challenge of reading the labor market with each incoming data release.</p>
+                                <p>Yet across these three months, education and health services combined with leisure and hospitality accounted for the vast majority of job creation, continuing the overall pattern of previous years. Finance and information posted consecutive losses, while transportation and warehousing swung from +26,000 in January to -37,000 in February to +21,000 in March. It is too soon to tell what trends are taking hold in 2026.</p>
+                                <h4>The Sustainability Question</h4>
+                                <p>One question going forward is whether an economy can sustain expansion when job creation concentrates so heavily in one sector while others stagnate. History suggests the answer is no—broad-based employment growth typically characterizes healthy expansions, while sectoral concentration often precedes turning points.</p>
+                                <p class="note-source">Data: Bureau of Labor Statistics, Current Employment Statistics (seasonally adjusted). Chart shows six-month averages (2023–2025) and monthly values (2026) for eight industry groups.</p>
+                            </div>
+                        </div>
+                        END UNCOMMENT -->
+
+                        <!-- Note 1: Beveridge Standstill -->
+                        <div class="note-tile">
+                            <div class="note-tile-top">
+                                <div class="note-chart">
+                                    <img src="assets/charts/beveridge_standstill_2026.png" alt="Beveridge curve showing job vacancy rate vs unemployment rate from March 2022 to February 2026">
+                                </div>
+                                <div class="note-content">
+                                    <h3>Fourteen Months in Place</h3>
+                                    <p>Fourteen months. That's how long the labor market has been stuck at the same point on the Beveridge curve.</p>
+                                    <p>Coming out of the pandemic the story was a steep favorable tradeoff—vacancies falling along the steep portion of the curve with little change in unemployment. The yellow dots show what happened next: nothing. Since January 2025, we've hovered at 4% unemployment and 3.5-4% vacancies month after month.</p>
+                                    <p>The descent stopped. Now we wait to see which direction it breaks in 2026.</p>
+                                    <p class="note-date">Economic Post · April 17, 2026 · <a href="assets/data/beveridge_curve_data.csv" download class="data-download">Download Data (CSV)</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Note 2: Breakeven Employment -->
+                        <div class="note-tile">
+                            <div class="note-tile-top">
+                                <div class="note-chart">
+                                    <img src="assets/charts/breakeven_employment_2026.png" alt="Chart showing monthly payroll employment compared to break-even employment with fixed and variable labor force participation from 2022 to 2026">
+                                </div>
+                                <div class="note-content">
+                                    <h3>The Benchmark Moved</h3>
+                                    <p>Recent job growth averaging around 20k per month looks soft. But is it?</p>
+                                    <p>Timely analysis by Dallas and San Francisco Fed economists shows break-even employment—the job growth needed to keep unemployment stable—peaked at 250k monthly in 2023, fell to 10k by mid-2025, and to near zero by year-end.</p>
+                                    <p>The reason: Net outflows of unauthorized immigrants averaging -55k per month combined with declining labor force participation. What this means: The benchmark moved. Payroll gains that would have signaled economic slack just two years ago are now consistent with a balanced labor market.</p>
+                                    <p class="note-date">Economic Post · April 15, 2026</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
         <!-- FRBSF Economic Letters Section -->
         <section class="section section-white">
             <div class="container">
                 <div class="research-section">
-                    <h2>FRBSF Economic Letters</h2>
+                    <h2 style="text-align: left;">FRBSF Economic Letters</h2>
                     <div class="papers-list papers-list-compact">
 
                         <div class="paper-card paper-card-compact">
@@ -274,6 +354,17 @@
             });
         });
 
+        // Track chart data downloads
+        document.querySelectorAll('.data-download').forEach(link => {
+            link.addEventListener('click', function() {
+                gtag('event', 'file_download', {
+                    'file_name': this.getAttribute('href').split('/').pop(),
+                    'file_type': 'csv',
+                    'link_text': this.textContent.trim()
+                });
+            });
+        });
+
         // Track page engagement
         let pageStartTime = Date.now();
         window.addEventListener('beforeunload', function() {
@@ -316,6 +407,105 @@
         // Initialize on load
         if (document.querySelector('.dropdown')) {
             initMobileDropdown();
+        }
+
+        // Tiles scroll functionality
+        function initTilesScroll() {
+            const tilesScroll = document.querySelector('.tiles-scroll');
+            const leftArrow = document.querySelector('.tile-nav .tile-arrow-left');
+            const rightArrow = document.querySelector('.tile-nav .tile-arrow-right');
+
+            if (!tilesScroll || !leftArrow || !rightArrow) return;
+
+            const scrollAmount = tilesScroll.offsetWidth * 0.85; // Scroll by ~1 tile width
+
+            // Helper: get currently visible tile title
+            function getVisibleTileTitle() {
+                const tiles = tilesScroll.querySelectorAll('.note-tile');
+                for (const tile of tiles) {
+                    const rect = tile.getBoundingClientRect();
+                    const containerRect = tilesScroll.getBoundingClientRect();
+                    if (rect.left >= containerRect.left - 10) {
+                        return tile.querySelector('h3')?.textContent || 'unknown';
+                    }
+                }
+                return 'unknown';
+            }
+
+            // Left arrow - scroll backward
+            leftArrow.addEventListener('click', () => {
+                tilesScroll.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                gtag('event', 'tiles_scroll', {
+                    'direction': 'left',
+                    'from_tile': getVisibleTileTitle()
+                });
+            });
+
+            // Right arrow - scroll forward
+            rightArrow.addEventListener('click', () => {
+                tilesScroll.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                gtag('event', 'tiles_scroll', {
+                    'direction': 'right',
+                    'from_tile': getVisibleTileTitle()
+                });
+            });
+
+            // Keyboard navigation (Left/Right arrow keys)
+            document.addEventListener('keydown', (e) => {
+                if (!document.querySelector('.tiles-container')) return;
+                if (e.key === 'ArrowLeft') {
+                    tilesScroll.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                    gtag('event', 'tiles_scroll', { 'direction': 'left', 'method': 'keyboard' });
+                } else if (e.key === 'ArrowRight') {
+                    tilesScroll.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                    gtag('event', 'tiles_scroll', { 'direction': 'right', 'method': 'keyboard' });
+                }
+            });
+
+            // Track tile views as user scrolls
+            const tiles = tilesScroll.querySelectorAll('.note-tile');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const tileTitle = entry.target.querySelector('h3')?.textContent;
+                        const tileIndex = Array.from(tiles).indexOf(entry.target) + 1;
+                        if (tileTitle) {
+                            gtag('event', 'tile_view', {
+                                'tile_title': tileTitle,
+                                'tile_index': tileIndex
+                            });
+                        }
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            tiles.forEach(tile => observer.observe(tile));
+        }
+
+        // Initialize tiles on load
+        if (document.querySelector('.tiles-container')) {
+            initTilesScroll();
+        }
+
+        // Toggle full Economic Note
+        function toggleNote(button) {
+            const noteTile = button.closest('.note-tile');
+            const noteFull = noteTile.querySelector('.note-full');
+
+            if (noteFull.style.display === 'none') {
+                noteFull.style.display = 'block';
+                button.textContent = 'Close Note';
+                button.classList.add('active');
+
+                gtag('event', 'view_economic_note', {
+                    'note_title': noteTile.querySelector('h3').textContent,
+                    'action': 'open'
+                });
+            } else {
+                noteFull.style.display = 'none';
+                button.textContent = 'Read Note';
+                button.classList.remove('active');
+            }
         }
 
         // Toggle summary function for Economic Letters

@@ -157,6 +157,19 @@
             });
         });
 
+        // Track scroll depth
+        let scrollDepths = [25, 50, 75, 100];
+        let scrollTracked = [];
+        window.addEventListener('scroll', function() {
+            const scrollPercent = Math.round((window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100);
+            scrollDepths.forEach(depth => {
+                if (scrollPercent >= depth && !scrollTracked.includes(depth)) {
+                    scrollTracked.push(depth);
+                    gtag('event', 'scroll_depth', { 'percent': depth, 'page': 'teaching_textbook' });
+                }
+            });
+        });
+
         // Mobile dropdown toggle
         function initMobileDropdown() {
             const dropdown = document.querySelector('.dropdown');
