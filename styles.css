@@ -1334,11 +1334,18 @@ main {
     text-decoration: underline;
 }
 
+.note-author {
+    font-size: 0.85rem !important;
+    color: #aaa !important;
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+}
+
 .note-source {
     font-size: 0.825rem !important;
     color: #999 !important;
     font-style: italic;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     border-top: 1px solid #eee;
     padding-top: 0.75rem;
 }
