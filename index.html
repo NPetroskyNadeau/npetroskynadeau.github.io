@@ -35,7 +35,7 @@
                 <ul class="nav-links">
                     <li><a href="index.html" class="active">Home</a></li>
                     <li><a href="research.html">Research</a></li>
-                    <li><a href="writing.html">Writing</a></li>
+                    <li><a href="insights.html">Insights</a></li>
                     <li class="dropdown">
                         <a href="#">Teaching ▼</a>
                         <ul class="dropdown-menu">
@@ -89,7 +89,7 @@
                 <h2 class="recent-work-heading">Recent Work</h2>
                 <div class="recent-work-grid">
 
-                    <a href="writing.html#econ-note-2026-01" class="recent-work-card">
+                    <a href="insights.html#econ-note-2026-01" class="recent-work-card">
                         <div class="recent-work-thumb">
                             <img src="assets/charts/labor_market_concentration_2026.png" alt="Stacked bar chart showing employment growth concentration in education and health services">
                         </div>
@@ -112,6 +112,22 @@
                         </div>
                     </a>
 
+                </div>
+            </div>
+        </section>
+
+        <section class="featured-video-banner">
+            <div class="container">
+                <div class="featured-video-inner">
+                    <div class="featured-video-media" id="featured-video">
+                        <video src="assets/videos/lfpr_women_25_54_animated_mobile.mp4" muted loop playsinline preload="metadata"></video>
+                    </div>
+                    <div class="featured-video-text">
+                        <p class="label">Labor Market Insights</p>
+                        <h2>Trends in Women&rsquo;s LFPR &mdash; Canada and the US</h2>
+                        <p>Women&rsquo;s labor force participation in the US and Canada tracked closely until 2000, then diverged sharply. Post-pandemic, the US has surged to a record 78.5%.</p>
+                        <a href="insights.html#videos" class="cta-link">View all videos &rarr;</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -147,7 +163,7 @@
                     <ul class="footer-links">
                         <li><a href="index.html">Home</a></li>
                         <li><a href="research.html">Research</a></li>
-                        <li><a href="writing.html">Writing</a></li>
+                        <li><a href="insights.html">Insights</a></li>
                         <li><a href="assets/documents/CV_PetroskyNadeau.pdf" target="_blank">CV (PDF)</a></li>
                         <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a> / <a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
                         <li><a href="https://www.linkedin.com/in/nicolas-petrosky-nadeau-a0331333" target="_blank">LinkedIn</a></li>
@@ -181,6 +197,31 @@
                 btn.classList.remove('active');
             }
         }
+
+        // Featured video — autoplay when visible, click to pause/resume
+        (function() {
+            const wrapper = document.getElementById('featured-video');
+            if (!wrapper) return;
+            const vid = wrapper.querySelector('video');
+
+            const obs = new IntersectionObserver(entries => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) vid.play();
+                    else vid.pause();
+                });
+            }, { threshold: 0.4 });
+            obs.observe(wrapper);
+
+            wrapper.addEventListener('click', () => {
+                if (vid.paused) { vid.play(); }
+                else { vid.pause(); }
+                gtag('event', 'video_interact', {
+                    'video_title': 'Women LFPR featured',
+                    'action': vid.paused ? 'pause' : 'play',
+                    'page': 'home'
+                });
+            });
+        })();
 
         // Track Recent Work card clicks
         document.querySelectorAll('.recent-work-card').forEach(card => {

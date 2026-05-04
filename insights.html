@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Public writing by Nicolas Petrosky-Nadeau - FRBSF Economic Letters explaining research to broad audiences.">
-    <title>Writing for the Public - Nicolas Petrosky-Nadeau</title>
+    <meta name="description" content="Insights by Nicolas Petrosky-Nadeau - Economic Notes, data visualizations, and FRBSF Economic Letters.">
+    <title>Insights - Nicolas Petrosky-Nadeau</title>
     <link rel="stylesheet" href="styles.css">
 
     <!-- Google Analytics 4 -->
@@ -27,7 +27,7 @@
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="research.html">Research</a></li>
-                    <li><a href="writing.html" class="active">Writing</a></li>
+                    <li><a href="insights.html" class="active">Insights</a></li>
                     <li class="dropdown">
                         <a href="#">Teaching ▼</a>
                         <ul class="dropdown-menu">
@@ -43,8 +43,8 @@
 
     <section class="hero hero-compact">
         <div class="hero-content">
-            <h1>Writing for the Public</h1>
-            <p class="hero-title">Economic Notes and FRBSF Economic Letters</p>
+            <h1>Insights</h1>
+            <p class="hero-title">Economic Notes, Data Visualizations, and FRBSF Economic Letters</p>
         </div>
     </section>
 
@@ -143,8 +143,32 @@
             </div>
         </section>
 
+        <!-- Labor Market Insights Videos Section -->
+        <section class="section section-white" id="videos">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2>Labor Market Insights Videos</h2>
+                    <p class="section-subtitle">Animated data visualizations exploring labor markets</p>
+                </div>
+
+                <div class="video-tile" id="video-women-lfpr">
+                    <div class="video-tile-top">
+                        <div class="video-tile-media">
+                            <video src="assets/videos/lfpr_women_25_54_animated_mobile.mp4" muted loop playsinline preload="metadata" aria-label="Animated chart: Women's labor force participation rate ages 25-54, US vs Canada, 1988 to 2026"></video>
+                            <button class="video-play-btn" aria-label="Play video">&#9654;</button>
+                        </div>
+                        <div class="note-content">
+                            <h3>Trends in Women&rsquo;s LFPR &mdash; Canada and the US</h3>
+                            <p>Women&rsquo;s labor force participation in the US and Canada tracked closely until 2000, then diverged sharply. Post-pandemic, the US has surged to a record 78.5%, narrowing the gap from 8.0 to 6.6 percentage points.</p>
+                            <p class="note-date">May 2, 2026 &middot; Labor Market Insights</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- FRBSF Economic Letters Section -->
-        <section class="section section-white">
+        <section class="section section-gray">
             <div class="container">
                 <div class="research-section">
                     <h2 style="text-align: left;">FRBSF Economic Letters</h2>
@@ -330,7 +354,7 @@
                     <ul class="footer-links">
                         <li><a href="index.html">Home</a></li>
                         <li><a href="research.html">Research</a></li>
-                        <li><a href="writing.html">Writing</a></li>
+                        <li><a href="insights.html">Insights</a></li>
                         <li><a href="assets/documents/CV_PetroskyNadeau.pdf" target="_blank">CV (PDF)</a></li>
                         <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a> / <a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
                         <li><a href="https://www.linkedin.com/in/nicolas-petrosky-nadeau-a0331333" target="_blank">LinkedIn</a></li>
@@ -385,7 +409,7 @@
             const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
             gtag('event', 'page_engagement', {
                 'time_seconds': timeSpent,
-                'page': 'writing'
+                'page': 'insights'
             });
         });
 
@@ -399,7 +423,7 @@
                     scrollTracked.push(depth);
                     gtag('event', 'scroll_depth', {
                         'percent': depth,
-                        'page': 'writing'
+                        'page': 'insights'
                     });
                 }
             });
@@ -521,6 +545,30 @@
                 button.classList.remove('active');
             }
         }
+
+        // Video play/pause toggle
+        document.querySelectorAll('.video-tile').forEach(tile => {
+            const video = tile.querySelector('video');
+            const btn = tile.querySelector('.video-play-btn');
+            if (!video || !btn) return;
+
+            function toggle() {
+                if (video.paused) {
+                    video.play();
+                    btn.classList.add('hidden');
+                    gtag('event', 'video_play', {
+                        'video_title': tile.querySelector('h3')?.textContent,
+                        'page': 'insights'
+                    });
+                } else {
+                    video.pause();
+                    btn.classList.remove('hidden');
+                }
+            }
+
+            btn.addEventListener('click', toggle);
+            video.addEventListener('click', toggle);
+        });
 
         // Toggle summary function for Economic Letters
         function toggleAbstract(button) {
