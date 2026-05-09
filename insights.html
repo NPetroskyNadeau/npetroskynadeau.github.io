@@ -149,18 +149,40 @@
                 <div class="section-header-inline">
                     <h2>Labor Market Insights Videos</h2>
                     <p class="section-subtitle">Animated data visualizations exploring labor markets</p>
+                    <div class="tile-nav video-tile-nav">
+                        <button class="tile-arrow tile-arrow-left" aria-label="Scroll left">&#8249;</button>
+                        <button class="tile-arrow tile-arrow-right" aria-label="Scroll right">&#8250;</button>
+                    </div>
                 </div>
 
-                <div class="video-tile" id="video-women-lfpr">
-                    <div class="video-tile-top">
-                        <div class="video-tile-media">
-                            <video src="assets/videos/lfpr_women_25_54_animated_mobile.mp4" muted loop playsinline preload="metadata" aria-label="Animated chart: Women's labor force participation rate ages 25-54, US vs Canada, 1988 to 2026"></video>
-                            <button class="video-play-btn" aria-label="Play video">&#9654;</button>
+                <div class="tiles-container">
+                    <div class="tiles-scroll video-tiles-scroll">
+                        <div class="video-tile" id="video-beveridge-curve">
+                            <div class="video-tile-top">
+                                <div class="video-tile-media">
+                                    <video src="assets/videos/beveridge_curve_animated_mobile.mp4" poster="assets/videos/beveridge_curve_poster.jpg" muted loop playsinline preload="metadata" aria-label="Animated scatter plot: The Beveridge Curve showing the inverse relationship between unemployment and job vacancy rates, December 2000 to March 2026. Normal times in teal, the steep post-pandemic tradeoff in salmon, and the recent period in gold settling back on the historical curve."></video>
+                                    <button class="video-play-btn" aria-label="Play video">&#9654;</button>
+                                </div>
+                                <div class="note-content">
+                                    <h3>What is the Beveridge Curve?</h3>
+                                    <p>The Beveridge Curve captures the inverse relationship between unemployment and job vacancies. After an extraordinary post-pandemic period of steep tradeoffs, the labor market has returned to the normal part of the curve and changed little since early 2025.</p>
+                                    <p class="note-date">May 9, 2026 &middot; Labor Market Insights</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="note-content">
-                            <h3>Trends in Women&rsquo;s LFPR &mdash; Canada and the US</h3>
-                            <p>Women&rsquo;s labor force participation in the US and Canada tracked closely until 2000, then diverged sharply. Post-pandemic, the US has surged to a record 78.5%, narrowing the gap from 8.0 to 6.6 percentage points.</p>
-                            <p class="note-date">May 2, 2026 &middot; Labor Market Insights</p>
+
+                        <div class="video-tile" id="video-women-lfpr">
+                            <div class="video-tile-top">
+                                <div class="video-tile-media">
+                                    <video src="assets/videos/lfpr_women_25_54_animated_mobile.mp4" poster="assets/videos/lfpr_women_poster.jpg" muted loop playsinline preload="metadata" aria-label="Animated chart: Women's labor force participation rate ages 25-54, US vs Canada, 1988 to 2026"></video>
+                                    <button class="video-play-btn" aria-label="Play video">&#9654;</button>
+                                </div>
+                                <div class="note-content">
+                                    <h3>Trends in Women&rsquo;s LFPR &mdash; Canada and the US</h3>
+                                    <p>Women&rsquo;s labor force participation in the US and Canada tracked closely until 2000, then diverged sharply. Post-pandemic, the US has surged to a record 78.5%, narrowing the gap from 8.0 to 6.6 percentage points.</p>
+                                    <p class="note-date">May 2, 2026 &middot; Labor Market Insights</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -524,6 +546,25 @@
         if (document.querySelector('.tiles-container')) {
             initTilesScroll();
         }
+
+        // Video tiles scroll navigation
+        (function initVideoTilesScroll() {
+            const tilesScroll = document.querySelector('.video-tiles-scroll');
+            const nav = document.querySelector('.video-tile-nav');
+            if (!tilesScroll || !nav) return;
+
+            const leftArrow = nav.querySelector('.tile-arrow-left');
+            const rightArrow = nav.querySelector('.tile-arrow-right');
+            const scrollAmount = tilesScroll.offsetWidth * 0.85;
+
+            leftArrow.addEventListener('click', () => {
+                tilesScroll.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            });
+
+            rightArrow.addEventListener('click', () => {
+                tilesScroll.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            });
+        })();
 
         // Toggle full Economic Note
         function toggleNote(button) {
