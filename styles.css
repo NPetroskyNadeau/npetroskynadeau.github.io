@@ -1785,3 +1785,130 @@ footer {
         font-size: 1.4rem;
     }
 }
+
+/* Insights Hero with Section Links */
+.hero-insights .hero-insights-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-insights h1 {
+    margin-bottom: 0;
+}
+
+.hero-section-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.hero-section-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+}
+
+.hero-section-links a:hover {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .hero-insights .hero-insights-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .hero-section-links {
+        gap: 1rem;
+    }
+
+    .hero-section-links a {
+        font-size: 0.9rem;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 60px;
+}
+
+/* Data Page */
+.data-page h2 {
+    text-align: left;
+}
+
+.data-prose {
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: #444;
+}
+
+.data-prose p {
+    margin-bottom: 0.75rem;
+}
+
+.data-reference {
+    font-size: 0.75rem;
+    color: #555;
+    margin-top: 0.5rem;
+}
+
+.data-reference a {
+    color: #2c5aa0;
+    text-decoration: none;
+}
+
+.data-reference a:hover {
+    text-decoration: underline;
+}
+
+.data-technical-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.data-technical-label {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 1.5rem auto 1rem;
+}
+
+.chart-source {
+    font-size: 0.85rem;
+    color: #666;
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+.data-detail-box {
+    margin-top: 1rem;
+}
+
+.data-detail-box .paper-abstract {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #444;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.data-detail-box .paper-abstract p {
+    margin-bottom: 0.75rem;
+}

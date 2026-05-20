@@ -27,7 +27,15 @@
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
                     <li><a href="research.html">Research</a></li>
-                    <li><a href="insights.html" class="active">Insights</a></li>
+                    <li class="dropdown">
+                        <a href="insights.html" class="active">Insights &#9660;</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="insights.html#notes">Economic Notes</a></li>
+                            <li><a href="insights.html#videos">Videos</a></li>
+                            <li><a href="insights.html#letters">Economic Letters</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="data.html">Data</a></li>
                     <li class="dropdown">
                         <a href="#">Teaching ▼</a>
                         <ul class="dropdown-menu">
@@ -41,16 +49,21 @@
         </div>
     </header>
 
-    <section class="hero hero-compact">
-        <div class="hero-content">
+    <section class="hero hero-compact hero-insights">
+        <div class="container hero-insights-row">
             <h1>Insights</h1>
-            <p class="hero-title">Economic Notes, Data Visualizations, and FRBSF Economic Letters</p>
+            <nav class="hero-section-links">
+                <a href="#notes">Economic Notes</a>
+                <a href="#videos">Videos</a>
+                <a href="#letters">Economic Letters</a>
+            </nav>
         </div>
     </section>
 
     <main>
+
         <!-- Economic Notes Tiles Section -->
-        <section class="section section-gray">
+        <section class="section section-gray" id="notes">
             <div class="container">
                 <div class="section-header-inline">
                     <h2>Economic Notes</h2>
@@ -232,7 +245,7 @@
         </section>
 
         <!-- FRBSF Economic Letters Section -->
-        <section class="section section-gray">
+        <section class="section section-gray" id="letters">
             <div class="container">
                 <div class="research-section">
                     <h2 style="text-align: left;">FRBSF Economic Letters</h2>
@@ -419,6 +432,7 @@
                         <li><a href="index.html">Home</a></li>
                         <li><a href="research.html">Research</a></li>
                         <li><a href="insights.html">Insights</a></li>
+                        <li><a href="data.html">Data</a></li>
                         <li><a href="assets/documents/CV_PetroskyNadeau.pdf" target="_blank">CV (PDF)</a></li>
                         <li><a href="https://scholar.google.com/citations?user=NTFdQh8AAAAJ&hl=en" target="_blank">Google Scholar</a> / <a href="https://orcid.org/0000-0002-2216-110X" target="_blank">ORCID</a></li>
                         <li><a href="https://www.linkedin.com/in/nicolas-petrosky-nadeau-a0331333" target="_blank">LinkedIn</a></li>
@@ -494,21 +508,24 @@
         });
 
         // Mobile dropdown toggle
-        function initMobileDropdown() {
-            const dropdown = document.querySelector('.dropdown');
-            const dropdownLink = dropdown.querySelector('a');
-
-            dropdownLink.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    e.preventDefault();
-                    dropdown.classList.toggle('open');
-                }
+        function initMobileDropdowns() {
+            document.querySelectorAll('.dropdown').forEach(function(dropdown) {
+                const dropdownLink = dropdown.querySelector('a');
+                dropdownLink.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        e.preventDefault();
+                        document.querySelectorAll('.dropdown').forEach(function(d) {
+                            if (d !== dropdown) d.classList.remove('open');
+                        });
+                        dropdown.classList.toggle('open');
+                    }
+                });
             });
         }
 
         // Initialize on load
         if (document.querySelector('.dropdown')) {
-            initMobileDropdown();
+            initMobileDropdowns();
         }
 
         // Tiles scroll functionality
