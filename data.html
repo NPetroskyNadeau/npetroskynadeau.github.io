@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Data and estimates from the research of Nicolas Petrosky-Nadeau. Interactive charts of the stable-price natural rate of unemployment.">
+    <meta name="description" content="Data and estimates from the research of Nicolas Petrosky-Nadeau. Interactive charts of unemployment rate benchmarks and breakeven payroll growth.">
     <title>Data - Nicolas Petrosky-Nadeau</title>
     <link rel="stylesheet" href="styles.css">
 
@@ -49,16 +49,19 @@
         </div>
     </header>
 
-    <section class="hero hero-compact">
-        <div class="hero-content">
+    <section class="hero hero-compact hero-insights">
+        <div class="container hero-insights-row">
             <h1>Data</h1>
-            <p class="hero-title">Estimates and interactive charts from my research</p>
+            <nav class="hero-section-links">
+                <a href="#unemployment-benchmarks">Unemployment Benchmarks</a>
+                <a href="#breakeven-payrolls">Breakeven Payrolls</a>
+            </nav>
         </div>
     </section>
 
     <main class="data-page">
         <!-- Benchmark Rate Explanation -->
-        <section class="section">
+        <section class="section" id="unemployment-benchmarks">
             <div class="container">
                 <h2>What Is a Benchmark Rate of Unemployment?</h2>
                 <div class="data-prose">
@@ -95,14 +98,77 @@
         <!-- Interactive Chart -->
         <section class="section section-gray">
             <div class="container">
-                <h2>Estimates of Benchmark Rates of Unemployment</h2>
-                <p class="section-subtitle">Quarterly estimates, 1985:Q1 to 2026:Q1</p>
+                <div class="section-header-inline">
+                    <h2>Estimates of Benchmark Rates of Unemployment</h2>
+                    <p class="section-subtitle">Quarterly estimates, 1985:Q1 to 2026:Q1</p>
+                </div>
                 <div class="chart-container">
                     <canvas id="chartUSP"></canvas>
                 </div>
                 <p class="chart-source">Source: Bok, Crump, Nekarda, and Petrosky-Nadeau, "Estimating Natural Rates of Unemployment: A Primer" (2023), updated through 2026:Q1. CBO NROU from the Congressional Budget Office.</p>
             </div>
         </section>
+        <!-- Breakeven Payroll Growth Explanation -->
+        <section class="section" id="breakeven-payrolls">
+            <div class="container">
+                <h2>Breakeven Payroll Growth</h2>
+                <div class="data-prose">
+                    <p>How many jobs does the economy need to create each month to keep the unemployment rate from rising? The answer depends almost entirely on how fast the labor force is growing. If the working-age population is expanding rapidly, the economy needs proportionally more job creation just to absorb new entrants and hold unemployment steady.</p>
+                    <p>This "breakeven" pace of payroll growth can be expressed simply: multiply trend labor force growth by the share of the labor force that is employed. When actual job creation exceeds breakeven, unemployment tends to fall; when it falls short, unemployment tends to rise.</p>
+                    <p>Two complementary horizons are informative. The <em>long-run breakeven</em> captures the slow-moving demographic forces that determine how many workers the economy must absorb over decades. The <em>short-run breakeven</em> captures medium-frequency variation in labor force growth driven by factors such as immigration flows, shifts in labor force participation, and changes in population growth that operate at business-cycle and slightly longer frequencies.</p>
+                    <p class="data-reference">Reference: Petrosky-Nadeau and Stewart, "<a href="https://www.frbsf.org/research-and-insights/publications/economic-letter/2024/07/breakeven-employment-growth/" target="_blank">Breakeven Employment Growth</a>" FRBSF Economic Letter 2024-18, 2024.</p>
+                </div>
+
+                <div class="data-technical-row">
+                    <span class="data-technical-label">Technical Details</span>
+                    <button class="abstract-toggle" onclick="toggleDetail(this)">Methodology</button>
+                    <button class="abstract-toggle" onclick="toggleDetail(this)">Sources</button>
+                </div>
+
+                <div class="data-detail-box" id="detail-methodology" style="display: none;">
+                    <div class="paper-abstract">
+                        <p>The breakeven formula is: <em>dN<sub>be</sub> = (1 &minus; ū) &times; dLF<sub>trend</sub></em>, where <em>ū</em> is a reference unemployment rate (set to 4.4 percent, the CBO's current longer-run natural rate) and <em>dLF<sub>trend</sub></em> is the monthly change in trend civilian labor force level.</p>
+                        <p>Trend labor force is extracted using a Christiano-Fitzgerald (1999) asymmetric band-pass filter applied to the civilian labor force level (CLF16OV). The filter removes cyclical fluctuations while preserving the underlying growth trend.</p>
+                        <p>Two filter configurations capture different horizons. The long-run filter passes periods between 2 and 480 months (40 years), extracting the demographic trend from the full sample beginning January 1948. The short-run filter passes periods between 2 and 72 months (6 years), capturing medium-frequency movements. Because the pandemic created a discontinuity in the labor force series, the short-run filter is applied separately to a pre-COVID sub-period (January 1976 through February 2020) and a post-COVID sub-period (January 2021 through the latest available month).</p>
+                        <p>Both filters use local drift removal: the long-run filter subtracts a linear trend estimated from the trailing 20-year window, while the short-run filter uses a 3-year trailing window. This approach adapts to the secular deceleration in U.S. labor force growth without imposing a full-sample average that would overstate current trend growth.</p>
+                        <p>Band-pass filter endpoint estimates are less precise for the most recent approximately 24 months due to the symmetric nature of the ideal filter being approximated. Interpret the latest long-run estimates with appropriate caution.</p>
+                    </div>
+                </div>
+
+                <div class="data-detail-box" id="detail-sources" style="display: none;">
+                    <div class="paper-abstract">
+                        <p>All data are from the Bureau of Labor Statistics via FRED (Federal Reserve Economic Data). The civilian labor force level (CLF16OV, thousands, seasonally adjusted, monthly) is used to extract trend growth. Total nonfarm payrolls (PAYEMS, thousands, seasonally adjusted, monthly) provide the actual pace of job creation shown as bars in the chart.</p>
+                        <p>Estimates are updated following each monthly Employment Situation release (typically the first Friday of the month). The chart displays data from January 2000 through the latest available month.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Breakeven Chart -->
+        <section class="section section-gray">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2>Estimates of Breakeven Payroll Growth</h2>
+                    <p class="section-subtitle">Monthly, January 2022 to April 2026</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartBreakeven"></canvas>
+                </div>
+                <div class="range-slider-wrapper" style="max-width: 900px; margin: 0.5rem auto 1rem;">
+                    <div class="range-slider-container">
+                        <span class="range-label" id="beRangeStart">2022-01</span>
+                        <div class="range-slider-track">
+                            <div class="range-slider-fill" id="beTrackFill"></div>
+                            <input type="range" min="0" max="100" value="0" class="range-input range-min" id="beRangeMin">
+                            <input type="range" min="0" max="100" value="100" class="range-input range-max" id="beRangeMax">
+                        </div>
+                        <span class="range-label" id="beRangeEnd">2026-04</span>
+                    </div>
+                </div>
+                <p class="chart-source">Source: BLS via FRED and author's calculations. Breakeven payroll growth based on Petrosky-Nadeau and Stewart (2024). Last updated: May 2026. Payroll bars clipped at &plusmn;500K for readability.</p>
+            </div>
+        </section>
+
     </main>
 
     <footer>
@@ -137,6 +203,8 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <!-- Breakeven payroll growth data -->
+    <script src="assets/data/breakeven_data.js"></script>
 
     <script>
         // Stable-price natural rate data: [date, UNRATE, u*_SP preferred, CBO NROU]
@@ -448,6 +516,133 @@
         if (document.querySelector('.dropdown')) {
             initMobileDropdown();
         }
+
+        // --- Breakeven Payroll Growth Chart ---
+        const bePayrollCapped = PAYROLL_GROWTH.map(v => v === null ? null : Math.max(-500, Math.min(500, v)));
+
+        const chartBreakeven = new Chart(document.getElementById('chartBreakeven'), {
+            type: 'bar',
+            data: {
+                labels: BE_DATES,
+                datasets: [
+                    {
+                        label: 'Payroll growth',
+                        data: bePayrollCapped,
+                        type: 'bar',
+                        backgroundColor: BE_DATES.map((d, i) => {
+                            const v = bePayrollCapped[i];
+                            return v !== null && v < 0 ? 'rgba(183, 59, 54, 0.4)' : 'rgba(44, 90, 160, 0.25)';
+                        }),
+                        borderColor: BE_DATES.map((d, i) => {
+                            const v = bePayrollCapped[i];
+                            return v !== null && v < 0 ? 'rgba(183, 59, 54, 0.6)' : 'rgba(44, 90, 160, 0.4)';
+                        }),
+                        borderWidth: 1,
+                        order: 2
+                    },
+                    {
+                        label: 'Long-run breakeven',
+                        data: BE_LR,
+                        type: 'line',
+                        borderColor: '#2c5aa0',
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        order: 1
+                    },
+                    {
+                        label: 'Short-run breakeven',
+                        data: BE_SR,
+                        type: 'line',
+                        borderColor: '#c8850a',
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        spanGaps: false,
+                        order: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 20,
+                            color: '#333',
+                            font: { family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                const d = new Date(context[0].label);
+                                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                            },
+                            label: function(context) {
+                                if (context.parsed.y === null) return null;
+                                return context.dataset.label + ': ' + context.parsed.y.toFixed(0) + 'K';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: { unit: 'year', tooltipFormat: 'yyyy-MM-dd' },
+                        title: { display: false },
+                        ticks: { color: '#333', font: { size: 13, family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" } }
+                    },
+                    y: {
+                        title: { display: true, text: 'Thousands of jobs per month', color: '#333', font: { size: 13, family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" } },
+                        ticks: { color: '#333', font: { size: 13, family: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" } }
+                    }
+                }
+            }
+        });
+
+        // Range slider for breakeven chart
+        function setupRangeSlider(prefix, chart, dates) {
+            const minInput = document.getElementById(prefix + 'RangeMin');
+            const maxInput = document.getElementById(prefix + 'RangeMax');
+            const startLabel = document.getElementById(prefix + 'RangeStart');
+            const endLabel = document.getElementById(prefix + 'RangeEnd');
+            const trackFill = document.getElementById(prefix + 'TrackFill');
+            const n = dates.length;
+
+            function indexToDate(i) {
+                const d = new Date(dates[i]);
+                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+            }
+
+            function update() {
+                let lo = parseInt(minInput.value);
+                let hi = parseInt(maxInput.value);
+                if (lo >= hi) { lo = Math.max(0, hi - 1); minInput.value = lo; }
+                const iLo = Math.round(lo / 100 * (n - 1));
+                const iHi = Math.round(hi / 100 * (n - 1));
+                startLabel.textContent = indexToDate(iLo);
+                endLabel.textContent = indexToDate(iHi);
+                trackFill.style.left = lo + '%';
+                trackFill.style.width = (hi - lo) + '%';
+                chart.options.scales.x.min = dates[iLo];
+                chart.options.scales.x.max = dates[iHi];
+                chart.update('none');
+            }
+
+            minInput.addEventListener('input', update);
+            maxInput.addEventListener('input', update);
+            update();
+        }
+        setupRangeSlider('be', chartBreakeven, BE_DATES);
+
+
+        window.addEventListener('resize', function() {
+            chartBreakeven.resize();
+        });
     </script>
 </body>
 </html>
