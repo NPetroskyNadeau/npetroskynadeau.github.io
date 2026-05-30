@@ -68,6 +68,7 @@
                     <p>Policymakers monitor the unemployment rate closely, but the headline number alone does not reveal whether the labor market is running hot or cold. That assessment requires a benchmark.</p>
                     <p>Two complementary benchmarks emerge depending on the time horizon of interest. The longer-run benchmark reflects the unemployment rate expected to prevail after all cyclical shocks have dissipated. It moves slowly, driven by demographics and structural features of the labor market such as the age composition of the workforce and job-matching efficiency. The stable-price benchmark rate answers a different question: at what level of unemployment would inflation neither accelerate nor decelerate, given current economic conditions? This rate can shift quickly in response to large shocks.</p>
                     <p>These two benchmarks typically coincide, as they did at roughly 4 percent in late 2019. They can diverge sharply, however, when large disturbances alter the short-run relationship between unemployment and inflation without changing the economy's structural underpinnings.</p>
+                    <p>The chart below presents both benchmarks for the United States and, using the same framework applied to Canadian data, for Canada. Use the toggle to switch between countries. Canada's benchmarks sit well above the U.S. levels, reflecting structural differences between the two labor markets.</p>
                     <p class="data-reference">Reference: Crump, Nekarda, and Petrosky-Nadeau, "<a href="https://www.federalreserve.gov/econres/feds/unemployment-rate-benchmarks.htm" target="_blank">Unemployment Rate Benchmarks</a>," Finance and Economics Discussion Series 2020-072, 2020.</p>
                 </div>
 
@@ -82,6 +83,7 @@
                         <p>The estimate comes from a Phillips curve relationship embedded in a state-space model. The observation equation links changes in inflation to the unemployment gap, defined as the difference between the actual unemployment rate and the unobserved natural rate. The natural rate itself follows a random walk, allowing it to drift over time in response to shocks.</p>
                         <p>We estimate the model's parameters by maximum likelihood using data from 1985:Q1 through 2019:Q4. This sample excludes the pandemic period, so that the extreme observations of 2020 do not distort parameter estimates. The Kalman filter then tracks the unobserved natural rate forward through the most recent quarter of available data.</p>
                         <p>One parameter, the standard deviation of innovations to the natural rate's random walk, is calibrated rather than estimated. This choice addresses a well-known identification problem: when the natural rate is very smooth, maximum likelihood tends to push its volatility to zero, effectively making the estimate a constant.</p>
+                        <p><strong>Canada.</strong> The Canadian stable-price rate uses the same state-space model, estimated over 2000:Q1 through 2019:Q4. The sample begins in 2000 because the exchange-rate control enters as a year-over-year change of the Bank of Canada's effective exchange rate index, which is first published in 1999. The Canadian long-run rate is built from a separate demographic decomposition: the unemployment rate of each age, sex, and education group is weighted by that group's share of the labor force, so the benchmark moves with the changing composition of the workforce. the long-run line shown for Canada is this model estimate.</p>
                     </div>
                 </div>
 
@@ -90,6 +92,7 @@
                         <p>The model takes three inputs, all expressed as quarterly averages of monthly data from the Bureau of Labor Statistics (BLS) and the Federal Reserve Economic Data (FRED) system. The first is the civilian unemployment rate. The second is core personal consumption expenditures (PCE) inflation, measured as the year-over-year percent change in the price index excluding food and energy. The third is the broad trade-weighted U.S. dollar index, also expressed as a year-over-year percent change.</p>
                         <p>The preferred specification uses a counterfactual unemployment rate that adjusts for the surge in temporary layoffs beginning in 2020. This adjustment subtracts excess temporary layoffs, relative to their 2019:Q4 share of total unemployment, from the unemployed stock before computing the unemployment rate. Without this correction, the model interprets the pandemic spike in unemployment as a large increase in the natural rate, which is inconsistent with the transitory nature of the shock.</p>
                         <p>The estimation sample runs from 1985:Q1 through 2019:Q4. The Kalman filter extends the estimate through the latest available quarter, currently 2026:Q1.</p>
+                        <p><strong>Canada.</strong> The Canadian estimates draw on data from Statistics Canada and the Bank of Canada. The stable-price model uses the unemployment rate from the Labour Force Survey, the Bank of Canada's preferred core inflation measure (CPI-trim), and the Canadian effective exchange rate index. The same temporary-layoff adjustment is applied during the pandemic, drawing on the surge in layoffs reported in the Labour Force Survey. The long-run model uses labor force shares and unemployment rates by age, sex, and educational attainment, available monthly back to 1990 and seasonally adjusted with the Census Bureau's X-13 procedure before averaging to quarterly frequency.</p>
                     </div>
                 </div>
             </div>
@@ -100,12 +103,17 @@
             <div class="container">
                 <div class="section-header-inline">
                     <h2>Estimates of Benchmark Rates of Unemployment</h2>
-                    <p class="section-subtitle">Quarterly estimates, 1985:Q1 to 2026:Q1</p>
+                    <p class="section-subtitle" id="uspSubtitle">Quarterly estimates, 1985:Q1 to 2026:Q1</p>
+                </div>
+                <div class="chart-country-toggle">
+                    <button class="abstract-toggle country-toggle active" data-country="US" onclick="setCountry('US')">United States</button>
+                    <button class="abstract-toggle country-toggle" data-country="CA" onclick="setCountry('CA')">Canada</button>
                 </div>
                 <div class="chart-container">
                     <canvas id="chartUSP"></canvas>
                 </div>
-                <p class="chart-source">Source: Bok, Crump, Nekarda, and Petrosky-Nadeau, "Estimating Natural Rates of Unemployment: A Primer" (2023), updated through 2026:Q1. CBO NROU from the Congressional Budget Office.</p>
+                <p class="chart-source" id="uspSource">Source: Bok, Crump, Nekarda, and Petrosky-Nadeau, "Estimating Natural Rates of Unemployment: A Primer" (2023), updated through 2026:Q1. CBO NROU from the Congressional Budget Office.</p>
+                <p class="chart-source" style="margin-top: 0.35rem;"><a href="assets/data/unemployment_benchmarks_data.csv" download class="data-download">Download Data (CSV)</a> &middot; includes United States and Canada, with suggested citation in the file header.</p>
             </div>
         </section>
         <!-- Breakeven Payroll Growth Explanation -->
@@ -116,6 +124,7 @@
                     <p>How many jobs does the economy need to create each month to keep the unemployment rate from rising? The answer depends almost entirely on how fast the labor force is growing. If the working-age population is expanding rapidly, the economy needs proportionally more job creation just to absorb new entrants and hold unemployment steady.</p>
                     <p>This "breakeven" pace of payroll growth can be expressed simply: multiply trend labor force growth by the share of the labor force that is employed. When actual job creation exceeds breakeven, unemployment tends to fall; when it falls short, unemployment tends to rise.</p>
                     <p>Two complementary horizons are informative. The <em>long-run breakeven</em> captures the slow-moving demographic forces that determine how many workers the economy must absorb over decades. The <em>short-run breakeven</em> captures medium-frequency variation in labor force growth driven by factors such as immigration flows, shifts in labor force participation, and changes in population growth that operate at business-cycle and slightly longer frequencies.</p>
+                    <p>The same framework applies to Canada. Use the toggle above the chart to switch between the two countries. Because Canada's labor force is roughly one-seventh the size of the U.S. labor force, its breakeven pace is correspondingly smaller in absolute terms; comparing actual job creation to the breakeven line within each country is more informative than comparing the levels across countries. For Canada, the actual pace of hiring is measured by establishment-survey employment (the Survey of Employment, Payrolls and Hours), the closest analogue to U.S. nonfarm payrolls.</p>
                     <p class="data-reference">Reference: Petrosky-Nadeau and Stewart, "<a href="https://www.frbsf.org/research-and-insights/publications/economic-letter/2024/07/breakeven-employment-growth/" target="_blank">Breakeven Employment Growth</a>" FRBSF Economic Letter 2024-18, 2024.</p>
                 </div>
 
@@ -127,18 +136,19 @@
 
                 <div class="data-detail-box" id="detail-methodology" style="display: none;">
                     <div class="paper-abstract">
-                        <p>The breakeven formula is: <em>dN<sub>be</sub> = (1 &minus; ū) &times; dLF<sub>trend</sub></em>, where <em>ū</em> is a reference unemployment rate (set to 4.4 percent, the CBO's current longer-run natural rate) and <em>dLF<sub>trend</sub></em> is the monthly change in trend civilian labor force level.</p>
-                        <p>Trend labor force is extracted using a Christiano-Fitzgerald (1999) asymmetric band-pass filter applied to the civilian labor force level (CLF16OV). The filter removes cyclical fluctuations while preserving the underlying growth trend.</p>
-                        <p>Two filter configurations capture different horizons. The long-run filter passes periods between 2 and 480 months (40 years), extracting the demographic trend from the full sample beginning January 1948. The short-run filter passes periods between 2 and 72 months (6 years), capturing medium-frequency movements. Because the pandemic created a discontinuity in the labor force series, the short-run filter is applied separately to a pre-COVID sub-period (January 1976 through February 2020) and a post-COVID sub-period (January 2021 through the latest available month).</p>
-                        <p>Both filters use local drift removal: the long-run filter subtracts a linear trend estimated from the trailing 20-year window, while the short-run filter uses a 3-year trailing window. This approach adapts to the secular deceleration in U.S. labor force growth without imposing a full-sample average that would overstate current trend growth.</p>
+                        <p>The breakeven formula is: <em>dN<sub>be</sub> = (1 &minus; ū) &times; dLF<sub>trend</sub></em>, where <em>ū</em> is a reference unemployment rate and <em>dLF<sub>trend</sub></em> is the monthly change in the trend labor force level. For the United States, <em>ū</em> is set to 4.4 percent (the CBO's current longer-run natural rate); for Canada, <em>ū</em> is set to 6.0 percent. Empirically relevant changes in <em>ū</em> have a negligible effect on the estimates.</p>
+                        <p>Trend labor force is extracted using a Christiano-Fitzgerald (1999) asymmetric band-pass filter applied to the labor force level &mdash; CLF16OV for the United States, the Labour Force Survey labour force for Canada. The filter removes cyclical fluctuations while preserving the underlying growth trend. The methodology is identical across countries; only the underlying data and reference rate differ.</p>
+                        <p>Two filter configurations capture different horizons. The long-run filter passes periods between 2 and 480 months (40 years), extracting the demographic trend from the full available sample (the United States from January 1948, Canada from January 1976). The short-run filter passes periods between 2 and 72 months (6 years), capturing medium-frequency movements. Because the pandemic created a discontinuity in the labor force series in both countries, the short-run filter is applied separately to a pre-COVID sub-period (through February 2020) and a post-COVID sub-period (January 2021 through the latest available month).</p>
+                        <p>Both filters use local drift removal: the long-run filter subtracts a linear trend estimated from the trailing 20-year window, while the short-run filter uses a 3-year trailing window. This approach adapts to the secular deceleration in labor force growth without imposing a full-sample average that would overstate current trend growth.</p>
                         <p>Band-pass filter endpoint estimates are less precise for the most recent approximately 24 months due to the symmetric nature of the ideal filter being approximated. Interpret the latest long-run estimates with appropriate caution.</p>
                     </div>
                 </div>
 
                 <div class="data-detail-box" id="detail-sources" style="display: none;">
                     <div class="paper-abstract">
-                        <p>All data are from the Bureau of Labor Statistics via FRED (Federal Reserve Economic Data). The civilian labor force level (CLF16OV, thousands, seasonally adjusted, monthly) is used to extract trend growth. Total nonfarm payrolls (PAYEMS, thousands, seasonally adjusted, monthly) provide the actual pace of job creation shown as bars in the chart.</p>
-                        <p>Estimates are updated following each monthly Employment Situation release (typically the first Friday of the month). The chart displays data from January 2000 through the latest available month.</p>
+                        <p>For the United States, all data are from the Bureau of Labor Statistics via FRED (Federal Reserve Economic Data). The civilian labor force level (CLF16OV, thousands, seasonally adjusted, monthly) is used to extract trend growth. Total nonfarm payrolls (PAYEMS, thousands, seasonally adjusted, monthly) provide the actual pace of job creation shown as bars in the chart. The reference unemployment rate is 4.4 percent (CBO's current longer-run natural rate).</p>
+                        <p>For Canada, data are from Statistics Canada. Trend growth is extracted from the labour force level (Labour Force Survey, table 14-10-0287, thousands, seasonally adjusted, monthly, beginning January 1976). The actual pace of job creation shown as bars is employment from the Survey of Employment, Payrolls and Hours (SEPH, table 14-10-0223, seasonally adjusted, monthly, beginning January 2001), the establishment-survey analogue of U.S. nonfarm payrolls. The reference unemployment rate is set to 6.0 percent, consistent with the author's own natural-rate estimates.</p>
+                        <p>Estimates are updated following each monthly labor market release. The chart displays data from January 2022 through the latest available month.</p>
                     </div>
                 </div>
             </div>
@@ -149,7 +159,11 @@
             <div class="container">
                 <div class="section-header-inline">
                     <h2>Estimates of Breakeven Payroll Growth</h2>
-                    <p class="section-subtitle">Monthly, January 2022 to April 2026</p>
+                    <p class="section-subtitle" id="beSubtitle">Monthly, January 2022 to April 2026</p>
+                </div>
+                <div class="chart-country-toggle">
+                    <button class="abstract-toggle country-toggle be-country-toggle active" data-country="US" onclick="setBreakevenCountry('US')">United States</button>
+                    <button class="abstract-toggle country-toggle be-country-toggle" data-country="CA" onclick="setBreakevenCountry('CA')">Canada</button>
                 </div>
                 <div class="chart-container">
                     <canvas id="chartBreakeven"></canvas>
@@ -165,7 +179,8 @@
                         <span class="range-label" id="beRangeEnd">2026-04</span>
                     </div>
                 </div>
-                <p class="chart-source">Source: BLS via FRED and author's calculations. Breakeven payroll growth based on Petrosky-Nadeau and Stewart (2024). Last updated: May 2026. Payroll bars clipped at &plusmn;500K for readability.</p>
+                <p class="chart-source" id="beSource">Source: BLS via FRED and author's calculations. Breakeven payroll growth based on Petrosky-Nadeau and Stewart (2024). Last updated: May 2026. Payroll bars clipped at &plusmn;500K for readability.</p>
+                <p class="chart-source" style="margin-top: 0.35rem;"><a href="assets/data/breakeven_payrolls_data.csv" download class="data-download">Download Data (CSV)</a> &middot; includes United States and Canada, with suggested citation in the file header.</p>
             </div>
         </section>
 
@@ -205,6 +220,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <!-- Breakeven payroll growth data -->
     <script src="assets/data/breakeven_data.js"></script>
+    <script src="assets/data/breakeven_data_CA.js"></script>
 
     <script>
         // Stable-price natural rate data: [date, UNRATE, u*_SP preferred, CBO NROU]
@@ -376,7 +392,174 @@
 ["2026-01-01",4.3333,5.1526,4.3991]
         ];
 
-        // Build chart
+        // Canada: [date, unemployment rate, u*_SP preferred, U-LR model (CBO-inspired)]
+        // U-SP estimate begins 2000:Q2 (exchange-rate regressor binds); U-LR is the model's
+        // CBO-inspired estimate, since Canada has no published NAIRU benchmark.
+        const SP_DATA_CA = [
+["1990-01-01",7.6333,null,8.2912],
+["1990-04-01",7.6667,null,8.2392],
+["1990-07-01",8.1667,null,8.1296],
+["1990-10-01",9.1333,null,8.0904],
+["1991-01-01",10.1667,null,8.0870],
+["1991-04-01",10.3333,null,8.1172],
+["1991-07-01",10.4333,null,8.0901],
+["1991-10-01",10.3333,null,8.0669],
+["1992-01-01",10.6000,null,7.9526],
+["1992-04-01",11.0000,null,7.8486],
+["1992-07-01",11.5333,null,7.8199],
+["1992-10-01",11.7333,null,7.7679],
+["1993-01-01",11.1333,null,7.6703],
+["1993-04-01",11.6333,null,7.6056],
+["1993-07-01",11.4333,null,7.5976],
+["1993-10-01",11.3000,null,7.5687],
+["1994-01-01",11.0333,null,7.5519],
+["1994-04-01",10.6333,null,7.5120],
+["1994-07-01",10.1333,null,7.4131],
+["1994-10-01",9.7667,null,7.3929],
+["1995-01-01",9.6333,null,7.4269],
+["1995-04-01",9.5000,null,7.3491],
+["1995-07-01",9.4333,null,7.3101],
+["1995-10-01",9.3000,null,7.2812],
+["1996-01-01",9.5000,null,7.2774],
+["1996-04-01",9.4333,null,7.2583],
+["1996-07-01",9.6667,null,7.2509],
+["1996-10-01",9.8333,null,7.1434],
+["1997-01-01",9.4333,null,7.1296],
+["1997-04-01",9.3000,null,7.0803],
+["1997-07-01",8.8667,null,7.0782],
+["1997-10-01",8.7667,null,7.0666],
+["1998-01-01",8.6000,null,7.0513],
+["1998-04-01",8.3333,null,7.0508],
+["1998-07-01",8.2000,null,7.0251],
+["1998-10-01",8.0333,null,6.9942],
+["1999-01-01",7.9000,null,6.9542],
+["1999-04-01",7.9000,null,6.9667],
+["1999-07-01",7.5000,null,7.0131],
+["1999-10-01",6.9667,null,7.0184],
+["2000-01-01",6.8667,null,6.9944],
+["2000-04-01",6.6667,6.6661,6.9857],
+["2000-07-01",6.9000,6.8469,6.9311],
+["2000-10-01",6.9000,6.8651,6.8721],
+["2001-01-01",7.0000,6.9485,6.7945],
+["2001-04-01",7.1000,7.0379,6.7718],
+["2001-07-01",7.1667,7.0430,6.7837],
+["2001-10-01",7.6333,7.1495,6.7983],
+["2002-01-01",7.9333,7.3457,6.8786],
+["2002-04-01",7.7000,7.2498,6.8522],
+["2002-07-01",7.5333,7.1843,6.8289],
+["2002-10-01",7.5667,7.2546,6.9231],
+["2003-01-01",7.4667,7.2146,6.9304],
+["2003-04-01",7.6667,7.2388,6.9179],
+["2003-07-01",7.8000,7.3031,6.9419],
+["2003-10-01",7.4333,7.1629,6.9617],
+["2004-01-01",7.3000,7.0652,6.9568],
+["2004-04-01",7.1667,7.0048,6.9471],
+["2004-07-01",7.0000,6.9579,6.9265],
+["2004-10-01",7.1333,7.0560,6.9045],
+["2005-01-01",6.9333,6.9403,6.8205],
+["2005-04-01",6.8333,6.9186,6.7373],
+["2005-07-01",6.7000,6.8444,6.7173],
+["2005-10-01",6.5333,6.7670,6.7286],
+["2006-01-01",6.6000,6.8175,6.7858],
+["2006-04-01",6.3333,6.7130,6.7585],
+["2006-07-01",6.5000,6.8545,6.7518],
+["2006-10-01",6.3667,6.8144,6.7149],
+["2007-01-01",6.3333,6.8093,6.6727],
+["2007-04-01",6.2000,6.7718,6.7139],
+["2007-07-01",6.0000,6.6301,6.7285],
+["2007-10-01",6.1000,6.6389,6.7271],
+["2008-01-01",6.1333,6.6496,6.7184],
+["2008-04-01",6.1667,6.6726,6.7221],
+["2008-07-01",6.2333,6.7054,6.6971],
+["2008-10-01",6.7000,6.8420,6.6502],
+["2009-01-01",8.0000,7.2549,6.6298],
+["2009-04-01",8.6333,7.4211,6.7031],
+["2009-07-01",8.6667,7.3976,6.6650],
+["2009-10-01",8.6000,7.4316,6.6342],
+["2010-01-01",8.3667,7.3751,6.6532],
+["2010-04-01",8.1333,7.2970,6.6026],
+["2010-07-01",8.2000,7.3262,6.5878],
+["2010-10-01",7.9333,7.2614,6.5352],
+["2011-01-01",7.8000,7.2048,6.6056],
+["2011-04-01",7.7333,7.2521,6.6354],
+["2011-07-01",7.4333,7.1853,6.6191],
+["2011-10-01",7.5333,7.1973,6.6128],
+["2012-01-01",7.5667,7.2215,6.5379],
+["2012-04-01",7.4667,7.1288,6.5132],
+["2012-07-01",7.3667,7.0663,6.5033],
+["2012-10-01",7.3667,7.0624,6.5397],
+["2013-01-01",7.1667,6.9902,6.5566],
+["2013-04-01",7.1667,6.9908,6.5555],
+["2013-07-01",7.2333,7.0346,6.5441],
+["2013-10-01",7.2667,7.0463,6.5253],
+["2014-01-01",7.2333,7.0504,6.5345],
+["2014-04-01",7.2000,7.0900,6.5259],
+["2014-07-01",7.0333,7.0094,6.5148],
+["2014-10-01",6.7667,6.9333,6.5048],
+["2015-01-01",6.8667,6.9529,6.4495],
+["2015-04-01",6.9333,6.9464,6.4696],
+["2015-07-01",7.0667,7.0217,6.5131],
+["2015-10-01",7.1333,7.0461,6.4494],
+["2016-01-01",7.2333,7.0829,6.4101],
+["2016-04-01",7.1333,7.0835,6.3545],
+["2016-07-01",6.9667,7.0235,6.3741],
+["2016-10-01",6.8667,6.9668,6.3848],
+["2017-01-01",6.7333,6.9212,6.3961],
+["2017-04-01",6.5333,6.8170,6.3962],
+["2017-07-01",6.2333,6.7754,6.3242],
+["2017-10-01",6.1667,6.7878,6.3888],
+["2018-01-01",5.9000,6.7281,6.3745],
+["2018-04-01",5.9000,6.7135,6.4090],
+["2018-07-01",5.9000,6.7161,6.3969],
+["2018-10-01",5.6333,6.6073,6.3551],
+["2019-01-01",5.7667,6.6606,6.4102],
+["2019-04-01",5.6000,6.6133,6.4218],
+["2019-07-01",5.6667,6.6115,6.3685],
+["2019-10-01",5.7000,6.6336,6.3508],
+["2020-01-01",6.6000,6.5400,6.3264],
+["2020-04-01",13.5000,7.2727,6.2143],
+["2020-07-01",10.0333,7.4507,6.2200],
+["2020-10-01",8.8333,7.3239,6.1930],
+["2021-01-01",8.4667,7.1359,6.2634],
+["2021-04-01",8.1333,7.2464,6.2524],
+["2021-07-01",7.1667,7.1961,6.2278],
+["2021-10-01",6.1667,6.9517,6.1562],
+["2022-01-01",5.7667,6.8672,6.1166],
+["2022-04-01",5.1667,6.8665,6.0999],
+["2022-07-01",5.0333,6.7600,6.1079],
+["2022-10-01",5.0333,6.7240,6.1183],
+["2023-01-01",5.1333,6.6023,6.0840],
+["2023-04-01",5.2333,6.5552,6.0280],
+["2023-07-01",5.4333,6.6294,6.0271],
+["2023-10-01",5.7667,6.7044,6.0308],
+["2024-01-01",5.9000,6.7058,5.9681],
+["2024-04-01",6.3000,6.7717,5.9713],
+["2024-07-01",6.5000,6.7857,5.9280],
+["2024-10-01",6.7667,6.8684,5.9730],
+["2025-01-01",6.7000,6.8729,5.9412],
+["2025-04-01",6.9333,6.9487,5.9907],
+["2025-07-01",7.0333,6.9593,5.9865],
+["2025-10-01",6.7667,6.8691,5.9280],
+["2026-01-01",6.6333,6.7740,5.9317]
+        ];
+
+        // Per-country chart configuration
+        const USP_CONFIG = {
+            US: {
+                data: SP_DATA,
+                lrLabel: 'U-LR (CBO)',
+                subtitle: 'Quarterly estimates, 1985:Q1 to 2026:Q1',
+                source: 'Source: Bok, Crump, Nekarda, and Petrosky-Nadeau, "Estimating Natural Rates of Unemployment: A Primer" (2023), updated through 2026:Q1. CBO NROU from the Congressional Budget Office.'
+            },
+            CA: {
+                data: SP_DATA_CA,
+                lrLabel: 'U-LR (model)',
+                subtitle: 'Quarterly estimates, 1990:Q1 to 2026:Q1',
+                source: 'Source: author’s estimates following Bok, Crump, Nekarda, and Petrosky-Nadeau (2023), applied to Canadian data from Statistics Canada and the Bank of Canada, through 2026:Q1. The stable-price rate (U-SP) begins 2000:Q1; the long-run rate (U-LR) is the model’s estimate.'
+            }
+        };
+
+        // Build chart (initialized with the US series; toggled via setCountry)
         const chartUSP = new Chart(document.getElementById('chartUSP'), {
             type: 'line',
             data: {
@@ -430,6 +613,7 @@
                                 return d.getFullYear() + ':Q' + q;
                             },
                             label: function(context) {
+                                if (context.parsed.y === null) return null;
                                 return context.dataset.label + ': ' + context.parsed.y.toFixed(2) + '%';
                             }
                         }
@@ -452,9 +636,46 @@
             }
         });
 
+        // Swap the chart between the US and Canada series
+        let uspCountry = 'US';
+        function setCountry(country) {
+            if (country === uspCountry) return;
+            uspCountry = country;
+            const cfg = USP_CONFIG[country];
+            chartUSP.data.labels = cfg.data.map(r => r[0]);
+            chartUSP.data.datasets[0].data = cfg.data.map(r => r[1]);
+            chartUSP.data.datasets[1].data = cfg.data.map(r => r[2]);
+            chartUSP.data.datasets[2].data = cfg.data.map(r => r[3]);
+            chartUSP.data.datasets[2].label = cfg.lrLabel;
+            chartUSP.update();
+
+            document.getElementById('uspSubtitle').textContent = cfg.subtitle;
+            document.getElementById('uspSource').innerHTML = cfg.source;
+
+            document.querySelectorAll('.country-toggle').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.country === country);
+            });
+
+            gtag('event', 'toggle_country', {
+                'country': country,
+                'page': 'data'
+            });
+        }
+
         // Force chart resize on window resize
         window.addEventListener('resize', function() {
             chartUSP.resize();
+        });
+
+        // Track chart data downloads
+        document.querySelectorAll('.data-download').forEach(link => {
+            link.addEventListener('click', function() {
+                gtag('event', 'file_download', {
+                    'file_name': this.getAttribute('href').split('/').pop(),
+                    'file_type': 'csv',
+                    'page': 'data'
+                });
+            });
         });
 
         // Toggle technical detail boxes
@@ -518,31 +739,59 @@
         }
 
         // --- Breakeven Payroll Growth Chart ---
-        const bePayrollCapped = PAYROLL_GROWTH.map(v => v === null ? null : Math.max(-500, Math.min(500, v)));
+        // Per-country data and chrome. US uses BLS/FRED; Canada uses Statistics Canada.
+        const BREAKEVEN_CONFIG = {
+            US: {
+                dates: BE_DATES,
+                payroll: PAYROLL_GROWTH,
+                lr: BE_LR,
+                sr: BE_SR,
+                payrollLabel: 'Nonfarm payroll growth',
+                source: 'Source: BLS via FRED and author\'s calculations. Breakeven payroll growth based on Petrosky-Nadeau and Stewart (2024). Reference unemployment rate set to 4.4 percent (CBO longer-run natural rate). Payroll bars are total nonfarm payrolls, clipped at &plusmn;500K for readability.'
+            },
+            CA: {
+                dates: BE_DATES_CA,
+                payroll: PAYROLL_GROWTH_CA,
+                lr: BE_LR_CA,
+                sr: BE_SR_CA,
+                payrollLabel: 'SEPH employment growth',
+                source: 'Source: Statistics Canada (Labour Force Survey 14-10-0287; Survey of Employment, Payrolls and Hours 14-10-0223) and author\'s calculations, following Petrosky-Nadeau and Stewart (2024). Reference unemployment rate set to 6.0 percent. Payroll bars are SEPH employment, clipped at &plusmn;500K for readability.'
+            }
+        };
+
+        const capPayroll = arr => arr.map(v => v === null ? null : Math.max(-500, Math.min(500, v)));
+        const barColors = capped => ({
+            bg: capped.map(v => v !== null && v < 0 ? 'rgba(183, 59, 54, 0.4)' : 'rgba(44, 90, 160, 0.25)'),
+            border: capped.map(v => v !== null && v < 0 ? 'rgba(183, 59, 54, 0.6)' : 'rgba(44, 90, 160, 0.4)')
+        });
+        // "Monthly, January 2022 to April 2026" from a date array
+        function beSubtitle(dates) {
+            const fmt = s => { const d = new Date(s); return d.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }) + ' ' + d.getUTCFullYear(); };
+            return 'Monthly, ' + fmt(dates[0]) + ' to ' + fmt(dates[dates.length - 1]);
+        }
+
+        let beCountry = 'US';
+        let beCfg = BREAKEVEN_CONFIG[beCountry];
+        let bePayrollCapped = capPayroll(beCfg.payroll);
+        let beColors = barColors(bePayrollCapped);
 
         const chartBreakeven = new Chart(document.getElementById('chartBreakeven'), {
             type: 'bar',
             data: {
-                labels: BE_DATES,
+                labels: beCfg.dates,
                 datasets: [
                     {
-                        label: 'Payroll growth',
+                        label: beCfg.payrollLabel,
                         data: bePayrollCapped,
                         type: 'bar',
-                        backgroundColor: BE_DATES.map((d, i) => {
-                            const v = bePayrollCapped[i];
-                            return v !== null && v < 0 ? 'rgba(183, 59, 54, 0.4)' : 'rgba(44, 90, 160, 0.25)';
-                        }),
-                        borderColor: BE_DATES.map((d, i) => {
-                            const v = bePayrollCapped[i];
-                            return v !== null && v < 0 ? 'rgba(183, 59, 54, 0.6)' : 'rgba(44, 90, 160, 0.4)';
-                        }),
+                        backgroundColor: beColors.bg,
+                        borderColor: beColors.border,
                         borderWidth: 1,
                         order: 2
                     },
                     {
                         label: 'Long-run breakeven',
-                        data: BE_LR,
+                        data: beCfg.lr,
                         type: 'line',
                         borderColor: '#2c5aa0',
                         borderWidth: 2.5,
@@ -552,7 +801,7 @@
                     },
                     {
                         label: 'Short-run breakeven',
-                        data: BE_SR,
+                        data: beCfg.sr,
                         type: 'line',
                         borderColor: '#c8850a',
                         borderWidth: 2.5,
@@ -635,10 +884,48 @@
 
             minInput.addEventListener('input', update);
             maxInput.addEventListener('input', update);
+            // reset handles to full range whenever the dataset (country) changes
+            minInput.value = 0;
+            maxInput.value = 100;
             update();
         }
-        setupRangeSlider('be', chartBreakeven, BE_DATES);
+        setupRangeSlider('be', chartBreakeven, beCfg.dates);
+        // Initialize subtitle and source from the active country's config
+        document.getElementById('beSubtitle').textContent = beSubtitle(beCfg.dates);
+        document.getElementById('beSource').innerHTML = beCfg.source;
 
+        // Swap the breakeven chart between the US and Canada series
+        function setBreakevenCountry(country) {
+            if (country === beCountry) return;
+            beCountry = country;
+            beCfg = BREAKEVEN_CONFIG[country];
+
+            bePayrollCapped = capPayroll(beCfg.payroll);
+            beColors = barColors(bePayrollCapped);
+
+            chartBreakeven.data.labels = beCfg.dates;
+            chartBreakeven.data.datasets[0].label = beCfg.payrollLabel;
+            chartBreakeven.data.datasets[0].data = bePayrollCapped;
+            chartBreakeven.data.datasets[0].backgroundColor = beColors.bg;
+            chartBreakeven.data.datasets[0].borderColor = beColors.border;
+            chartBreakeven.data.datasets[1].data = beCfg.lr;
+            chartBreakeven.data.datasets[2].data = beCfg.sr;
+            chartBreakeven.update();
+
+            document.getElementById('beSubtitle').textContent = beSubtitle(beCfg.dates);
+            document.getElementById('beSource').innerHTML = beCfg.source;
+
+            // re-point the range slider at the active country's dates (lengths may differ)
+            setupRangeSlider('be', chartBreakeven, beCfg.dates);
+
+            document.querySelectorAll('.be-country-toggle').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.country === country);
+            });
+
+            if (typeof gtag === 'function') {
+                gtag('event', 'toggle_country', { 'country': country, 'page': 'data', 'chart': 'breakeven' });
+            }
+        }
 
         window.addEventListener('resize', function() {
             chartBreakeven.resize();

@@ -1845,7 +1845,7 @@ html {
 
 .data-prose {
     font-size: 1.05rem;
-    line-height: 1.55;
+    line-height: 1.45;
     color: #444;
 }
 
@@ -1890,6 +1890,19 @@ html {
     margin: 1.5rem auto 1rem;
 }
 
+.chart-country-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    max-width: 900px;
+    margin: 1rem auto 0;
+}
+
+.chart-country-toggle .country-toggle {
+    padding: 0.35rem 1rem;
+    font-size: 0.9rem;
+}
+
 .chart-source {
     font-size: 0.85rem;
     color: #666;
@@ -1904,7 +1917,7 @@ html {
 
 .data-detail-box .paper-abstract {
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.5;
     color: #444;
     animation: fadeIn 0.3s ease-in-out;
 }
