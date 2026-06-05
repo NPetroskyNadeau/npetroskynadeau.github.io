@@ -609,8 +609,8 @@
                         callbacks: {
                             title: function(context) {
                                 const d = new Date(context[0].label);
-                                const q = Math.floor(d.getMonth() / 3) + 1;
-                                return d.getFullYear() + ':Q' + q;
+                                const q = Math.floor(d.getUTCMonth() / 3) + 1;
+                                return d.getUTCFullYear() + ':Q' + q;
                             },
                             label: function(context) {
                                 if (context.parsed.y === null) return null;
@@ -829,7 +829,7 @@
                         callbacks: {
                             title: function(context) {
                                 const d = new Date(context[0].label);
-                                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                                return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0');
                             },
                             label: function(context) {
                                 if (context.parsed.y === null) return null;
@@ -864,7 +864,7 @@
 
             function indexToDate(i) {
                 const d = new Date(dates[i]);
-                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+                return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0');
             }
 
             function update() {
