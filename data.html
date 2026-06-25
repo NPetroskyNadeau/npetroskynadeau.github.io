@@ -55,6 +55,7 @@
             <nav class="hero-section-links">
                 <a href="#unemployment-benchmarks">Unemployment Benchmarks</a>
                 <a href="#breakeven-payrolls">Breakeven Payrolls</a>
+                <a href="#labor-force-trends">Labor Force Trends</a>
             </nav>
         </div>
     </section>
@@ -184,6 +185,93 @@
             </div>
         </section>
 
+        <!-- Labor Force Trends Explanation -->
+        <section class="section" id="labor-force-trends">
+            <div class="container">
+                <h2>Labor Force Trends and Projections</h2>
+                <div class="data-prose">
+                    <p>How fast is the labor force really growing, once the swings of the business cycle are stripped away? The answer shapes nearly every question about the labor market, from how many jobs the economy needs each month to how much the workforce will expand over the coming decade. But the raw count of workers is noisy, and participation rates move with the cycle. Isolating the underlying trend requires looking through that variation.</p>
+                    <p>The trend shown below is built from a demographic decomposition of the population. The civilian population is split into narrow cells by sex and age; the participation rate of each cell is smoothed to remove cyclical and seasonal variation, and the cells are recombined using their population shares. This captures two distinct forces: changes in how much each group participates, and the shifting age composition of the population.</p>
+                    <p>The same framework projects the labor force forward. Holding each group's trend participation rate fixed at its latest value, the projection lets official Census population projections drive the changing demographic mix. It is a demographic-composition baseline that answers what would happen to participation and the labor force if the only moving part were the age composition of the population. The dashed line extends this baseline to 2035.</p>
+                    <p>The two charts show the labor force level, in millions of workers, and the participation rate, in percent. In each, the smoothed demographic trend runs through the historical period and joins continuously to the projection.</p>
+                    <p class="data-reference">Reference: Petrosky-Nadeau, "Labor Market Trends and Projections" (methodology note, 2026).</p>
+                </div>
+
+                <div class="data-technical-row">
+                    <span class="data-technical-label">Technical Details</span>
+                    <button class="abstract-toggle" onclick="toggleDetail(this)">LF Methodology</button>
+                    <button class="abstract-toggle" onclick="toggleDetail(this)">LF Sources</button>
+                </div>
+
+                <div class="data-detail-box" id="detail-lf-methodology" style="display: none;">
+                    <div class="paper-abstract">
+                        <p>The population is partitioned into cells defined by sex (two groups) and age (16&ndash;24, 25&ndash;34, 35&ndash;44, 45&ndash;54, and 55+). For each cell, the monthly participation rate is computed from Current Population Survey microdata back to January 1976. Each cell's series is seasonally adjusted with the Census Bureau's X-13ARIMA-SEATS procedure, the March&ndash;November 2020 pandemic months are treated as a transitory disruption and interpolated, a centered three-month moving average removes residual noise, and a Christiano-Fitzgerald band-pass filter extracts the low-frequency trend.</p>
+                        <p>Aggregate trends are weighted averages of the filtered cell series, using each group's smoothed population share as the weight. This decomposition separates changes in group-specific participation behavior from changes in the demographic composition of the population.</p>
+                        <p>The projection holds each cell's trend participation rate fixed at its most recent value and applies Census Bureau population projections to evolve the demographic shares forward to 2035. The aggregate participation rate and labor force level then move only with the changing age and sex composition of the population.</p>
+                    </div>
+                </div>
+
+                <div class="data-detail-box" id="detail-lf-sources" style="display: none;">
+                    <div class="paper-abstract">
+                        <p>Trend construction uses Current Population Survey microdata from the Bureau of Labor Statistics, January 1976 through the latest available month, with BLS composite weights. The actual labor force level shown in the level chart is the official civilian labor force (FRED series CLF16OV, seasonally adjusted, thousands), which extends through the most recent monthly release.</p>
+                        <p>Population projections that drive the forward path are from the U.S. Census Bureau.</p>
+                        <p>Estimates are updated following each monthly labor market release and after population-projection revisions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Labor Force Level Chart -->
+        <section class="section section-gray">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2>Labor Force Level</h2>
+                    <p class="section-subtitle" id="lflvlSubtitle">Monthly, millions of workers, 1976 to 2035</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartLFLevel"></canvas>
+                </div>
+                <div class="range-slider-wrapper" style="max-width: 900px; margin: 0.5rem auto 1rem;">
+                    <div class="range-slider-container">
+                        <span class="range-label" id="lflvlRangeStart">1976</span>
+                        <div class="range-slider-track">
+                            <div class="range-slider-fill" id="lflvlTrackFill"></div>
+                            <input type="range" min="0" max="100" value="0" class="range-input range-min" id="lflvlRangeMin">
+                            <input type="range" min="0" max="100" value="100" class="range-input range-max" id="lflvlRangeMax">
+                        </div>
+                        <span class="range-label" id="lflvlRangeEnd">2035</span>
+                    </div>
+                </div>
+                <p class="chart-source">Source: BLS civilian labor force (CLF16OV) via FRED and author's demographic-decomposition trend; Census Bureau population projections. The demographic trend joins to the Census-based projection (dashed) at the latest trend observation.</p>
+            </div>
+        </section>
+
+        <!-- Labor Force Participation Rate Chart -->
+        <section class="section section-gray">
+            <div class="container">
+                <div class="section-header-inline">
+                    <h2>Labor Force Participation Rate</h2>
+                    <p class="section-subtitle" id="lfprSubtitle">Monthly, percent, 1976 to 2035</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartLFPR"></canvas>
+                </div>
+                <div class="range-slider-wrapper" style="max-width: 900px; margin: 0.5rem auto 1rem;">
+                    <div class="range-slider-container">
+                        <span class="range-label" id="lfprRangeStart">1976</span>
+                        <div class="range-slider-track">
+                            <div class="range-slider-fill" id="lfprTrackFill"></div>
+                            <input type="range" min="0" max="100" value="0" class="range-input range-min" id="lfprRangeMin">
+                            <input type="range" min="0" max="100" value="100" class="range-input range-max" id="lfprRangeMax">
+                        </div>
+                        <span class="range-label" id="lfprRangeEnd">2035</span>
+                    </div>
+                </div>
+                <p class="chart-source">Source: author's demographic-decomposition trend from BLS Current Population Survey microdata; Census Bureau population projections. The seasonally adjusted aggregate participation rate and the smoothed demographic trend join to the Census-based projection (dashed) at the latest trend observation.</p>
+                <p class="chart-source" style="margin-top: 0.35rem;"><a href="assets/data/labor_force_trends_data.csv" download class="data-download">Download Data (CSV)</a> &middot; labor force level and participation rate, with actual, demographic trend, and Census-based projection series, plus suggested citation in the file header.</p>
+            </div>
+        </section>
+
     </main>
 
     <footer>
@@ -221,6 +309,8 @@
     <!-- Breakeven payroll growth data -->
     <script src="assets/data/breakeven_data.js"></script>
     <script src="assets/data/breakeven_data_CA.js"></script>
+    <!-- Labor force trends and projections data -->
+    <script src="assets/data/labor_force_data.js"></script>
 
     <script>
         // Stable-price natural rate data: [date, UNRATE, u*_SP preferred, CBO NROU]
@@ -680,7 +770,7 @@
 
         // Toggle technical detail boxes
         function toggleDetail(button) {
-            const label = button.textContent.trim().toLowerCase();
+            const label = button.textContent.trim().toLowerCase().replace(/\s+/g, '-');
             const detailBox = document.getElementById('detail-' + label);
 
             if (detailBox.style.display === 'none') {
@@ -929,6 +1019,147 @@
 
         window.addEventListener('resize', function() {
             chartBreakeven.resize();
+        });
+
+        // --- Labor Force Trends and Projections charts ---
+        // Three lines each: actual data (solid gray), demographic trend (solid teal),
+        // Census-based projection (dashed blue). Shared 1976-2035 monthly grid; the
+        // projection arrays repeat the join month so the dashed line connects to the
+        // solid history with no gap. spanGaps:false so null padding shows as a break.
+        const LF_COL_ACTUAL = '#888888';
+        const LF_COL_TREND = '#00837E';
+        const LF_COL_PROJ = '#2c5aa0';
+        const lfFont = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
+
+        function lfTrendOptions(yLabel, valueFmt) {
+            return {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: { usePointStyle: true, boxWidth: 20, color: '#333', font: { family: lfFont } }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            title: function(context) {
+                                const d = new Date(context[0].label);
+                                return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0');
+                            },
+                            label: function(context) {
+                                if (context.parsed.y === null) return null;
+                                return context.dataset.label + ': ' + valueFmt(context.parsed.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: { unit: 'year', tooltipFormat: 'yyyy-MM-dd' },
+                        title: { display: false },
+                        ticks: { color: '#333', font: { size: 13, family: lfFont } }
+                    },
+                    y: {
+                        title: { display: true, text: yLabel, color: '#333', font: { size: 13, family: lfFont } },
+                        ticks: { color: '#333', font: { size: 13, family: lfFont } }
+                    }
+                }
+            };
+        }
+
+        // Labor force level chart (thousands -> displayed in millions)
+        const lfLevelMillions = arr => arr.map(v => v === null ? null : v / 1000);
+        const chartLFLevel = new Chart(document.getElementById('chartLFLevel'), {
+            type: 'line',
+            data: {
+                labels: LFT_DATES,
+                datasets: [
+                    {
+                        label: 'Labor force (actual)',
+                        data: lfLevelMillions(LFT_LF_ACTUAL),
+                        borderColor: LF_COL_ACTUAL,
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        spanGaps: false,
+                        order: 3
+                    },
+                    {
+                        label: 'Demographic trend',
+                        data: lfLevelMillions(LFT_LF_TREND),
+                        borderColor: LF_COL_TREND,
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        spanGaps: false,
+                        order: 2
+                    },
+                    {
+                        label: 'Projection (Census)',
+                        data: lfLevelMillions(LFT_LF_PROJ),
+                        borderColor: LF_COL_PROJ,
+                        borderWidth: 2,
+                        borderDash: [6, 4],
+                        pointRadius: 0,
+                        tension: 0.1,
+                        spanGaps: false,
+                        order: 1
+                    }
+                ]
+            },
+            options: lfTrendOptions('Millions of workers', v => v.toFixed(1) + 'M')
+        });
+
+        // Labor force participation rate chart (percent)
+        const chartLFPR = new Chart(document.getElementById('chartLFPR'), {
+            type: 'line',
+            data: {
+                labels: LFT_DATES,
+                datasets: [
+                    {
+                        label: 'Participation rate (actual)',
+                        data: LFT_LFPR_ACTUAL,
+                        borderColor: LF_COL_ACTUAL,
+                        borderWidth: 1.5,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        spanGaps: false,
+                        order: 3
+                    },
+                    {
+                        label: 'Demographic trend',
+                        data: LFT_LFPR_TREND,
+                        borderColor: LF_COL_TREND,
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        tension: 0.1,
+                        spanGaps: false,
+                        order: 2
+                    },
+                    {
+                        label: 'Projection (Census)',
+                        data: LFT_LFPR_PROJ,
+                        borderColor: LF_COL_PROJ,
+                        borderWidth: 2,
+                        borderDash: [6, 4],
+                        pointRadius: 0,
+                        tension: 0.1,
+                        spanGaps: false,
+                        order: 1
+                    }
+                ]
+            },
+            options: lfTrendOptions('Percent', v => v.toFixed(2) + '%')
+        });
+
+        // Range sliders (reuse setupRangeSlider, defined above for breakeven)
+        setupRangeSlider('lflvl', chartLFLevel, LFT_DATES);
+        setupRangeSlider('lfpr', chartLFPR, LFT_DATES);
+
+        window.addEventListener('resize', function() {
+            chartLFLevel.resize();
+            chartLFPR.resize();
         });
     </script>
 </body>
