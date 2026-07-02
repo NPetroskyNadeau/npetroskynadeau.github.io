@@ -85,6 +85,50 @@ function hasData(cat) {
 function pct1(v) { return (v === null || v === undefined || isNaN(v)) ? '—' : v.toFixed(1) + '%'; }
 function kfmt(v) { return (v === null || v === undefined || isNaN(v)) ? '—' : Math.round(v) + 'K'; }
 
+// Filter a built chart spec to the trailing `years` (null = keep all). Slices
+// spec.dates and every dataset's data to the window so the chart plots only
+// in-window points — the correct way to zoom a time-series bar chart. Returns a
+// shallow-cloned spec; the original (full) spec is left intact for later widening.
+function filterSpecToYears(spec, years) {
+    if (!years) return spec;
+    var dates = spec.dates;
+    var last = new Date(dates[dates.length - 1]);
+    var cutoff = new Date(Date.UTC(last.getUTCFullYear() - years, last.getUTCMonth(), 1));
+    var start = 0;
+    for (var i = 0; i < dates.length; i++) {
+        if (new Date(dates[i]).getTime() >= cutoff.getTime()) { start = i; break; }
+    }
+    var out = {};
+    for (var k in spec) if (spec.hasOwnProperty(k)) out[k] = spec[k];
+    out.dates = dates.slice(start);
+    out.datasets = spec.datasets.map(function (d) {
+        var nd = {};
+        for (var kk in d) if (d.hasOwnProperty(kk)) nd[kk] = d[kk];
+        nd.data = d.data.slice(start);
+        if (nd.revisedData) nd.revisedData = d.revisedData.slice(start);
+        return nd;
+    });
+    return out;
+}
+
+// Trailing (backward) moving average of `arr` over `window` points. Each output
+// is the mean of the current point and the prior window-1 points; positions
+// without a full window (or spanning a null) are left null so the line starts
+// only where a complete average exists. Non-mutating.
+function trailingMA(arr, window) {
+    if (!window || window < 2) return arr.slice();
+    var out = new Array(arr.length).fill(null);
+    for (var i = window - 1; i < arr.length; i++) {
+        var sum = 0, ok = true;
+        for (var j = i - window + 1; j <= i; j++) {
+            if (arr[j] === null || arr[j] === undefined || isNaN(arr[j])) { ok = false; break; }
+            sum += arr[j];
+        }
+        if (ok) out[i] = sum / window;
+    }
+    return out;
+}
+
 /* ---------- Recession-shading plugin ---------------------------------- */
 /* Reads chart.$recessions (array of [start,end] ISO strings) and paints
    translucent bands within the plot area using the time scale. */
@@ -343,16 +387,35 @@ var CATEGORIES = [
     charts: [{
         id: 'breakeven',
         title: 'Estimates of Breakeven Payroll Growth',
-        rangeSlider: true,
-        presets: null,
-        build: function (country) {
+        // Range via discrete presets that FILTER the data to a trailing window
+        // (see rangePresets handling in the shell) — not an axis clamp, which
+        // mis-rendered the bezier breakeven lines. 'All' (years:null) is default.
+        rangeSlider: false,
+        rangePresets: [
+            { label: '1Y', years: 1 },
+            { label: '2Y', years: 2 },
+            { label: '3Y', years: 3 },
+            { label: 'All', years: null }
+        ],
+        // Optional smoothing toggle: trailing moving average of payroll growth.
+        // window=0 -> Monthly (raw bars only). The shell reads state[cat].smoothing.
+        smoothing: [
+            { label: 'Monthly', window: 0 },
+            { label: '6-mo avg', window: 6 },
+            { label: '12-mo avg', window: 12 }
+        ],
+        build: function (country, ma) {
+            ma = ma || 0;
             var isCA = country === 'CA';
             var dates = isCA ? BE_DATES_CA : BE_DATES;
             var lr = isCA ? BE_LR_CA : BE_LR, sr = isCA ? BE_SR_CA : BE_SR;
             var pay = isCA ? PAYROLL_GROWTH_CA : PAYROLL_GROWTH;
             var capped = pay.map(function (v) { return v === null ? null : Math.max(-500, Math.min(500, v)); });
-            var bg = capped.map(function (v) { return v !== null && v < 0 ? 'rgba(183,59,54,0.4)' : 'rgba(44,90,160,0.25)'; });
-            var bd = capped.map(function (v) { return v !== null && v < 0 ? 'rgba(183,59,54,0.6)' : 'rgba(44,90,160,0.4)'; });
+            // When a moving average is on, fade the raw bars so the MA line reads
+            // as the foreground signal; otherwise use the normal bar opacity.
+            var barFill = ma ? 0.10 : 0.25, barNeg = ma ? 0.15 : 0.40;
+            var bg = capped.map(function (v) { return v !== null && v < 0 ? 'rgba(183,59,54,' + barNeg + ')' : 'rgba(44,90,160,' + barFill + ')'; });
+            var bd = capped.map(function (v) { return v !== null && v < 0 ? 'rgba(183,59,54,' + (barNeg + 0.2) + ')' : 'rgba(44,90,160,' + (barFill + 0.15) + ')'; });
             // Prior (previously published) payroll growth: null except revised months.
             // Drawn as a faint hollow bar overlaid on the same category (grouped:false)
             // so it sits beside the revised bar and shows the revision at a glance.
@@ -365,6 +428,16 @@ var CATEGORIES = [
                 { label: 'Long-run breakeven', data: lr, type: 'line', borderColor: COL.navy, borderWidth: 2.5, pointRadius: 0, tension: 0.1, order: 1 },
                 { label: 'Short-run breakeven', data: sr, type: 'line', borderColor: COL.gold, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 0 }
             ];
+            if (ma) {
+                // Trailing MA over the RAW (uncapped) payroll series so smoothing
+                // isn't distorted by the ±500K display clip. Draw on top of bars.
+                var avg = trailingMA(pay, ma);
+                datasets.push({
+                    label: ma + '-month average', data: avg, type: 'line',
+                    borderColor: COL.teal, borderWidth: 2.5, pointRadius: 0, tension: 0.25,
+                    spanGaps: false, order: 0, isMA: true, maWindow: ma
+                });
+            }
             if (hasRevisions) {
                 // Insert the ghost bar right after the payroll bars so it shares
                 // their axis; grouped:false overlays rather than shrinking bars.
@@ -429,8 +502,14 @@ var CATEGORIES = [
             id: 'lfpr',
             title: 'Labor Force Participation Rate',
             viewLabel: 'Participation rate',
-            rangeSlider: true,
-            presets: [{ label: 'History', years: 'HIST' }, { label: 'Max', years: null }],
+            // Discrete range presets that filter the data (no axis clamp). 'Recent'
+            // is a 25-year window off the 2035 projection end (~2010-2035); 'Full'
+            // (years:null) shows all of 1976-2035 and is the default.
+            rangeSlider: false,
+            rangePresets: [
+                { label: 'Recent', years: 25 },
+                { label: 'Full', years: null }
+            ],
             build: function () {
                 return {
                     dates: LFT_DATES, recession: null,
@@ -451,8 +530,11 @@ var CATEGORIES = [
             id: 'lflvl',
             title: 'Labor Force Level',
             viewLabel: 'Level',
-            rangeSlider: true,
-            presets: [{ label: 'History', years: 'HIST' }, { label: 'Max', years: null }],
+            rangeSlider: false,
+            rangePresets: [
+                { label: 'Recent', years: 25 },
+                { label: 'Full', years: null }
+            ],
             build: function () {
                 var mm = function (a) { return a.map(function (v) { return v === null ? null : v / 1000; }); };
                 return {
@@ -478,20 +560,7 @@ var CATEGORIES = [
     ]
 },
 
-/* --- 4. Labor market status (CPS) — pending export ------------------ */
-{
-    id: 'labor-market-status',
-    tab: 'Labor Market Status',
-    heading: 'Labor Market Status',
-    subtitle: '',
-    prose: [],
-    reference: '',
-    hasCountry: false,
-    pending: true,
-    kpis: null, charts: [], technical: []
-},
-
-/* --- 5. Labor market flows (CPS) — pending export ------------------- */
+/* --- 4. Labor market flows (CPS) — pending export ------------------- */
 {
     id: 'labor-market-flows',
     tab: 'Labor Market Flows',
@@ -551,6 +620,15 @@ function controlsHtml(cat, chartSpec) {
             '<button class="dash-toggle" data-country="CA" aria-pressed="false">Canada</button>' +
             '</div>');
     }
+    // Smoothing toggle (Monthly / N-mo avg). First option is the default/on state.
+    if (chartSpec.smoothing) {
+        var sbtns = chartSpec.smoothing.map(function (s, i) {
+            return '<button class="dash-toggle dash-smooth' + (i === 0 ? ' active' : '') + '" ' +
+                'data-window="' + s.window + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + s.label + '</button>';
+        }).join('');
+        parts.push('<div class="chart-control-group" role="group" aria-label="Smoothing">' +
+            '<span class="chart-control-label">Smoothing</span>' + sbtns + '</div>');
+    }
     // Range presets (right)
     if (chartSpec.presets) {
         var btns = chartSpec.presets.map(function (p) {
@@ -558,6 +636,18 @@ function controlsHtml(cat, chartSpec) {
         }).join('');
         parts.push('<div class="chart-control-group" role="group" aria-label="Time range">' +
             '<span class="chart-control-label">Range</span>' + btns + '</div>');
+    }
+    // Range presets that FILTER the data (discrete windows; replaces the slider).
+    // Default active = the option whose years is null ('All'), else the first.
+    if (chartSpec.rangePresets) {
+        var cur = state[cat.id].rangeYears[chartSpec.id] || null;
+        var rbtns = chartSpec.rangePresets.map(function (p) {
+            var on = (p.years || null) === cur;
+            return '<button class="dash-toggle dash-range-preset' + (on ? ' active' : '') + '" ' +
+                'data-years="' + (p.years === null ? 'null' : p.years) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + p.label + '</button>';
+        }).join('');
+        parts.push('<div class="chart-control-group" role="group" aria-label="Time range">' +
+            '<span class="chart-control-label">Range</span>' + rbtns + '</div>');
     }
     if (!parts.length) return '';
     return '<div class="chart-controls">' + parts.join('') + '</div>';
@@ -683,11 +773,23 @@ function panelHtml(cat) {
         '</section>';
 }
 
+/* Produce the spec to render for a chart, applying the current smoothing and
+   (for rangePresets charts) the current trailing-year window. Single source of
+   truth so buildChart / country / smoothing / range all render consistently. */
+function buildSpec(cat, chartSpec) {
+    var st = state[cat.id];
+    var spec = chartSpec.build(st.country, st.smoothing);
+    if (chartSpec.rangePresets) {
+        spec = filterSpecToYears(spec, st.rangeYears[chartSpec.id] || null);
+    }
+    return spec;
+}
+
 /* Build a Chart instance for a chartSpec, wire slider/presets/source. */
 function buildChart(cat, chartSpec) {
     var prefix = chartPrefix(cat, chartSpec);
     var country = state[cat.id].country;
-    var spec = chartSpec.build(country);
+    var spec = buildSpec(cat, chartSpec);
     var canvas = document.getElementById('canvas_' + prefix);
     var chart = new Chart(canvas, {
         type: spec.datasets.some(function (d) { return d.type === 'bar'; }) ? 'bar' : 'line',
@@ -737,7 +839,7 @@ function updateCountry(cat, country) {
     // update each chart
     cat.charts.forEach(function (chartSpec) {
         var entry = st.charts[chartSpec.id];
-        var spec = chartSpec.build(country);
+        var spec = buildSpec(cat, chartSpec);
         entry.chart.data.labels = spec.dates;
         // replace datasets wholesale (labels/colors/data may all differ)
         entry.chart.data.datasets = spec.datasets;
@@ -766,6 +868,60 @@ function updateCountry(cat, country) {
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     ga('toggle_country', { country: country, page: 'data', category: cat.id });
+}
+
+/* Smoothing toggle: rebuild the affected chart's datasets in place (fading the
+   bars + adding/removing the moving-average line) WITHOUT touching the x-range,
+   so the current zoom is preserved. Only charts that declare `smoothing` react. */
+function updateSmoothing(cat, window) {
+    var st = state[cat.id];
+    if (st.smoothing === window) return;
+    st.smoothing = window;
+    cat.charts.forEach(function (chartSpec) {
+        if (!chartSpec.smoothing) return;
+        var entry = st.charts[chartSpec.id];
+        if (!entry) return;
+        // buildSpec applies smoothing AND the current range window, so the two
+        // controls compose. Swap labels + datasets and repaint.
+        var spec = buildSpec(cat, chartSpec);
+        entry.chart.data.labels = spec.dates;
+        entry.chart.data.datasets = spec.datasets;
+        entry.chart.update();
+    });
+    // button state within this panel
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-smooth').forEach(function (btn) {
+        var on = parseInt(btn.dataset.window, 10) === window;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    ga('toggle_smoothing', { window: window, page: 'data', category: cat.id });
+}
+
+/* Range preset: filter the chart's data to a trailing window of `years` (null =
+   All). Rebuilds via buildSpec (which slices the built data), so the time axis
+   always fits the visible points — no axis clamp, no mis-drawn lines. */
+function updateRange(cat, chartSpec, years) {
+    var st = state[cat.id];
+    if ((st.rangeYears[chartSpec.id] || null) === (years || null)) return;
+    st.rangeYears[chartSpec.id] = years || null;
+    var entry = st.charts[chartSpec.id];
+    if (entry) {
+        var spec = buildSpec(cat, chartSpec);
+        entry.chart.data.labels = spec.dates;
+        entry.chart.data.datasets = spec.datasets;
+        entry.chart.update();
+    }
+    // button state within this chart card
+    var card = document.querySelector('#panel-' + cat.id + ' .dashboard-chart-card[data-chart="' + chartSpec.id + '"]');
+    if (card) {
+        card.querySelectorAll('.dash-range-preset').forEach(function (btn) {
+            var by = btn.dataset.years === 'null' ? null : parseInt(btn.dataset.years, 10);
+            var on = by === (years || null);
+            btn.classList.toggle('active', on);
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+    }
+    ga('select_range', { years: years || 'all', page: 'data', category: cat.id, chart: chartSpec.id });
 }
 
 /* ---------- Chart-view switch (shared by click handler + deep link) ---- */
@@ -813,8 +969,17 @@ function buildShareHash(cat, chartId) {
     var params = [];
     if (cat.hasCountry) params.push('c=' + state[cat.id].country);
     if (cat.chartToggle && chartId) params.push('v=' + chartId);
-    var r = chartId ? chartRange(cat.id, chartId) : null;
-    if (r && !(r.lo === 0 && r.hi === 100)) params.push('r=' + r.lo + '-' + r.hi);
+    if (state[cat.id].smoothing) params.push('s=' + state[cat.id].smoothing);
+    // rangePresets charts encode the trailing-year window as y=N; slider charts
+    // still encode r=lo-hi.
+    var chartSpec = chartId ? cat.charts.find(function (c) { return c.id === chartId; }) : null;
+    if (chartSpec && chartSpec.rangePresets) {
+        var yy = state[cat.id].rangeYears[chartId];
+        if (yy) params.push('y=' + yy);
+    } else {
+        var r = chartId ? chartRange(cat.id, chartId) : null;
+        if (r && !(r.lo === 0 && r.hi === 100)) params.push('r=' + r.lo + '-' + r.hi);
+    }
     return '#' + cat.id + (params.length ? '?' + params.join('&') : '');
 }
 function parseHash(raw) {
@@ -840,13 +1005,20 @@ function applyViewState(cat, params) {
         switchChartView(cat, params.v);
         viewId = params.v;
     }
+    if (params.s) {
+        var w = parseInt(params.s, 10);
+        if (!isNaN(w)) updateSmoothing(cat, w);
+    }
+    var targetChart = viewId || (cat.charts[0] && cat.charts[0].id);
+    var targetSpec = cat.charts.find(function (c) { return c.id === targetChart; });
+    if (params.y && targetSpec && targetSpec.rangePresets) {
+        var yr = parseInt(params.y, 10);
+        if (!isNaN(yr)) updateRange(cat, targetSpec, yr);
+    }
     if (params.r) {
         var m = params.r.split('-');
         var lo = parseInt(m[0], 10), hi = parseInt(m[1], 10);
-        if (!isNaN(lo) && !isNaN(hi)) {
-            var targetChart = viewId || (cat.charts[0] && cat.charts[0].id);
-            if (targetChart) setChartRange(cat.id, targetChart, lo, hi);
-        }
+        if (!isNaN(lo) && !isNaN(hi) && targetChart) setChartRange(cat.id, targetChart, lo, hi);
     }
 }
 function copyShareLink(btn) {
@@ -956,6 +1128,25 @@ function initDelegates() {
             updateCountry(cat, ct.dataset.country);
             return;
         }
+        // Smoothing toggle (Monthly / N-mo moving average)
+        var sm = e.target.closest('.dash-smooth');
+        if (sm) {
+            var spanel = sm.closest('.dashboard-panel');
+            var scat = CATEGORIES.find(function (c) { return 'panel-' + c.id === spanel.id; });
+            updateSmoothing(scat, parseInt(sm.dataset.window, 10));
+            return;
+        }
+        // Range presets that filter the data (1Y / 2Y / 3Y / All)
+        var rp = e.target.closest('.dash-range-preset');
+        if (rp) {
+            var rpanel = rp.closest('.dashboard-panel');
+            var rcat = CATEGORIES.find(function (c) { return 'panel-' + c.id === rpanel.id; });
+            var rcard = rp.closest('.dashboard-chart-card');
+            var rcs = rcat.charts.find(function (c) { return c.id === rcard.dataset.chart; });
+            var yv = rp.dataset.years === 'null' ? null : parseInt(rp.dataset.years, 10);
+            if (rcs) updateRange(rcat, rcs, yv);
+            return;
+        }
         var dt = e.target.closest('.dash-detail-toggle');
         if (dt) {
             var box = document.getElementById(dt.dataset.target);
@@ -1014,7 +1205,7 @@ function positionTabs() {
 /* ---------- Boot ------------------------------------------------------- */
 function init() {
     // init per-category state
-    CATEGORIES.forEach(function (c) { state[c.id] = { country: 'US', charts: {} }; });
+    CATEGORIES.forEach(function (c) { state[c.id] = { country: 'US', charts: {}, smoothing: 0, rangeYears: {} }; });
 
     document.getElementById('dashboardPanels').innerHTML =
         CATEGORIES.map(panelHtml).join('');
