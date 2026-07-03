@@ -82,6 +82,10 @@ function hasData(cat) {
     }
     return true;
 }
+// True on phone-width viewports; used to shrink canvas-drawn chart elements
+// (legend, axis ticks) that CSS media queries can't reach.
+function isMobile() { return typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(max-width: 600px)').matches; }
+
 function pct1(v) { return (v === null || v === undefined || isNaN(v)) ? '—' : v.toFixed(1) + '%'; }
 function kfmt(v) { return (v === null || v === undefined || isNaN(v)) ? '—' : Math.round(v) + 'K'; }
 
@@ -101,11 +105,19 @@ function filterSpecToYears(spec, years) {
     var out = {};
     for (var k in spec) if (spec.hasOwnProperty(k)) out[k] = spec[k];
     out.dates = dates.slice(start);
+    var fullLen = dates.length;
     out.datasets = spec.datasets.map(function (d) {
         var nd = {};
         for (var kk in d) if (d.hasOwnProperty(kk)) nd[kk] = d[kk];
-        nd.data = d.data.slice(start);
-        if (nd.revisedData) nd.revisedData = d.revisedData.slice(start);
+        // Slice `data` AND every per-point array property (e.g. backgroundColor /
+        // borderColor arrays that carry one entry per bar) by the same offset, so
+        // colors stay aligned to their data points in a trimmed window. Scalar
+        // props (a single color string, numbers, flags) are copied unchanged.
+        for (var p in d) {
+            if (d.hasOwnProperty(p) && Array.isArray(d[p]) && d[p].length === fullLen) {
+                nd[p] = d[p].slice(start);
+            }
+        }
         return nd;
     });
     return out;
@@ -163,7 +175,14 @@ function baseOptions(opts) {
         plugins: {
             legend: {
                 position: 'top',
-                labels: { usePointStyle: true, boxWidth: 20, color: COL.text, font: { family: FONT } }
+                // Tighten the legend on phones so 3-4 series don't crowd the plot.
+                labels: {
+                    usePointStyle: true,
+                    boxWidth: isMobile() ? 12 : 20,
+                    padding: isMobile() ? 8 : 10,
+                    color: COL.text,
+                    font: { family: FONT, size: isMobile() ? 11 : 12 }
+                }
             },
             tooltip: {
                 callbacks: {
@@ -180,12 +199,12 @@ function baseOptions(opts) {
                 type: 'time',
                 time: { unit: 'year', tooltipFormat: 'yyyy-MM-dd' },
                 title: { display: false },
-                ticks: { color: COL.text, font: { size: 13, family: FONT } }
+                ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT }, maxRotation: isMobile() ? 45 : 50 }
             },
             y: {
                 min: opts.yMin, max: opts.yMax,
-                title: { display: true, text: opts.yLabel, color: COL.text, font: { size: 13, family: FONT } },
-                ticks: { color: COL.text, font: { size: 13, family: FONT } }
+                title: { display: true, text: opts.yLabel, color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT } },
+                ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT } }
             }
         }
     };

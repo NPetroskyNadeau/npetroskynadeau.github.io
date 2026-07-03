@@ -154,6 +154,11 @@
         align-items: flex-start;
         gap: 0.35rem;
     }
+    /* Reclaim horizontal space for the chart on phones: trim card + heading. */
+    .dashboard-chart-card { padding: 1rem 0.9rem 1.1rem; }
+    .dashboard-panel-heading { font-size: 1.4rem; }
+    .dashboard-panel-subtitle { font-size: 0.95rem; }
+    .dashboard-chart-head h3 { font-size: 1.1rem; }
 }
 
 /* ---- Prose + technical details (mirrors styles.css .data-* patterns) -- */
