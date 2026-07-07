@@ -1,5 +1,5 @@
 // Breakeven payroll growth data for website chart
-// Generated: 2026-07-02
+// Generated: 2026-07-06
 // Source: BLS via FRED, author's calculations
 // Last observation: 2026-06
 
@@ -9,10 +9,6 @@ const BE_LR = [76.6, 76.6, 76.6, 76.7, 76.7, 76.7, 76.7, 76.7, 76.7, 76.7, 76.8,
 
 const BE_SR = [201.3, 203.8, 205.9, 207.6, 209.1, 210.1, 210.8, 211.2, 211.1, 210.7, 209.9, 208.7, 207.2, 205.3, 203.1, 200.5, 197.5, 194.2, 190.6, 186.7, 182.6, 178.1, 173.4, 168.4, 163.2, 157.9, 152.3, 146.6, 140.8, 134.8, 128.8, 122.7, 116.5, 110.4, 104.2, 98.1, 92.0, 86.0, 80.2, 74.4, 68.8, 63.3, 58.0, 52.9, 48.0, 43.3, 38.9, 34.7, 30.8, 27.2, 23.9, 20.8, 18.1, 15.6];
 
-const BE_LR_HARM = [91.0, 91.1, 91.1, 91.2, 91.3, 91.3, 91.4, 91.4, 91.5, 91.6, 91.6, 91.7, 91.8, 91.8, 91.9, 91.9, 92.0, 92.1, 92.1, 92.2, 92.2, 92.3, 92.4, 92.4, 92.5, 92.5, 92.6, 92.6, 92.7, 92.7, 92.8, 92.8, 92.9, 92.9, 93.0, 93.0, 93.1, 93.1, 93.2, 93.2, 93.3, null, null, null, null, null, null, null, null, null, null, null, null, null];
-
-const BE_SR_HARM = [190.7, 190.4, 190.1, 189.6, 188.9, 188.2, 187.3, 186.3, 185.2, 183.9, 182.6, 181.1, 179.6, 177.9, 176.2, 174.4, 172.5, 170.5, 168.5, 166.4, 164.3, 162.2, 160.1, 157.9, 155.7, 153.6, 151.4, 149.3, 147.2, 145.2, 143.2, 141.3, 139.4, 137.6, 135.9, 134.3, 132.8, 131.4, 130.1, 128.9, 127.8, null, null, null, null, null, null, null, null, null, null, null, null, null];
-
 const PAYROLL_GROWTH = [190, 819, 490, 308, 301, 434, 714, 290, 220, 357, 303, 100, 434, 290, 68, 241, 280, 225, 163, 218, 156, 159, 127, 154, 175, 206, 228, 64, 78, 87, 53, 9, 155, 33, 134, 237, -48, 42, 67, 108, 13, -20, 64, -70, 76, -140, 41, -17, 160, -156, 214, 148, 129, 57];
 
-const PAYROLL_GROWTH_PRIOR = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 179, 172, null];
+const PAYROLL_GROWTH_PRIOR = [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null];

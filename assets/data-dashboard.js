@@ -93,11 +93,14 @@ function kfmt(v) { return (v === null || v === undefined || isNaN(v)) ? '—' : 
 // spec.dates and every dataset's data to the window so the chart plots only
 // in-window points — the correct way to zoom a time-series bar chart. Returns a
 // shallow-cloned spec; the original (full) spec is left intact for later widening.
-function filterSpecToYears(spec, years) {
+function filterSpecToYears(spec, years, anchorDate) {
     if (!years) return spec;
     var dates = spec.dates;
-    var last = new Date(dates[dates.length - 1]);
-    var cutoff = new Date(Date.UTC(last.getUTCFullYear() - years, last.getUTCMonth(), 1));
+    // Anchor the trailing window at anchorDate (e.g. the last actual month) when
+    // provided, so any projection tail AFTER the anchor is always kept; otherwise
+    // anchor at the last date in the series.
+    var anchor = anchorDate ? new Date(anchorDate) : new Date(dates[dates.length - 1]);
+    var cutoff = new Date(Date.UTC(anchor.getUTCFullYear() - years, anchor.getUTCMonth(), 1));
     var start = 0;
     for (var i = 0; i < dates.length; i++) {
         if (new Date(dates[i]).getTime() >= cutoff.getTime()) { start = i; break; }
@@ -181,7 +184,19 @@ function baseOptions(opts) {
                     boxWidth: isMobile() ? 12 : 20,
                     padding: isMobile() ? 8 : 10,
                     color: COL.text,
-                    font: { family: FONT, size: isMobile() ? 11 : 12 }
+                    font: { family: FONT, size: isMobile() ? 11 : 12 },
+                    // Make the legend marker honor each line's dash pattern, so the
+                    // projection entries render DASHED (matching the chart) instead of
+                    // solid. The default generateLabels ignores borderDash for point-
+                    // style line markers; copy it onto the item's lineDash.
+                    generateLabels: function (chart) {
+                        var items = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                        items.forEach(function (item) {
+                            var ds = chart.data.datasets[item.datasetIndex];
+                            if (ds && ds.borderDash && ds.borderDash.length) item.lineDash = ds.borderDash;
+                        });
+                        return items;
+                    }
                 }
             },
             tooltip: {
@@ -197,14 +212,29 @@ function baseOptions(opts) {
         scales: {
             x: {
                 type: 'time',
-                time: { unit: 'year', tooltipFormat: 'yyyy-MM-dd' },
+                time: { unit: 'year', tooltipFormat: 'yyyy-MM-dd', displayFormats: { year: 'yyyy' } },
                 title: { display: false },
-                ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT }, maxRotation: isMobile() ? 45 : 50 }
+                // offset:false anchors ticks/gridlines at their EXACT date coordinate.
+                // Bar charts default to offset:true (half-category padding), which shifts
+                // every gridline off the year boundary — the misalignment we're fixing.
+                // With offset:false each Jan-1 gridline sits exactly on the year start,
+                // and align:'start' puts the year label just to its right.
+                offset: false,
+                grid: { offset: false },
+                ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT }, maxRotation: 0, minRotation: 0, align: 'start' }
             },
             y: {
                 min: opts.yMin, max: opts.yMax,
                 title: { display: true, text: opts.yLabel, color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT } },
-                ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT } }
+                ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT } },
+                // Soft caps: auto-scale to the visible data (optimal viewing), but never
+                // let the axis extend past yCapMin/yCapMax. Extremes beyond the cap run
+                // off-edge; when data stays within, the axis shrinks to fit. Applied to
+                // the data limits so Chart.js still computes nice ticks from the result.
+                afterDataLimits: (opts.yCapMin != null || opts.yCapMax != null) ? function (scale) {
+                    if (opts.yCapMin != null && scale.min < opts.yCapMin) scale.min = opts.yCapMin;
+                    if (opts.yCapMax != null && scale.max > opts.yCapMax) scale.max = opts.yCapMax;
+                } : undefined
             }
         }
     };
@@ -386,75 +416,167 @@ var CATEGORIES = [
     prose: [
         'How many jobs must the economy create each month to keep the unemployment rate from rising? The answer depends almost entirely on how fast the labor force is growing.',
         'This <em>breakeven</em> pace equals trend labor-force growth times the share of the labor force that is employed. When actual job creation exceeds breakeven, unemployment tends to fall; when it falls short, unemployment tends to rise. The <em>long-run</em> breakeven captures slow demographic forces; the <em>short-run</em> breakeven captures medium-frequency variation from immigration, participation, and population growth.',
+        'For the United States, the dashed lines extend the estimate to 2028 using a demographic labor-force projection, and the <em>endpoint drift</em> control shows how sensitive the latest reading is to how the recent trend is carried forward. See Technical details for how the projection is built.',
         'The same framework applies to Canada. Because Canada&rsquo;s labor force is roughly one-seventh the U.S. size, its breakeven pace is smaller in absolute terms&mdash;compare actual hiring to the breakeven line <em>within</em> each country. For Canada, hiring is measured by establishment-survey employment (SEPH), the closest analogue to U.S. nonfarm payrolls.'
     ],
     reference: 'Reference: Petrosky-Nadeau and Stewart, "<a href="https://www.frbsf.org/research-and-insights/publications/economic-letter/2024/07/breakeven-employment-growth/" target="_blank">Breakeven Employment Growth</a>," FRBSF Economic Letter 2024-18, 2024.',
     hasCountry: true,
-    kpis: function (country) {
+    kpis: function (country, drift) {
+        drift = drift || 'full';
         var isCA = country === 'CA';
         var dates = isCA ? BE_DATES_CA : BE_DATES;
         var lr = isCA ? BE_LR_CA : BE_LR, sr = isCA ? BE_SR_CA : BE_SR;
         var pay = isCA ? PAYROLL_GROWTH_CA : PAYROLL_GROWTH;
-        var lrV = lastNonNull(lr), srV = lastNonNull(sr), payV = lastNonNull(pay);
-        var date = lastNonNullDate(dates, pay);
+        var payV = lastNonNull(pay);
+        var payDate = lastNonNullDate(dates, pay);
+        // US breakeven KPIs read the spliced series at the join month (last actual),
+        // matching the chart. Canada uses the published series' latest value.
+        var lrV, srV, beDate;
+        var splAvail = !isCA && typeof BE_SPL_DATES !== 'undefined' && BE_SPL_DATES.length;
+        if (splAvail) {
+            var j = BE_SPL_DATES.indexOf(BE_SPL_NOW);
+            lrV = (drift === 'loc' ? BE_SPL_LR_LOC : BE_SPL_LR_FULL)[j];
+            srV = (drift === 'loc' ? BE_SPL_SR_LOC : BE_SPL_SR_FULL)[j];
+            beDate = BE_SPL_NOW;
+        } else {
+            lrV = lastNonNull(lr); srV = lastNonNull(sr);
+            beDate = lastNonNullDate(dates, sr);
+        }
+        var beNote = beDate ? fmtMonthYear(beDate) : 'jobs/month';
         return [
-            { value: kfmt(lrV), label: 'Long-run breakeven', note: 'jobs/month', color: 'navy' },
-            { value: kfmt(srV), label: 'Short-run breakeven', note: 'jobs/month', color: 'gold' },
-            { value: kfmt(payV), label: isCA ? 'Latest SEPH employment' : 'Latest payroll growth', note: date ? fmtMonthYear(date) : '', color: 'gray' }
+            { value: kfmt(lrV), label: 'Long-run breakeven', note: beNote, color: 'navy' },
+            { value: kfmt(srV), label: 'Short-run breakeven', note: beNote, color: 'gold' },
+            { value: kfmt(payV), label: isCA ? 'Latest SEPH employment' : 'Latest payroll growth', note: payDate ? fmtMonthYear(payDate) : '', color: 'gray' }
         ];
     },
     charts: [{
         id: 'breakeven',
         title: 'Estimates of Breakeven Payroll Growth',
-        // Range via discrete presets that FILTER the data to a trailing window
-        // (see rangePresets handling in the shell) — not an axis clamp, which
-        // mis-rendered the bezier breakeven lines. 'All' (years:null) is default.
+        // Range presets FILTER the data to a trailing HISTORY window measured back
+        // from the last actual month (not the projection end), and ALWAYS keep the
+        // full projection tail. So '3Y' shows 3 years of history + projection to
+        // 2028; 'All' (years:null) shows everything (2016 -> 2028, the default).
+        // The shell honors `rangeAnchor: 'histEnd'` to cut relative to histEnd.
         rangeSlider: false,
+        rangeAnchor: 'histEnd',
+        // Default to 5Y: the full 'All' (2016+) view is dominated by the COVID
+        // swing in the raw 12-month payroll average, which blows out the y-axis;
+        // 5Y lands post-COVID and keeps the breakeven lines + projection readable.
+        defaultYears: 5,
         rangePresets: [
-            { label: '1Y', years: 1 },
-            { label: '2Y', years: 2 },
             { label: '3Y', years: 3 },
+            { label: '5Y', years: 5 },
+            { label: '10Y', years: 10 },
             { label: 'All', years: null }
         ],
-        // Optional smoothing toggle: trailing moving average of payroll growth.
-        // window=0 -> Monthly (raw bars only). The shell reads state[cat].smoothing.
+        // Smoothing toggle: trailing moving average of payroll growth. Default is
+        // 12-mo; window=0 -> No smoothing (raw bars only). Shell reads state[cat].smoothing.
         smoothing: [
-            { label: 'Monthly', window: 0 },
+            { label: '12-mo avg', window: 12 },
             { label: '6-mo avg', window: 6 },
-            { label: '12-mo avg', window: 12 }
+            { label: 'No smoothing', window: 0 }
         ],
-        build: function (country, ma) {
-            ma = ma || 0;
+        // Endpoint-drift OVERLAY toggle (US only). Full-sample is the always-on
+        // baseline; 'loc' ADDS the 36-month-drift lines on top for comparison
+        // (not a swap). Shell reads state[cat].drift ('full' = baseline only,
+        // 'loc' = baseline + 36-month overlay).
+        driftOptions: [
+            { label: 'Full-sample', drift: 'full' },
+            { label: '+ 36-month', drift: 'loc' }
+        ],
+        // Projection show/hide (US only). Shell reads state[cat].showProj (default true).
+        projectionToggle: [
+            { label: 'Show', showProj: true },
+            { label: 'Hide', showProj: false }
+        ],
+        build: function (country, ma, drift, showProj) {
+            ma = (ma === undefined) ? 12 : ma;
+            drift = drift || 'full';
+            showProj = (showProj === undefined) ? true : showProj;
             var isCA = country === 'CA';
             var dates = isCA ? BE_DATES_CA : BE_DATES;
             var lr = isCA ? BE_LR_CA : BE_LR, sr = isCA ? BE_SR_CA : BE_SR;
             var pay = isCA ? PAYROLL_GROWTH_CA : PAYROLL_GROWTH;
-            var capped = pay.map(function (v) { return v === null ? null : Math.max(-500, Math.min(500, v)); });
+            // US only: replace the published history LR/SR with ONE continuous
+            // seam-reconciled spliced series (breakeven_projection_data.js), drawn
+            // solid through the join month and dashed after — same construction on
+            // both sides, so there is no discrete jump where the projection starts.
+            // Full-sample is the baseline; the 36-month overlay is added when drift
+            // === 'loc'. Payroll comes from BE_SPL_PAY on the same 2016-2028 axis.
+            var splAvail = !isCA && typeof BE_SPL_DATES !== 'undefined' && BE_SPL_DATES.length;
+            var lrHist = null, srHist = null, lrProj = null, srProj = null;
+            var lrHistL = null, srHistL = null, lrProjL = null, srProjL = null;
+            if (splAvail) {
+                var nowIdx = BE_SPL_DATES.indexOf(BE_SPL_NOW);
+                dates = BE_SPL_DATES;
+                pay = (typeof BE_SPL_PAY !== 'undefined') ? BE_SPL_PAY : pay;
+                var splitHist = function (a) { return a.map(function (v, i) { return i <= nowIdx ? v : null; }); };
+                var splitProj = function (a) { return a.map(function (v, i) { return i >= nowIdx ? v : null; }); };
+                // Baseline (full-sample drift)
+                lrHist = splitHist(BE_SPL_LR_FULL); srHist = splitHist(BE_SPL_SR_FULL);
+                lrProj = splitProj(BE_SPL_LR_FULL); srProj = splitProj(BE_SPL_SR_FULL);
+                lr = lrHist; sr = srHist;
+                // Overlay (36-month local drift), only when requested
+                if (drift === 'loc') {
+                    lrHistL = splitHist(BE_SPL_LR_LOC); srHistL = splitHist(BE_SPL_SR_LOC);
+                    lrProjL = splitProj(BE_SPL_LR_LOC); srProjL = splitProj(BE_SPL_SR_LOC);
+                }
+            }
+            // Payroll bars are drawn at their RAW magnitude (no ±500K clip): the
+            // moving-average line is uncapped, so clipping only the bars would be
+            // inconsistent. The COVID months therefore run to full scale.
+            var barVals = pay.slice();
             // When a moving average is on, fade the raw bars so the MA line reads
             // as the foreground signal; otherwise use the normal bar opacity.
             var barFill = ma ? 0.10 : 0.25, barNeg = ma ? 0.15 : 0.40;
-            var bg = capped.map(function (v) { return v !== null && v < 0 ? 'rgba(183,59,54,' + barNeg + ')' : 'rgba(44,90,160,' + barFill + ')'; });
-            var bd = capped.map(function (v) { return v !== null && v < 0 ? 'rgba(183,59,54,' + (barNeg + 0.2) + ')' : 'rgba(44,90,160,' + (barFill + 0.15) + ')'; });
-            // Prior (previously published) payroll growth: null except revised months.
-            // Drawn as a faint hollow bar overlaid on the same category (grouped:false)
-            // so it sits beside the revised bar and shows the revision at a glance.
-            var priorRaw = isCA ? (typeof PAYROLL_GROWTH_PRIOR_CA !== 'undefined' ? PAYROLL_GROWTH_PRIOR_CA : null)
-                                : (typeof PAYROLL_GROWTH_PRIOR !== 'undefined' ? PAYROLL_GROWTH_PRIOR : null);
-            var prior = priorRaw ? priorRaw.map(function (v) { return v === null ? null : Math.max(-500, Math.min(500, v)); }) : null;
+            var bg = barVals.map(function (v) { return v !== null && v < 0 ? 'rgba(183,59,54,' + barNeg + ')' : 'rgba(44,90,160,' + barFill + ')'; });
+            var bd = barVals.map(function (v) { return v !== null && v < 0 ? 'rgba(183,59,54,' + (barNeg + 0.2) + ')' : 'rgba(44,90,160,' + (barFill + 0.15) + ')'; });
+            // Prior-revision ghost bars: only for the CA path (its payroll is on
+            // BE_DATES_CA). The US path now uses BE_SPL_PAY on the spliced axis, so
+            // the old PAYROLL_GROWTH_PRIOR (2022+ BE_DATES) would misalign — skip it.
+            var priorRaw = isCA ? (typeof PAYROLL_GROWTH_PRIOR_CA !== 'undefined' ? PAYROLL_GROWTH_PRIOR_CA : null) : null;
+            var prior = priorRaw ? priorRaw.slice() : null;   // raw (unclipped), matches bars
             var hasRevisions = prior && prior.some(function (v) { return v !== null; });
             var datasets = [
-                { label: isCA ? 'SEPH employment growth' : 'Nonfarm payroll growth', data: capped, type: 'bar', backgroundColor: bg, borderColor: bd, borderWidth: 1, order: 2, isPayroll: true },
-                { label: 'Long-run breakeven', data: lr, type: 'line', borderColor: COL.navy, borderWidth: 2.5, pointRadius: 0, tension: 0.1, order: 1 },
-                { label: 'Short-run breakeven', data: sr, type: 'line', borderColor: COL.gold, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 0 }
+                { label: isCA ? 'SEPH employment growth' : 'Nonfarm payroll growth', data: barVals, type: 'bar', backgroundColor: bg, borderColor: bd, borderWidth: 1, order: 2, isPayroll: true, pointStyle: 'rect' },
+                { label: 'Long-run breakeven', data: lr, type: 'line', borderColor: COL.navy, borderWidth: 2.5, pointRadius: 0, tension: 0.1, order: 1, pointStyle: 'line' },
+                { label: 'Short-run breakeven', data: sr, type: 'line', borderColor: COL.gold, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 0, pointStyle: 'line' }
             ];
+            if (lrProj && showProj) {
+                // Dashed forward paths (projection). Same colors as history, dashed.
+                datasets.push(
+                    { label: 'Long-run breakeven (projected)', data: lrProj, type: 'line', borderColor: COL.navy, borderWidth: 2, borderDash: [6, 4], pointRadius: 0, tension: 0.1, spanGaps: false, order: 1, isProjection: true, pointStyle: 'line' },
+                    { label: 'Short-run breakeven (projected)', data: srProj, type: 'line', borderColor: COL.gold, borderWidth: 2, borderDash: [6, 4], pointRadius: 0, tension: 0.1, spanGaps: false, order: 0, isProjection: true, pointStyle: 'line' }
+                );
+            }
+            if (lrHistL) {
+                // 36-month-drift OVERLAY (lighter/thinner) so both drifts compare at
+                // once against the full-sample baseline. History solid, projection dashed.
+                datasets.push(
+                    { label: 'Long-run breakeven (36-mo)', data: lrHistL, type: 'line', borderColor: COL.navyLight || 'rgba(44,90,160,0.55)', borderWidth: 1.75, pointRadius: 0, tension: 0.1, spanGaps: false, order: 1, isDriftOverlay: true, pointStyle: 'line' },
+                    { label: 'Short-run breakeven (36-mo)', data: srHistL, type: 'line', borderColor: 'rgba(230,168,23,0.65)', borderWidth: 1.75, pointRadius: 0, tension: 0.1, spanGaps: false, order: 0, isDriftOverlay: true, pointStyle: 'line' }
+                );
+                if (showProj) {
+                    datasets.push(
+                        { label: 'Long-run breakeven (36-mo, projected)', data: lrProjL, type: 'line', borderColor: COL.navyLight || 'rgba(44,90,160,0.55)', borderWidth: 1.5, borderDash: [3, 3], pointRadius: 0, tension: 0.1, spanGaps: false, order: 1, isDriftOverlay: true, pointStyle: 'line' },
+                        { label: 'Short-run breakeven (36-mo, projected)', data: srProjL, type: 'line', borderColor: 'rgba(230,168,23,0.65)', borderWidth: 1.5, borderDash: [3, 3], pointRadius: 0, tension: 0.1, spanGaps: false, order: 0, isDriftOverlay: true, pointStyle: 'line' }
+                    );
+                }
+            }
             if (ma) {
-                // Trailing MA over the RAW (uncapped) payroll series so smoothing
-                // isn't distorted by the ±500K display clip. Draw on top of bars.
-                var avg = trailingMA(pay, ma);
+                // Trailing MA of raw payroll growth. For the US spliced axis, use the
+                // PRECOMPUTED arrays (BE_SPL_PAY_MA*), which are built in Python with a
+                // pre-2016 lead-in so the line is complete from the first shown month
+                // (Jan 2016) — a browser MA over the 2016+ array alone would be null for
+                // its first 11 months. Fall back to a browser MA (Canada / no precompute).
+                var avg;
+                if (splAvail && ma === 12 && typeof BE_SPL_PAY_MA12 !== 'undefined') avg = BE_SPL_PAY_MA12;
+                else if (splAvail && ma === 6 && typeof BE_SPL_PAY_MA6 !== 'undefined') avg = BE_SPL_PAY_MA6;
+                else avg = trailingMA(pay, ma);
                 datasets.push({
                     label: ma + '-month average', data: avg, type: 'line',
                     borderColor: COL.teal, borderWidth: 2.5, pointRadius: 0, tension: 0.25,
-                    spanGaps: false, order: 0, isMA: true, maWindow: ma
+                    spanGaps: false, order: 0, isMA: true, maWindow: ma, pointStyle: 'line'
                 });
             }
             if (hasRevisions) {
@@ -464,13 +586,24 @@ var CATEGORIES = [
                     label: 'Prior estimate', data: prior, type: 'bar',
                     backgroundColor: 'rgba(0,0,0,0)', borderColor: 'rgba(120,120,120,0.9)',
                     borderWidth: 1.25, borderDash: [3, 2], grouped: false, order: 3,
-                    isPrior: true, revisedData: capped
+                    isPrior: true, revisedData: barVals
                 });
             }
             return {
                 dates: dates,
-                recession: null, // series starts 2022; no recession in window
-                yLabel: 'Thousands of jobs per month', yMin: undefined, yMax: undefined,
+                recession: null,
+                // Join month (last actual) — range presets anchor their trailing
+                // window here so the projection tail is always kept.
+                histEnd: splAvail ? BE_SPL_NOW : lastNonNullDate(dates, sr),
+                // US only: SOFT-cap the y-axis at ±1000 for readability. The axis
+                // auto-scales to the visible data (optimal viewing when it's small, e.g.
+                // the 5Y window), but never extends past ±1000 — so the COVID payroll
+                // bar (-20,469) and MA spikes run off-edge in the 'All' view rather than
+                // crushing the breakeven lines. Bars/MA keep true values (tooltips too).
+                // Canada (~±30K) has no cap and stays fully auto-scaled.
+                yLabel: 'Thousands of jobs per month',
+                yMin: undefined, yMax: undefined,
+                yCapMin: isCA ? undefined : -1000, yCapMax: isCA ? undefined : 1000,
                 valueFmt: function (v) { return v.toFixed(0) + 'K'; },
                 titleFmt: fmtShortMY,
                 datasets: datasets
@@ -478,14 +611,14 @@ var CATEGORIES = [
         },
         source: function (country) {
             return country === 'CA'
-                ? 'Source: Statistics Canada (LFS 14-10-0287; SEPH 14-10-0223) and author&rsquo;s calculations, following Petrosky-Nadeau and Stewart (2024). Reference unemployment rate 6.0 percent. Payroll bars are SEPH employment, clipped at &plusmn;500K for readability.'
-                : 'Source: BLS via FRED and author&rsquo;s calculations. Breakeven payroll growth based on Petrosky-Nadeau and Stewart (2024). Reference unemployment rate 4.4 percent (CBO longer-run natural rate). Payroll bars are total nonfarm payrolls, clipped at &plusmn;500K for readability.';
+                ? 'Source: Statistics Canada (LFS 14-10-0287; SEPH 14-10-0223) and author&rsquo;s calculations, following Petrosky-Nadeau and Stewart (2024). Reference unemployment rate 6.0 percent. Payroll bars are SEPH employment.'
+                : 'Source: BLS via FRED and author&rsquo;s calculations. Breakeven payroll growth based on Petrosky-Nadeau and Stewart (2024). Reference unemployment rate 4.4 percent (CBO longer-run natural rate). Payroll bars are total nonfarm payrolls; the 12-month average is shown by default (use the smoothing control to change it). The dashed forward path (through 2028) splices a Census-based demographic labor-force projection onto the actual series so the current month is estimated as an interior point rather than a one-sided endpoint; the endpoint-drift toggle shows its sensitivity to how the trend is extrapolated.';
         }
     }],
     download: { href: 'assets/data/breakeven_payrolls_data.csv', label: 'Download data (CSV)', note: 'includes United States and Canada, with suggested citation in the file header.' },
     technical: [
-        { label: 'Methodology', html: '<p>The breakeven formula is <em>dN<sub>be</sub> = (1 &minus; &#363;) &times; dLF<sub>trend</sub></em>, where <em>&#363;</em> is a reference unemployment rate (4.4 percent for the U.S.; 6.0 percent for Canada) and <em>dLF<sub>trend</sub></em> is the monthly change in trend labor force. Trend labor force is extracted with a Christiano-Fitzgerald asymmetric band-pass filter. The long-run filter passes 2&ndash;480 month cycles; the short-run filter passes 2&ndash;72 months and is applied separately pre- and post-COVID because the pandemic broke the series. Endpoint estimates for the most recent ~24 months are less precise.</p>' },
-        { label: 'Sources', html: '<p>U.S.: civilian labor force (CLF16OV) for the trend and total nonfarm payrolls (PAYEMS) for the bars, both from BLS via FRED. Canada: labour force (LFS 14-10-0287) for the trend and SEPH employment (14-10-0223) for the bars, from Statistics Canada. Estimates update after each monthly release; the chart shows January 2022 onward.</p>' }
+        { label: 'Methodology', html: '<p>The breakeven formula is <em>dN<sub>be</sub> = (1 &minus; &#363;) &times; dLF<sub>trend</sub></em>, where <em>&#363;</em> is a reference unemployment rate (4.4 percent for the U.S.; 6.0 percent for Canada) and <em>dLF<sub>trend</sub></em> is the monthly change in trend labor force. Trend labor force is extracted with a Christiano-Fitzgerald asymmetric band-pass filter. The long-run filter passes 2&ndash;480 month cycles; the short-run filter passes 2&ndash;72 months and is applied separately pre- and post-COVID because the pandemic broke the series.</p><p><strong>Projection (U.S., dashed).</strong> Because the filter is one-sided at the end of the sample, the most recent ~24 months are sensitive to how the trend is assumed to continue. The dashed forward path (through 2028) addresses this by splicing a Census-based demographic labor-force projection onto the actual series&mdash;level-matched at the join so there is no discontinuity&mdash;and filtering the combined series, which turns the current month into an interior point. The <em>endpoint-drift</em> toggle makes the remaining sensitivity explicit: <em>full-sample</em> drift extrapolates the long-run average slope, while <em>36-month</em> drift uses the trailing three-year slope. On the spliced series the two nearly coincide for the short-run measure (the projection removes most of the sensitivity) and differ by a few thousand for the long-run measure.</p>' },
+        { label: 'Sources', html: '<p>U.S.: civilian labor force (CLF16OV) for the trend and total nonfarm payrolls (PAYEMS) for the bars, both from BLS via FRED; the forward projection uses U.S. Census Bureau population projections via the author&rsquo;s demographic labor-force model. Canada: labour force (LFS 14-10-0287) for the trend and SEPH employment (14-10-0223) for the bars, from Statistics Canada (no projection). Estimates update after each monthly release; the U.S. chart shows January 2016 onward, with the projection extending to December 2028 (Canada shows January 2022 onward).</p>' }
     ]
 },
 
@@ -648,6 +781,30 @@ function controlsHtml(cat, chartSpec) {
         parts.push('<div class="chart-control-group" role="group" aria-label="Smoothing">' +
             '<span class="chart-control-label">Smoothing</span>' + sbtns + '</div>');
     }
+    // Endpoint-drift toggle (first option is default/on). Hidden for Canada via
+    // JS since the spliced series is US-only; shown otherwise.
+    if (chartSpec.driftOptions) {
+        var initCA = state[cat.id].country === 'CA';
+        var dbtns = chartSpec.driftOptions.map(function (o, i) {
+            return '<button class="dash-toggle dash-drift' + (i === 0 ? ' active' : '') + '" ' +
+                'data-drift="' + o.drift + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + o.label + '</button>';
+        }).join('');
+        parts.push('<div class="chart-control-group dash-drift-group" role="group" aria-label="Endpoint drift"' +
+            (initCA ? ' style="display:none"' : '') + '>' +
+            '<span class="chart-control-label">Endpoint drift</span>' + dbtns + '</div>');
+    }
+    // Projection show/hide toggle (US only; hidden for Canada). First option
+    // (Show) is the default/on state.
+    if (chartSpec.projectionToggle) {
+        var initCAp = state[cat.id].country === 'CA';
+        var pbtns = chartSpec.projectionToggle.map(function (o, i) {
+            return '<button class="dash-toggle dash-proj' + (i === 0 ? ' active' : '') + '" ' +
+                'data-proj="' + o.showProj + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + o.label + '</button>';
+        }).join('');
+        parts.push('<div class="chart-control-group dash-proj-group" role="group" aria-label="Projection"' +
+            (initCAp ? ' style="display:none"' : '') + '>' +
+            '<span class="chart-control-label">Projection</span>' + pbtns + '</div>');
+    }
     // Range presets (right)
     if (chartSpec.presets) {
         var btns = chartSpec.presets.map(function (p) {
@@ -797,9 +954,10 @@ function panelHtml(cat) {
    truth so buildChart / country / smoothing / range all render consistently. */
 function buildSpec(cat, chartSpec) {
     var st = state[cat.id];
-    var spec = chartSpec.build(st.country, st.smoothing);
+    var spec = chartSpec.build(st.country, st.smoothing, st.drift, st.showProj);
     if (chartSpec.rangePresets) {
-        spec = filterSpecToYears(spec, st.rangeYears[chartSpec.id] || null);
+        var anchor = (chartSpec.rangeAnchor === 'histEnd') ? spec.histEnd : null;
+        spec = filterSpecToYears(spec, st.rangeYears[chartSpec.id] || null, anchor);
     }
     return spec;
 }
@@ -853,7 +1011,7 @@ function updateCountry(cat, country) {
     st.country = country;
     // update KPIs
     if (cat.kpis) {
-        document.getElementById('kpis_' + cat.id).innerHTML = kpiHtml(cat.kpis(country));
+        document.getElementById('kpis_' + cat.id).innerHTML = kpiHtml(cat.kpis(country, st.drift));
     }
     // update each chart
     cat.charts.forEach(function (chartSpec) {
@@ -863,9 +1021,16 @@ function updateCountry(cat, country) {
         // replace datasets wholesale (labels/colors/data may all differ)
         entry.chart.data.datasets = spec.datasets;
         entry.chart.$recessions = spec.recession;
-        // re-point y bounds if provided
+        // re-point y bounds + soft-cap callback (US caps at ±1000; CA has none, so
+        // the callback must be cleared or CA would stay clamped to the stale US cap).
         entry.chart.options.scales.y.min = spec.yMin;
         entry.chart.options.scales.y.max = spec.yMax;
+        entry.chart.options.scales.y.afterDataLimits = (spec.yCapMin != null || spec.yCapMax != null)
+            ? function (scale) {
+                if (spec.yCapMin != null && scale.min < spec.yCapMin) scale.min = spec.yCapMin;
+                if (spec.yCapMax != null && scale.max > spec.yCapMax) scale.max = spec.yCapMax;
+            }
+            : undefined;
         entry.chart.options.plugins.tooltip.callbacks.title = function (c) { return spec.titleFmt(c[0].label); };
         entry.chart.options.plugins.tooltip.callbacks.label = function (c) {
             if (c.parsed.y === null) return null;
@@ -885,6 +1050,10 @@ function updateCountry(cat, country) {
         var on = btn.dataset.country === country;
         btn.classList.toggle('active', on);
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    // Endpoint-drift + projection toggles are US-only; hide them for Canada.
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-drift-group, #panel-' + cat.id + ' .dash-proj-group').forEach(function (g) {
+        g.style.display = country === 'CA' ? 'none' : '';
     });
     ga('toggle_country', { country: country, page: 'data', category: cat.id });
 }
@@ -914,6 +1083,55 @@ function updateSmoothing(cat, window) {
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     ga('toggle_smoothing', { window: window, page: 'data', category: cat.id });
+}
+
+/* Endpoint-drift toggle: rebuild the affected chart's datasets in place, swapping
+   the spliced series between full-sample and 36-month local drift. Preserves the
+   current x-range. Only charts that declare `driftOptions` react. */
+function updateDrift(cat, drift) {
+    var st = state[cat.id];
+    if (st.drift === drift) return;
+    st.drift = drift;
+    cat.charts.forEach(function (chartSpec) {
+        if (!chartSpec.driftOptions) return;
+        var entry = st.charts[chartSpec.id];
+        if (!entry) return;
+        var spec = buildSpec(cat, chartSpec);
+        entry.chart.data.labels = spec.dates;
+        entry.chart.data.datasets = spec.datasets;
+        entry.chart.update();
+    });
+    // KPIs stay on the full-sample baseline (the 36-month is an overlay, not the
+    // headline), so no KPI refresh here.
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-drift').forEach(function (btn) {
+        var on = btn.dataset.drift === drift;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    ga('toggle_drift', { drift: drift, page: 'data', category: cat.id });
+}
+
+/* Projection show/hide toggle: rebuild datasets to include or omit the dashed
+   forward paths. Preserves the current x-range. */
+function updateProjection(cat, showProj) {
+    var st = state[cat.id];
+    if (st.showProj === showProj) return;
+    st.showProj = showProj;
+    cat.charts.forEach(function (chartSpec) {
+        if (!chartSpec.projectionToggle) return;
+        var entry = st.charts[chartSpec.id];
+        if (!entry) return;
+        var spec = buildSpec(cat, chartSpec);
+        entry.chart.data.labels = spec.dates;
+        entry.chart.data.datasets = spec.datasets;
+        entry.chart.update();
+    });
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-proj').forEach(function (btn) {
+        var on = (btn.dataset.proj === 'true') === showProj;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    ga('toggle_projection', { show: showProj, page: 'data', category: cat.id });
 }
 
 /* Range preset: filter the chart's data to a trailing window of `years` (null =
@@ -1155,6 +1373,22 @@ function initDelegates() {
             updateSmoothing(scat, parseInt(sm.dataset.window, 10));
             return;
         }
+        // Endpoint-drift overlay toggle (Full-sample / + 36-month)
+        var df = e.target.closest('.dash-drift');
+        if (df) {
+            var dpanel = df.closest('.dashboard-panel');
+            var dcat = CATEGORIES.find(function (c) { return 'panel-' + c.id === dpanel.id; });
+            updateDrift(dcat, df.dataset.drift);
+            return;
+        }
+        // Projection show/hide toggle
+        var pj = e.target.closest('.dash-proj');
+        if (pj) {
+            var pjpanel = pj.closest('.dashboard-panel');
+            var pjcat = CATEGORIES.find(function (c) { return 'panel-' + c.id === pjpanel.id; });
+            updateProjection(pjcat, pj.dataset.proj === 'true');
+            return;
+        }
         // Range presets that filter the data (1Y / 2Y / 3Y / All)
         var rp = e.target.closest('.dash-range-preset');
         if (rp) {
@@ -1224,7 +1458,14 @@ function positionTabs() {
 /* ---------- Boot ------------------------------------------------------- */
 function init() {
     // init per-category state
-    CATEGORIES.forEach(function (c) { state[c.id] = { country: 'US', charts: {}, smoothing: 0, rangeYears: {} }; });
+    CATEGORIES.forEach(function (c) { state[c.id] = { country: 'US', charts: {}, smoothing: (c.id === 'breakeven-payrolls' ? 12 : 0), drift: 'full', showProj: true, rangeYears: {} }; });
+    // Seed each chart's default range window from its spec's defaultYears (if any),
+    // so the initial active preset + filtered view match (e.g. breakeven -> 5Y).
+    CATEGORIES.forEach(function (c) {
+        c.charts.forEach(function (cs) {
+            if (cs.defaultYears) state[c.id].rangeYears[cs.id] = cs.defaultYears;
+        });
+    });
 
     document.getElementById('dashboardPanels').innerHTML =
         CATEGORIES.map(panelHtml).join('');
