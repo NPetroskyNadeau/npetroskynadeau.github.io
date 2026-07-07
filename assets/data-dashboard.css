@@ -159,6 +159,14 @@
     .dashboard-panel-heading { font-size: 1.4rem; }
     .dashboard-panel-subtitle { font-size: 0.95rem; }
     .dashboard-chart-head h3 { font-size: 1.1rem; }
+    /* The chart is the page's most important element. With maintainAspectRatio:false
+       (set on mobile in data-dashboard.js), Chart.js fills this container, so give it
+       a tall fixed height — most of the viewport, minus room for the legend rows. */
+    .chart-canvas-wrap {
+        height: 68vh;
+        min-height: 420px;
+        max-height: 620px;
+    }
 }
 
 /* ---- Prose + technical details (mirrors styles.css .data-* patterns) -- */

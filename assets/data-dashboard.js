@@ -173,7 +173,11 @@ function baseOptions(opts) {
     // opts: { yLabel, yMin, yMax, valueFmt, titleFmt }
     return {
         responsive: true,
-        maintainAspectRatio: true,
+        // On phones, DON'T tie chart height to width (a 2:1 aspect on a ~330px-wide
+        // screen leaves a tiny plot). Instead let the canvas fill a fixed-height
+        // container sized in CSS (.chart-canvas-wrap on mobile) so the chart is big.
+        maintainAspectRatio: !isMobile(),
+        aspectRatio: 2,
         interaction: { mode: 'index', intersect: false },
         plugins: {
             legend: {
@@ -191,6 +195,16 @@ function baseOptions(opts) {
                     // style line markers; copy it onto the item's lineDash.
                     generateLabels: function (chart) {
                         var items = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                        // On phones, drop the "(36-mo)" drift-overlay duplicates from the
+                        // legend only (the primary + projected entries stay). They're a
+                        // secondary comparison series and would otherwise push the legend to
+                        // 3-4 rows and crush the plot. Desktop keeps everything.
+                        if (isMobile()) {
+                            items = items.filter(function (item) {
+                                var ds = chart.data.datasets[item.datasetIndex];
+                                return !(ds && ds.isDriftOverlay);
+                            });
+                        }
                         items.forEach(function (item) {
                             var ds = chart.data.datasets[item.datasetIndex];
                             if (ds && ds.borderDash && ds.borderDash.length) item.lineDash = ds.borderDash;
@@ -221,11 +235,15 @@ function baseOptions(opts) {
                 // and align:'start' puts the year label just to its right.
                 offset: false,
                 grid: { offset: false },
-                ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT }, maxRotation: 0, minRotation: 0, align: 'start' }
+                // autoSkip thins year labels when they'd collide (narrow phone widths);
+                // keep them horizontal so they stay readable rather than rotating.
+                ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT }, maxRotation: 0, minRotation: 0, align: 'start', autoSkip: true, autoSkipPadding: isMobile() ? 8 : 4 }
             },
             y: {
                 min: opts.yMin, max: opts.yMax,
-                title: { display: true, text: opts.yLabel, color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT } },
+                // Trim the y-title padding on phones so the axis label hugs the ticks
+                // instead of leaving a wide empty gutter on the left.
+                title: { display: true, text: opts.yLabel, color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT }, padding: isMobile() ? 0 : 4 },
                 ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT } },
                 // Soft caps: auto-scale to the visible data (optimal viewing), but never
                 // let the axis extend past yCapMin/yCapMax. Extremes beyond the cap run
