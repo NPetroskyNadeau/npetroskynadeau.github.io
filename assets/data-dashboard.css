@@ -221,6 +221,37 @@
 .dashboard-about-body { margin-top: 0.6rem; }
 .dashboard-about-body[hidden] { display: none; }
 
+/* ---- "Chart options" advanced-controls disclosure (below the chart) -----
+   Two-tier progressive disclosure: the everyday rail sits above the chart; the
+   power-user controls are gated here, collapsed by default, opened on one click. */
+.dash-advanced { margin: 0.5rem 0 0.25rem; }
+.dash-advanced-toggle {
+    appearance: none;
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #2c5aa0;
+    cursor: pointer;
+    padding: 0.3rem 0.2rem;
+}
+.dash-advanced-toggle:hover { text-decoration: underline; }
+.dash-advanced-toggle:focus-visible { outline: 2px solid #2c5aa0; outline-offset: 2px; border-radius: 3px; }
+.dash-advanced-caret { display: inline-block; font-size: 0.75rem; }
+.dash-advanced-body { margin-top: 0.25rem; }
+.dash-advanced-body[hidden] { display: none; }
+/* The button-group rail inside the disclosure left-aligns its groups (no
+   space-between spread) and drops the top border the toggle already supplies. */
+.dash-advanced-rail {
+    justify-content: flex-start;
+    border-top: none;
+    margin-top: 0;
+}
+/* A range slider gated into the disclosure gets a small label above it. */
+.dash-advanced-slider { margin-top: 0.6rem; }
+.dash-advanced-slider .chart-control-label { display: block; margin-bottom: 0.3rem; }
+
 /* ---- Chart-view switch (multi-chart categories: one chart at a time) --- */
 .chart-view-switch {
     display: flex;

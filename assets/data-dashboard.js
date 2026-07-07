@@ -394,6 +394,12 @@ var CATEGORIES = [
         id: 'benchmark',
         title: 'Estimates of Benchmark Rates of Unemployment',
         rangeSlider: true,
+        // Two-tier progressive disclosure (matches Breakeven): the coarse presets
+        // (10Y/20Y/Max) are the everyday range control on top; the fine-grained
+        // dual-handle slider is gated into the "Chart options" disclosure below so
+        // there aren't two competing range UIs on the primary surface (UI research
+        // findings #6/#7).
+        sliderInAdvanced: true,
         presets: [{ label: '10Y', years: 10 }, { label: '20Y', years: 20 }, { label: 'Max', years: null }],
         build: function (country) {
             var d = country === 'CA' ? SP_DATA_CA : SP_DATA;
@@ -405,9 +411,13 @@ var CATEGORIES = [
                 valueFmt: function (v) { return v.toFixed(2) + '%'; },
                 titleFmt: fmtQuarter,
                 datasets: [
-                    { label: 'Unemployment rate', data: col(d, 1), borderColor: COL.red, borderWidth: 2, pointRadius: 0, tension: 0.1 },
-                    { label: 'U-SP (preferred)', data: col(d, 2), borderColor: COL.navy, borderWidth: 2, pointRadius: 0, tension: 0.1 },
-                    { label: lrLabel, data: col(d, 3), borderColor: COL.gray, borderWidth: 1.5, borderDash: [8, 4], pointRadius: 0, tension: 0.1 }
+                    // pointStyle:'line' -> legend shows line-style markers (matching
+                    // Breakeven), not the ambiguous hollow circles; the dashed U-LR
+                    // then renders as a dashed line swatch via the legend's
+                    // borderDash->lineDash copy in baseOptions.
+                    { label: 'Unemployment rate', data: col(d, 1), borderColor: COL.red, borderWidth: 2, pointRadius: 0, tension: 0.1, pointStyle: 'line' },
+                    { label: 'U-SP (preferred)', data: col(d, 2), borderColor: COL.navy, borderWidth: 2, pointRadius: 0, tension: 0.1, pointStyle: 'line' },
+                    { label: lrLabel, data: col(d, 3), borderColor: COL.gray, borderWidth: 1.5, borderDash: [8, 4], pointRadius: 0, tension: 0.1, pointStyle: 'line' }
                 ]
             };
         },
@@ -507,6 +517,11 @@ var CATEGORIES = [
             { label: 'Show', showProj: true },
             { label: 'Hide', showProj: false }
         ],
+        // Two-tier progressive disclosure (UI research, FRED model): keep the
+        // everyday rail to Country + Range; gate Smoothing, Endpoint drift, and
+        // Projection behind a "Chart options" disclosure below the chart. These
+        // are legibility/methodology/secondary controls, not the primary view.
+        advanced: ['smoothing', 'drift', 'projection'],
         build: function (country, ma, drift, showProj) {
             ma = (ma === undefined) ? 12 : ma;
             drift = drift || 'full';
@@ -688,9 +703,9 @@ var CATEGORIES = [
                     valueFmt: function (v) { return v.toFixed(2) + '%'; },
                     titleFmt: fmtShortMY,
                     datasets: [
-                        { label: 'Participation rate (actual)', data: LFT_LFPR_ACTUAL, borderColor: COL.gray, borderWidth: 1.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 3 },
-                        { label: 'Demographic trend', data: LFT_LFPR_TREND, borderColor: COL.teal, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 2 },
-                        { label: 'Projection (Census)', data: LFT_LFPR_PROJ, borderColor: COL.navy, borderWidth: 2, borderDash: [6, 4], pointRadius: 0, tension: 0.1, spanGaps: false, order: 1 }
+                        { label: 'Participation rate (actual)', data: LFT_LFPR_ACTUAL, borderColor: COL.gray, borderWidth: 1.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 3, pointStyle: 'line' },
+                        { label: 'Demographic trend', data: LFT_LFPR_TREND, borderColor: COL.teal, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 2, pointStyle: 'line' },
+                        { label: 'Projection (Census)', data: LFT_LFPR_PROJ, borderColor: COL.navy, borderWidth: 2, borderDash: [6, 4], pointRadius: 0, tension: 0.1, spanGaps: false, order: 1, pointStyle: 'line' }
                     ]
                 };
             },
@@ -714,9 +729,9 @@ var CATEGORIES = [
                     valueFmt: function (v) { return v.toFixed(1) + 'M'; },
                     titleFmt: fmtShortMY,
                     datasets: [
-                        { label: 'Labor force (actual)', data: mm(LFT_LF_ACTUAL), borderColor: COL.gray, borderWidth: 1.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 3 },
-                        { label: 'Demographic trend', data: mm(LFT_LF_TREND), borderColor: COL.teal, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 2 },
-                        { label: 'Projection (Census)', data: mm(LFT_LF_PROJ), borderColor: COL.navy, borderWidth: 2, borderDash: [6, 4], pointRadius: 0, tension: 0.1, spanGaps: false, order: 1 }
+                        { label: 'Labor force (actual)', data: mm(LFT_LF_ACTUAL), borderColor: COL.gray, borderWidth: 1.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 3, pointStyle: 'line' },
+                        { label: 'Demographic trend', data: mm(LFT_LF_TREND), borderColor: COL.teal, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 2, pointStyle: 'line' },
+                        { label: 'Projection (Census)', data: mm(LFT_LF_PROJ), borderColor: COL.navy, borderWidth: 2, borderDash: [6, 4], pointRadius: 0, tension: 0.1, spanGaps: false, order: 1, pointStyle: 'line' }
                     ]
                 };
             },
@@ -780,15 +795,22 @@ function kpiHtml(kpis) {
     return '<div class="kpi-strip">' + stats + '</div>';
 }
 
-function controlsHtml(cat, chartSpec) {
-    var parts = [];
-    // Country toggle (left)
+/* Build every control group for a chart, keyed by name, so the everyday rail
+   (controlsHtml, above the chart) and the gated "Chart options" disclosure
+   (advancedControlsHtml, below the chart) draw from ONE source of truth. Which
+   groups are gated is declared per-chart via chartSpec.advanced (a list of these
+   keys); everything else stays on the everyday tier. Two-tier progressive
+   disclosure per the UI research (FRED model): keep the primary rail to the few
+   most-important controls, gate the rest. */
+function buildControlGroups(cat, chartSpec) {
+    var g = {};
+    // Country toggle
     if (cat.hasCountry) {
-        parts.push('<div class="chart-control-group" role="group" aria-label="Country">' +
+        g.country = '<div class="chart-control-group" role="group" aria-label="Country">' +
             '<span class="chart-control-label">Country</span>' +
             '<button class="dash-toggle" data-country="US" aria-pressed="true">United States</button>' +
             '<button class="dash-toggle" data-country="CA" aria-pressed="false">Canada</button>' +
-            '</div>');
+            '</div>';
     }
     // Smoothing toggle (Monthly / N-mo avg). First option is the default/on state.
     if (chartSpec.smoothing) {
@@ -796,8 +818,8 @@ function controlsHtml(cat, chartSpec) {
             return '<button class="dash-toggle dash-smooth' + (i === 0 ? ' active' : '') + '" ' +
                 'data-window="' + s.window + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + s.label + '</button>';
         }).join('');
-        parts.push('<div class="chart-control-group" role="group" aria-label="Smoothing">' +
-            '<span class="chart-control-label">Smoothing</span>' + sbtns + '</div>');
+        g.smoothing = '<div class="chart-control-group" role="group" aria-label="Smoothing">' +
+            '<span class="chart-control-label">Smoothing</span>' + sbtns + '</div>';
     }
     // Endpoint-drift toggle (first option is default/on). Hidden for Canada via
     // JS since the spliced series is US-only; shown otherwise.
@@ -807,9 +829,9 @@ function controlsHtml(cat, chartSpec) {
             return '<button class="dash-toggle dash-drift' + (i === 0 ? ' active' : '') + '" ' +
                 'data-drift="' + o.drift + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + o.label + '</button>';
         }).join('');
-        parts.push('<div class="chart-control-group dash-drift-group" role="group" aria-label="Endpoint drift"' +
+        g.drift = '<div class="chart-control-group dash-drift-group" role="group" aria-label="Endpoint drift"' +
             (initCA ? ' style="display:none"' : '') + '>' +
-            '<span class="chart-control-label">Endpoint drift</span>' + dbtns + '</div>');
+            '<span class="chart-control-label">Endpoint drift</span>' + dbtns + '</div>';
     }
     // Projection show/hide toggle (US only; hidden for Canada). First option
     // (Show) is the default/on state.
@@ -819,17 +841,17 @@ function controlsHtml(cat, chartSpec) {
             return '<button class="dash-toggle dash-proj' + (i === 0 ? ' active' : '') + '" ' +
                 'data-proj="' + o.showProj + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' + o.label + '</button>';
         }).join('');
-        parts.push('<div class="chart-control-group dash-proj-group" role="group" aria-label="Projection"' +
+        g.projection = '<div class="chart-control-group dash-proj-group" role="group" aria-label="Projection"' +
             (initCAp ? ' style="display:none"' : '') + '>' +
-            '<span class="chart-control-label">Projection</span>' + pbtns + '</div>');
+            '<span class="chart-control-label">Projection</span>' + pbtns + '</div>';
     }
-    // Range presets (right)
+    // Range presets (button variant that only sets a preset window, no filter).
     if (chartSpec.presets) {
         var btns = chartSpec.presets.map(function (p) {
             return '<button class="dash-toggle dash-preset" data-years="' + p.years + '">' + p.label + '</button>';
         }).join('');
-        parts.push('<div class="chart-control-group" role="group" aria-label="Time range">' +
-            '<span class="chart-control-label">Range</span>' + btns + '</div>');
+        g.range = '<div class="chart-control-group" role="group" aria-label="Time range">' +
+            '<span class="chart-control-label">Range</span>' + btns + '</div>';
     }
     // Range presets that FILTER the data (discrete windows; replaces the slider).
     // Default active = the option whose years is null ('All'), else the first.
@@ -840,11 +862,50 @@ function controlsHtml(cat, chartSpec) {
             return '<button class="dash-toggle dash-range-preset' + (on ? ' active' : '') + '" ' +
                 'data-years="' + (p.years === null ? 'null' : p.years) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + p.label + '</button>';
         }).join('');
-        parts.push('<div class="chart-control-group" role="group" aria-label="Time range">' +
-            '<span class="chart-control-label">Range</span>' + rbtns + '</div>');
+        g.range = '<div class="chart-control-group" role="group" aria-label="Time range">' +
+            '<span class="chart-control-label">Range</span>' + rbtns + '</div>';
     }
+    return g;
+}
+
+// Canonical left-to-right order of control groups on either tier.
+var CONTROL_ORDER = ['country', 'smoothing', 'drift', 'projection', 'range'];
+
+// Everyday control rail (above the chart): every group NOT gated by chartSpec.advanced.
+function controlsHtml(cat, chartSpec) {
+    var g = buildControlGroups(cat, chartSpec);
+    var adv = chartSpec.advanced || [];
+    var parts = CONTROL_ORDER.filter(function (k) { return g[k] && adv.indexOf(k) === -1; })
+        .map(function (k) { return g[k]; });
     if (!parts.length) return '';
     return '<div class="chart-controls">' + parts.join('') + '</div>';
+}
+
+/* Gated "Chart options" disclosure (below the chart): the button-groups listed
+   in chartSpec.advanced, plus (optionally) the fine-grained range slider when
+   chartSpec.sliderInAdvanced is set. Collapsed by default. Advanced/power-user
+   controls belong at the bottom (UI research finding #6) behind a single click
+   (progressive disclosure, FRED "Edit Graph" model). `sliderHtml` is the
+   pre-rendered slider markup (passed in so its ids match what buildChart wires
+   up). Returns '' when there's nothing to gate. */
+function advancedControlsHtml(cat, chartSpec, prefix, sliderHtml) {
+    var adv = chartSpec.advanced || [];
+    var g = buildControlGroups(cat, chartSpec);
+    var parts = CONTROL_ORDER.filter(function (k) { return g[k] && adv.indexOf(k) !== -1; })
+        .map(function (k) { return g[k]; });
+    var slider = (chartSpec.sliderInAdvanced && sliderHtml)
+        ? '<div class="dash-advanced-slider"><span class="chart-control-label">Custom range</span>' + sliderHtml + '</div>'
+        : '';
+    if (!parts.length && !slider) return '';
+    var bodyId = 'advctl_' + prefix;
+    // Button-groups sit in a .chart-controls rail; the slider (full-width) follows
+    // it as a separate block. Wrap both in the disclosure body.
+    var body = (parts.length ? '<div class="chart-controls dash-advanced-rail">' + parts.join('') + '</div>' : '') + slider;
+    return '<div class="dash-advanced">' +
+        '<button class="dash-advanced-toggle" aria-expanded="false" data-target="' + bodyId + '">' +
+        '<span class="dash-advanced-caret" aria-hidden="true">▸</span> Chart options</button>' +
+        '<div class="dash-advanced-body" id="' + bodyId + '" hidden>' + body + '</div>' +
+        '</div>';
 }
 
 function rangeSliderHtml(prefix, startLabel, endLabel) {
@@ -865,7 +926,11 @@ function chartCardHtml(cat, chartSpec, hidden) {
     var spec0 = chartSpec.build('US');
     var dates = spec0.dates;
     var startL = fmtShortMY(dates[0]), endL = fmtShortMY(dates[dates.length - 1]);
-    var slider = chartSpec.rangeSlider ? rangeSliderHtml(prefix, startL, endL) : '';
+    var sliderMarkup = chartSpec.rangeSlider ? rangeSliderHtml(prefix, startL, endL) : '';
+    // The slider renders inline below the chart UNLESS it's gated into the "Chart
+    // options" disclosure (sliderInAdvanced) — then advancedControlsHtml carries it.
+    var slider = (chartSpec.rangeSlider && !chartSpec.sliderInAdvanced) ? sliderMarkup : '';
+    var advSlider = (chartSpec.rangeSlider && chartSpec.sliderInAdvanced) ? sliderMarkup : '';
     // Screen-reader summary of the chart (canvas is otherwise opaque to AT).
     var srLabels = spec0.datasets.map(function (d) { return d.label; }).join(', ');
     var aria = chartSpec.title + '. Line and bar chart showing: ' + srLabels + '. Full data available via the download link below.';
@@ -885,6 +950,7 @@ function chartCardHtml(cat, chartSpec, hidden) {
         controlsHtml(cat, chartSpec) +
         '<div class="chart-canvas-wrap"><canvas id="canvas_' + prefix + '" role="img" aria-label="' + aria.replace(/"/g, '&quot;') + '"></canvas></div>' +
         slider +
+        advancedControlsHtml(cat, chartSpec, prefix, advSlider) +
         recNote +
         '<p class="dashboard-source" id="source_' + prefix + '"></p>' +
         share +
@@ -1426,6 +1492,18 @@ function initDelegates() {
             dt.classList.toggle('active', open);
             dt.setAttribute('aria-expanded', open ? 'true' : 'false');
             if (open) ga('view_technical_detail', { detail_title: dt.textContent, page: 'data' });
+            return;
+        }
+        // "Chart options" advanced-controls disclosure (collapsed by default)
+        var ac = e.target.closest('.dash-advanced-toggle');
+        if (ac) {
+            var acbox = document.getElementById(ac.dataset.target);
+            var acopen = acbox.hidden;
+            acbox.hidden = !acopen;
+            ac.classList.toggle('active', acopen);
+            ac.setAttribute('aria-expanded', acopen ? 'true' : 'false');
+            var caret = ac.querySelector('.dash-advanced-caret');
+            if (caret) caret.textContent = acopen ? '▾' : '▸';
             return;
         }
         // "About this measure" show/hide (open by default)
