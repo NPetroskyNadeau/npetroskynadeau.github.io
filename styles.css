@@ -752,6 +752,52 @@ main {
     font-weight: 500;
 }
 
+/* Compact research paper cards — recover vertical space so more rows are
+   visible per screen. Scoped to .research-section so the already-compact
+   Economic Letters cards (.paper-card-compact on insights.html) are untouched. */
+.research-section .paper-card { padding: 1rem 1.1rem; }
+.research-section .paper-title {
+    font-size: 1.2rem;
+    line-height: 1.3;
+    margin-bottom: 0.25rem;
+}
+.research-section .paper-authors {
+    font-size: 0.95rem;
+    margin-bottom: 0.15rem;
+}
+.research-section .paper-venue {
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+}
+.research-section .abstract-toggle {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+}
+.research-section .papers-list { gap: 0.85rem; }
+
+/* Self-defined card edge: a subtle 1px border + refined two-layer shadow so
+   each card reads as a distinct surface on ANY section background (the gray
+   Working Papers section AND the white Published Papers section). Keeps the
+   alternating section rhythm; the card no longer depends on its backdrop. */
+.research-section .paper-card {
+    border: 1px solid #e2e6ec;
+    border-left: 4px solid #2c5aa0;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.06),
+                0 1px 2px rgba(16, 24, 40, 0.04);
+}
+.research-section .paper-card:hover {
+    border-color: #d0d7e2;
+    box-shadow: 0 4px 12px rgba(16, 24, 40, 0.10);
+}
+
+/* Inline hero tagline (research page): title + tagline share one row, so the
+   tagline drops its bottom margin like the insights/data hero rows and matches
+   their 1rem tagline size (the 1.3rem .hero-title default was too large here). */
+.hero-insights .hero-tagline {
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
 /* Badge Styles */
 .badge {
     white-space: nowrap;  /* Prevents awkward line breaks */
