@@ -1130,6 +1130,7 @@ var CATEGORIES = [
             defaultYears: DEMO_RANGE_DEFAULT,
             rangePresets: DEMO_RANGE_PRESETS,
             hideControls: ['framing'],  // framing applies only to the "drivers" view
+            advanced: ['breakdown', 'anchor', 'range'],  // keep the top rail uncluttered on mobile
             build: function () {
                 var st = state['aging-participation'];
                 var yr = st.anchor || 2000, bd = st.breakdown || 'age';
@@ -1161,6 +1162,7 @@ var CATEGORIES = [
             title: 'What’s Driving the Change in Participation',
             viewLabel: 'What’s driving it',
             rangeSlider: false,
+            advanced: ['breakdown', 'anchor'],  // Decomposition stays on top; demote the rest
             // Two aligned panels shown side by side: the OUTCOME (each group's
             // contribution to the total change since the base) next to the INPUTS (its
             // change in population share and in its own rate). Both share the canonical
@@ -1286,6 +1288,7 @@ var CATEGORIES = [
             defaultYears: DEMO_RANGE_DEFAULT,
             rangePresets: DEMO_RANGE_PRESETS,
             hideControls: ['anchor', 'framing'],  // base-year-independent; framing is drivers-only
+            advanced: ['breakdown', 'range'],  // keep the top rail uncluttered on mobile
             build: function () {
                 var st = state['aging-participation'];
                 var yr = st.anchor || 2000, bd = st.breakdown || 'age';
@@ -1314,6 +1317,7 @@ var CATEGORIES = [
             defaultYears: DEMO_RANGE_DEFAULT,
             rangePresets: DEMO_RANGE_PRESETS,
             hideControls: ['anchor', 'framing'],  // base-year-independent; framing is drivers-only
+            advanced: ['breakdown', 'range'],  // keep the top rail uncluttered on mobile
             build: function () {
                 var st = state['aging-participation'];
                 var yr = st.anchor || 2000, bd = st.breakdown || 'age';
@@ -1549,7 +1553,9 @@ function advancedControlsHtml(cat, chartSpec, prefix, sliderHtml) {
     var body = (parts.length ? '<div class="chart-controls dash-advanced-rail">' + parts.join('') + '</div>' : '') + slider;
     return '<div class="dash-advanced">' +
         '<button class="dash-advanced-toggle" aria-expanded="false" data-target="' + bodyId + '">' +
-        '<span class="dash-advanced-caret" aria-hidden="true">▸</span> Chart options</button>' +
+        '<span class="dash-advanced-gear" aria-hidden="true">⚙</span>' +
+        '<span class="dash-advanced-label">Chart options</span>' +
+        '<span class="dash-advanced-caret" aria-hidden="true">▾</span></button>' +
         '<div class="dash-advanced-body" id="' + bodyId + '" hidden>' + body + '</div>' +
         '</div>';
 }
@@ -1589,6 +1595,7 @@ function chartCardHtml(cat, chartSpec, hidden) {
             '<div class="dashboard-chart-head"><h3>' + chartSpec.title + '</h3></div>' +
             controlsHtml(cat, chartSpec) +
             '<div class="dash-panel-row">' + panelsHtml + '</div>' +
+            advancedControlsHtml(cat, chartSpec, prefix, '') +   // panel views have no range slider
             recNoteP +
             '<p class="dashboard-source" id="source_' + prefix + '"></p>' +
             shareP +
@@ -1638,11 +1645,10 @@ function chartSwitchHtml(cat) {
             'data-chart-view="' + c.id + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' +
             (c.viewLabel || c.title) + '</button>';
     }).join('');
-    // When the category also carries persistent data toggles (breakdown / base year),
-    // signpost that those apply across every view, since all three groups share the
-    // same pill look and could otherwise read as one undifferentiated set.
+    // The breakdown / base year now live in the "Chart options" disclosure under each
+    // chart; signpost that so they are discoverable, and note they apply across views.
     var hint = (cat.breakdownPresets || cat.anchorPresets)
-        ? '<p class="chart-view-hint">The breakdown and base year below apply to every view.</p>'
+        ? '<p class="chart-view-hint">Change the demographic breakdown and base year under <strong>Chart options</strong>, below each chart; they apply across every view.</p>'
         : '';
     return '<div class="chart-view-switch" role="group" aria-label="Chart view">' +
         '<span class="chart-control-label">View</span>' + segs + '</div>' + hint;
@@ -2352,8 +2358,7 @@ function initDelegates() {
             acbox.hidden = !acopen;
             ac.classList.toggle('active', acopen);
             ac.setAttribute('aria-expanded', acopen ? 'true' : 'false');
-            var caret = ac.querySelector('.dash-advanced-caret');
-            if (caret) caret.textContent = acopen ? '▾' : '▸';
+            // caret rotation is handled in CSS via [aria-expanded]
             return;
         }
         // "About this measure" show/hide (open by default)

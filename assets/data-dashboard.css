@@ -241,22 +241,40 @@
 /* ---- "Chart options" advanced-controls disclosure (below the chart) -----
    Two-tier progressive disclosure: the everyday rail sits above the chart; the
    power-user controls are gated here, collapsed by default, opened on one click. */
-.dash-advanced { margin: 0.5rem 0 0.25rem; }
+.dash-advanced { margin: 0.6rem 0 0.25rem; }
+/* Bordered pill styled like the other .dash-toggle buttons, so the disclosure
+   reads unmistakably as a tappable control (it is the only entry point to the
+   controls on most Demographic Composition views). */
 .dash-advanced-toggle {
     appearance: none;
-    background: transparent;
-    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
     font-family: inherit;
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 600;
     color: #2c5aa0;
     cursor: pointer;
-    padding: 0.3rem 0.2rem;
+    transition: all 0.2s ease;
 }
-.dash-advanced-toggle:hover { text-decoration: underline; }
-.dash-advanced-toggle:focus-visible { outline: 2px solid #2c5aa0; outline-offset: 2px; border-radius: 3px; }
-.dash-advanced-caret { display: inline-block; font-size: 0.75rem; }
-.dash-advanced-body { margin-top: 0.25rem; }
+.dash-advanced-toggle:hover { background-color: #e6ecf5; border-color: #2c5aa0; }
+.dash-advanced-toggle[aria-expanded="true"] {
+    background-color: #e6ecf5;
+    border-color: #2c5aa0;
+}
+.dash-advanced-toggle:focus-visible { outline: 2px solid #2c5aa0; outline-offset: 2px; }
+.dash-advanced-gear { font-size: 0.95rem; line-height: 1; }
+.dash-advanced-caret {
+    display: inline-block;
+    font-size: 0.7rem;
+    transition: transform 0.2s ease;
+}
+.dash-advanced-toggle[aria-expanded="true"] .dash-advanced-caret { transform: rotate(180deg); }
+.dash-advanced-body { margin-top: 0.4rem; }
 .dash-advanced-body[hidden] { display: none; }
 /* The button-group rail inside the disclosure left-aligns its groups (no
    space-between spread) and drops the top border the toggle already supplies. */
