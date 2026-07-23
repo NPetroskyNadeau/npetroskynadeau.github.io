@@ -16,13 +16,14 @@
 
 /* ---------- Shared style constants (mirror styles.css / data.html) ---- */
 var COL = {
-    navy:  '#2c5aa0',
-    dark:  '#1a2332',
-    teal:  '#00837E',
-    red:   '#B63B36',
-    gray:  '#888888',
-    gold:  '#c8850a',
-    text:  '#333333'
+    navy:   '#2c5aa0',
+    dark:   '#1a2332',
+    teal:   '#00837E',
+    red:    '#B63B36',
+    gray:   '#888888',
+    gold:   '#c8850a',
+    salmon: '#DA6B5C',   // counterfactual line (distinct from teal actual; not a standalone gender mapping)
+    text:   '#333333'
 };
 var FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif";
 
@@ -89,18 +90,251 @@ function isMobile() { return typeof window !== 'undefined' && window.matchMedia 
 function pct1(v) { return (v === null || v === undefined || isNaN(v)) ? '—' : v.toFixed(1) + '%'; }
 function kfmt(v) { return (v === null || v === undefined || isNaN(v)) ? '—' : Math.round(v) + 'K'; }
 
+/* ---------- Demographic composition: browser-side counterfactual --------
+   Everything is recomputed in the browser from the 10 sex x age cells (globals
+   CELL_SHARE_{sex}_{age} / CELL_LFPR_{sex}_{age}, aligned to CELL_DATES). The
+   aggregate participation rate is the exact un-normalized share-weighted sum of
+   the cell rates, LFPR_t = sum_j w_j(t)*L_j(t); freezing the weights at a base
+   year t0 gives the composition-constant counterfactual cf_t = sum_j w_j(t0)*L_j(t).
+   Three "breakdowns" choose which composition dimension is frozen: the AGE
+   marginal (sexes summed), the SEX marginal (ages summed), or the full AGE x SEX
+   cells. The "actual" series is identical across breakdowns; only what the
+   counterfactual holds fixed differs. */
+
+var SEXES = ['M', 'F'];
+var AGE_KEYS = ['16_24', '25_34', '35_44', '45_54', '55_pl'];
+var AGE_TEXT = { '16_24': '16–24', '25_34': '25–34', '35_44': '35–44', '45_54': '45–54', '55_pl': '55+' };
+var SEX_TEXT = { 'M': 'Men', 'F': 'Women' };
+
+// Group colors. Age: single blue ramp deepening with age (mirrors the notes'
+// DEMADJ_AGE_COLORS). Sex: teal (men) / amber (women), the site gender convention.
+// Age x sex: men in a blue ramp, women in a gold->salmon ramp (mirrors DEMADJ_COLORS).
+// The lightest ramp members are darkened off pure-pale so they clear WCAG non-text
+// contrast as 2px lines on white (the youngest cohorts are exactly what readers track).
+var AGE_RAMP = { '16_24': '#8fb0d0', '25_34': '#5f86b4', '35_44': '#4B5D77', '45_54': '#2f3f59', '55_pl': '#16263d' };
+var SEX_RAMP = { 'M': '#00837E', 'F': '#c8850a' };
+var CELL_RAMP = {
+    'M_16_24': '#8fb0d0', 'M_25_34': '#6d88ab', 'M_35_44': '#5a7596', 'M_45_54': '#3c5578', 'M_55_pl': '#2C3143',
+    'F_16_24': '#e8c06a', 'F_25_34': '#f0b921', 'F_35_44': '#e79a4d', 'F_45_54': '#da6b5c', 'F_55_pl': '#a84334'
+};
+
+// Human wording for the frozen dimension, used in labels/KPIs/sources.
+var BREAKDOWN_NOUN = { age: 'age', sex: 'sex', agesex: 'age and sex' };
+
+// The ordered groups for a breakdown: [{key, label, color}].
+function groupsFor(breakdown) {
+    if (breakdown === 'sex') {
+        return SEXES.map(function (s) { return { key: s, label: SEX_TEXT[s], color: SEX_RAMP[s] }; });
+    }
+    if (breakdown === 'agesex') {
+        var out = [];
+        SEXES.forEach(function (s) {
+            AGE_KEYS.forEach(function (a) {
+                var g = s + '_' + a;
+                out.push({ key: g, label: SEX_TEXT[s] + ' ' + AGE_TEXT[a], color: CELL_RAMP[g] });
+            });
+        });
+        return out;
+    }
+    // default: age
+    return AGE_KEYS.map(function (a) { return { key: a, label: AGE_TEXT[a], color: AGE_RAMP[a] }; });
+}
+
+// Read the 10 raw cell arrays from the globals into share/lfpr dicts keyed by
+// 'M_16_24' etc. Lazily cached (the globals never change).
+var _cells = null;
+function cellData() {
+    if (_cells) return _cells;
+    var share = {}, lfpr = {};
+    SEXES.forEach(function (s) {
+        AGE_KEYS.forEach(function (a) {
+            var g = s + '_' + a;
+            share[g] = eval('CELL_SHARE_' + g);
+            lfpr[g] = eval('CELL_LFPR_' + g);
+        });
+    });
+    _cells = { share: share, lfpr: lfpr, n: CELL_DATES.length };
+    return _cells;
+}
+
+/* Recompute the composition-constant counterfactual for a BREAKDOWN and a base
+   YEAR (uses the first month whose year matches, i.e. January when present).
+   Returns, aligned to CELL_DATES: the group weights `w` (frozen dimension's
+   marginal share) and rates `L`, the `actual`/`cf`/`effect` aggregate series, and
+   the per-group `contrib` = (w_g(t) - w_g(t0))*L_g(t) (sums exactly to effect).
+   Pure function of the globals + (breakdown, year), so results are memoized. */
+var _demoCache = {};
+function demoCompute(breakdown, year) {
+    var ck = breakdown + '|' + year;
+    if (_demoCache[ck]) return _demoCache[ck];
+    var cells = cellData();
+    var n = cells.n;
+    var groups = groupsFor(breakdown);
+
+    // Base index: first month whose year matches (CELL_DATES are 'YYYY-MM' strings).
+    var t0 = 0;
+    for (var k = 0; k < n; k++) { if (CELL_DATES[k].slice(0, 4) === String(year)) { t0 = k; break; } }
+
+    // Which raw cells feed each group (sum over the collapsed dimension).
+    function cellsOf(gkey) {
+        if (breakdown === 'sex') return AGE_KEYS.map(function (a) { return gkey + '_' + a; });
+        if (breakdown === 'agesex') return [gkey];
+        return SEXES.map(function (s) { return s + '_' + gkey; }); // age
+    }
+
+    // Per-group weight w_g(t) = sum of member cell shares; rate L_g(t) = the
+    // share-weighted mean of member cell rates (= that cell's own rate for agesex).
+    var w = {}, L = {};
+    groups.forEach(function (grp) {
+        var mem = cellsOf(grp.key);
+        var wg = new Array(n), Lg = new Array(n);
+        for (var t = 0; t < n; t++) {
+            var sw = 0, swl = 0;
+            for (var m = 0; m < mem.length; m++) {
+                var c = mem[m];
+                sw += cells.share[c][t];
+                swl += cells.share[c][t] * cells.lfpr[c][t];
+            }
+            wg[t] = sw;
+            Lg[t] = sw !== 0 ? swl / sw : null;
+        }
+        w[grp.key] = wg; L[grp.key] = Lg;
+    });
+
+    // Base-period aggregate rate LFPR_{t0}; the growth denominator and the reference
+    // rate for the relative-share framing. (Equals actual[t0] once computed below.)
+    var lfBase = 0;
+    for (var gb = 0; gb < groups.length; gb++) { var kb = groups[gb].key; lfBase += w[kb][t0] * L[kb][t0]; }
+
+    // Composition-constant counterfactual (existing) PLUS the full change-since-base
+    // decomposition (new). For each group and month:
+    //   share    = (w(t) - w(t0)) * L(t)              composition term (== contrib)
+    //   rate     = w(t0) * (L(t) - L(t0))             behavioral term (base-weighted)
+    //   gtot     = w(t)*L(t) - w(t0)*L(t0)            total group contribution (share+rate)
+    //   relshare = (w(t) - w(t0)) * (L(t) - lfBase)   composition re-centered on LFPR_{t0}
+    //   relcontrib = relshare + rate                  group total under the relative framing
+    // sum_j gtot == actual - actual(t0); sum_j share == effect; sum_j relshare == sum_j share
+    // (the reference terms (w(t)-w(t0))*lfBase cancel when the group shares sum to the same
+    // value at t and t0 — guarded below).
+    var actual = new Array(n), cf = new Array(n), effect = new Array(n);
+    var contrib = {}, rate = {}, gtot = {}, relshare = {}, relcontrib = {};
+    groups.forEach(function (grp) {
+        contrib[grp.key] = new Array(n); rate[grp.key] = new Array(n);
+        gtot[grp.key] = new Array(n); relshare[grp.key] = new Array(n);
+        relcontrib[grp.key] = new Array(n);
+    });
+    for (var t = 0; t < n; t++) {
+        var a = 0, c = 0;
+        for (var gi = 0; gi < groups.length; gi++) {
+            var key = groups[gi].key;
+            a += w[key][t] * L[key][t];
+            c += w[key][t0] * L[key][t];
+            var sh = (w[key][t] - w[key][t0]) * L[key][t];
+            var rt = w[key][t0] * (L[key][t] - L[key][t0]);
+            var rs = (w[key][t] - w[key][t0]) * (L[key][t] - lfBase);
+            contrib[key][t] = sh;
+            rate[key][t] = rt;
+            gtot[key][t] = w[key][t] * L[key][t] - w[key][t0] * L[key][t0];
+            relshare[key][t] = rs;
+            relcontrib[key][t] = rs + rt;
+        }
+        actual[t] = a; cf[t] = c; effect[t] = a - c;
+    }
+
+    // Relative-variant invariant guard (mirrors _shiftshare_core in lfp_series.py):
+    // the reference terms cancel in the aggregate only when the endpoint's group-share
+    // sum equals the base's. The sums are ~1 but dip to ~0.995 in 1983-89, so warn if
+    // the current endpoint deviates from the base — the "aggregate unchanged" reading
+    // of the relative framing would no longer hold.
+    // Threshold 1e-4 separates a genuine break (the 1983-89 dip to ~0.995, a ~5e-3
+    // deviation → ~0.3 pp residual) from the ~2e-6 rounding noise in the shipped
+    // 6-decimal cell shares, which is immaterial.
+    var i = n - 1, sSumEnd = 0, sSumBase = 0;
+    for (var gg = 0; gg < groups.length; gg++) { var kg = groups[gg].key; sSumEnd += w[kg][i]; sSumBase += w[kg][t0]; }
+    if (Math.abs(sSumEnd - sSumBase) > 1e-4 && typeof console !== 'undefined') {
+        console.warn('demoCompute(' + breakdown + ',' + year + '): share-sum base ' +
+            sSumBase.toFixed(6) + ' vs endpoint ' + sSumEnd.toFixed(6) +
+            '; relative-framing reference term does not fully cancel (~' +
+            ((sSumEnd - sSumBase) * lfBase).toFixed(3) + ' pp aggregate residual).');
+    }
+
+    var out = { n: n, t0: t0, breakdown: breakdown, groups: groups,
+                w: w, L: L, actual: actual, cf: cf, effect: effect, contrib: contrib,
+                rate: rate, gtot: gtot, relshare: relshare, relcontrib: relcontrib, lfBase: lfBase };
+    _demoCache[ck] = out;
+    return out;
+}
+
+/* Per-group latest-month readout for the "What's driving it" panels. Both framings
+   decompose the group's total contribution to the change since the base into a
+   composition part + a behavioral part; `framing` sets how the composition part reads:
+   'relative' (default) re-centers it on the base-period aggregate rate (`relShare`), so
+   a below-average group that gains share is a drag and `bar` = relShare + rate; 'total'
+   uses each group's own rate (`share`) and `bar` = share + rate = gtot. Rows keep the
+   canonical demographic order from groupsFor (youngest to oldest age group; for age ×
+   sex, men then women each youngest to oldest) — the ONE shared ordering both panels
+   use, so a row reads across. Also carries dShare / dRate (the raw input changes since
+   base). Memoized by (breakdown, year) via demoCompute's cache. */
+function demadjRankedLatest(breakdown, year, framing) {
+    var r = demoCompute(breakdown, year);
+    var i = r.n - 1, t0 = r.t0;
+    return r.groups.map(function (g) {
+        var k = g.key;
+        var share = r.contrib[k][i], rt = r.rate[k][i], rs = r.relshare[k][i];
+        var bar = framing === 'total' ? r.gtot[k][i] : r.relcontrib[k][i];  // default: relative
+        return {
+            key: k, label: g.label, color: g.color,
+            bar: bar, contrib: share, share: share, rate: rt, relShare: rs,
+            gtot: r.gtot[k][i], relcontrib: r.relcontrib[k][i],
+            dShare: (r.w[k][i] - r.w[k][t0]) * 100,
+            dRate: r.L[k][i] - r.L[k][t0]
+        };
+    });
+}
+
 // Filter a built chart spec to the trailing `years` (null = keep all). Slices
 // spec.dates and every dataset's data to the window so the chart plots only
 // in-window points — the correct way to zoom a time-series bar chart. Returns a
 // shallow-cloned spec; the original (full) spec is left intact for later widening.
-function filterSpecToYears(spec, years, anchorDate) {
-    if (!years) return spec;
+// Normalize a range token to number (trailing years) | {since:YYYY} | null (full).
+// Accepts a number, the string "since:1999", a numeric string, or null/'null'/''.
+function parseRangeToken(tok) {
+    if (tok == null || tok === 'null' || tok === '') return null;
+    if (typeof tok === 'number') return tok;
+    // Already-normalized fixed-start object (e.g. the seeded default): pass through.
+    if (typeof tok === 'object') return (tok.since) ? { since: tok.since } : null;
+    if (typeof tok === 'string' && tok.indexOf('since:') === 0) {
+        var y = parseInt(tok.slice(6), 10);
+        return isNaN(y) ? null : { since: y };
+    }
+    var n = parseInt(tok, 10);
+    return isNaN(n) ? null : n;
+}
+
+// Canonical comparison key for a range value (preset or state): 'full' | 'yN' |
+// 'since:YYYY'. Lets button state + updates compare number and {since} uniformly.
+function rangeKey(range) {
+    var r = parseRangeToken(range);
+    if (!r) return 'full';
+    return (typeof r === 'object' && r.since) ? 'since:' + r.since : 'y' + r;
+}
+
+function filterSpecToYears(spec, range, anchorDate) {
+    var r = parseRangeToken(range);
+    if (!r) return spec;
     var dates = spec.dates;
-    // Anchor the trailing window at anchorDate (e.g. the last actual month) when
-    // provided, so any projection tail AFTER the anchor is always kept; otherwise
-    // anchor at the last date in the series.
-    var anchor = anchorDate ? new Date(anchorDate) : new Date(dates[dates.length - 1]);
-    var cutoff = new Date(Date.UTC(anchor.getUTCFullYear() - years, anchor.getUTCMonth(), 1));
+    var cutoff;
+    if (typeof r === 'object' && r.since) {
+        // Fixed calendar start: "since 1999" always means Jan 1999, regardless of
+        // how far the series extends (does not drift as the data updates).
+        cutoff = new Date(Date.UTC(r.since, 0, 1));
+    } else {
+        // Trailing window: anchor at anchorDate (e.g. the last actual month) when
+        // provided, so any projection tail AFTER the anchor is always kept;
+        // otherwise anchor at the last date in the series.
+        var anchor = anchorDate ? new Date(anchorDate) : new Date(dates[dates.length - 1]);
+        cutoff = new Date(Date.UTC(anchor.getUTCFullYear() - r, anchor.getUTCMonth(), 1));
+    }
     var start = 0;
     for (var i = 0; i < dates.length; i++) {
         if (new Date(dates[i]).getTime() >= cutoff.getTime()) { start = i; break; }
@@ -168,9 +402,64 @@ var recessionPlugin = {
     }
 };
 
+/* ---------- End-of-line direct-label plugin --------------------------- */
+/* For dense multi-line charts (chart.$endLabels === true), draw each series'
+   label at its last non-null point in the series color, instead of relying on a
+   crowded top legend. Labels are nudged vertically to avoid overlap and drawn in
+   the right-margin gutter (the chart reserves right padding via layout.padding).
+   Desktop only — on phones there's no horizontal room, so the legend is kept. */
+var endLabelPlugin = {
+    id: 'endLabels',
+    afterDatasetsDraw: function (chart) {
+        if (!chart.$endLabels || isMobile()) return;
+        var area = chart.chartArea, ctx = chart.ctx;
+        var yScale = chart.scales.y;
+        if (!area || !yScale) return;
+        // Collect the last visible point of each line.
+        var pts = [];
+        chart.data.datasets.forEach(function (ds, di) {
+            var meta = chart.getDatasetMeta(di);
+            if (meta.hidden) return;
+            var data = ds.data || [];
+            for (var i = data.length - 1; i >= 0; i--) {
+                var v = data[i];
+                if (v === null || v === undefined || isNaN(v)) continue;
+                var el = meta.data[i];
+                if (!el) break;
+                pts.push({ y: el.y, color: ds.borderColor, text: ds.label });
+                break;
+            }
+        });
+        if (!pts.length) return;
+        // De-collide vertically: sort by y and push apart by a minimum gap.
+        pts.sort(function (a, b) { return a.y - b.y; });
+        var gap = 13;
+        for (var i = 1; i < pts.length; i++) {
+            if (pts[i].y - pts[i - 1].y < gap) pts[i].y = pts[i - 1].y + gap;
+        }
+        // Clamp within the plot vertical extent.
+        var overflow = pts.length ? pts[pts.length - 1].y - area.bottom : 0;
+        if (overflow > 0) pts.forEach(function (p) { p.y -= overflow; });
+        ctx.save();
+        ctx.font = '11px ' + FONT;
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'left';
+        var x = area.right + 6;
+        pts.forEach(function (p) {
+            ctx.fillStyle = p.color;
+            ctx.fillText(p.text, x, p.y);
+        });
+        ctx.restore();
+    }
+};
+
 /* ---------- Chart option factory (single source of truth) ------------- */
 function baseOptions(opts) {
-    // opts: { yLabel, yMin, yMax, valueFmt, titleFmt }
+    // opts: { yLabel, yMin, yMax, valueFmt, titleFmt, endLabels }
+    // With direct end-of-line labels (dense multi-line views), hide the top legend
+    // on desktop and reserve a right gutter for the labels; on mobile the end-label
+    // plugin is off, so keep the legend there.
+    var useEndLabels = opts.endLabels && !isMobile();
     return {
         responsive: true,
         // On phones, DON'T tie chart height to width (a 2:1 aspect on a ~330px-wide
@@ -178,9 +467,11 @@ function baseOptions(opts) {
         // container sized in CSS (.chart-canvas-wrap on mobile) so the chart is big.
         maintainAspectRatio: !isMobile(),
         aspectRatio: 2,
+        layout: useEndLabels ? { padding: { right: 96 } } : {},
         interaction: { mode: 'index', intersect: false },
         plugins: {
             legend: {
+                display: !useEndLabels,
                 position: 'top',
                 // Tighten the legend on phones so 3-4 series don't crowd the plot.
                 labels: {
@@ -364,6 +655,16 @@ function setupRangeSlider(prefix, chart, dates, histEnd, entry) {
    Each build(country) returns a Chart.js-ready spec; the shell owns tabs, KPI
    strip, recession shading, sliders/presets, toggles, and disclosure.
    ===================================================================== */
+// Range presets shared by the demographic-composition time-series views
+// (counterfactual, group rates, group shares). Default is a FIXED start of Jan
+// 1999 (not a rolling window, so it does not drift as the data updates); "Full
+// history" shows 1976+. The endpoint-bar "What's driving it" view has no date
+// axis, so it omits these. Defined before CATEGORIES so the specs can reference it.
+var DEMO_RANGE_DEFAULT = { since: 1999 };
+var DEMO_RANGE_PRESETS = [
+    { label: 'Since 1999', years: { since: 1999 } },
+    { label: 'Full history', years: null }
+];
 var CATEGORIES = [
 
 /* --- 1. Unemployment benchmarks ------------------------------------- */
@@ -745,7 +1046,304 @@ var CATEGORIES = [
     ]
 },
 
-/* --- 4. Labor market flows (CPS) — pending export ------------------- */
+/* --- 4. Demographic composition and participation (composition-constant
+   counterfactual). Interactive companion to Sections 4-5 of the methodology note.
+   Aggregate participation is the exact un-normalized share-weighted sum of group
+   rates, LFPR_t = sum_j w_j(t)*L_j(t). Freezing the composition at a user-chosen
+   base year t0 gives cf_t = sum_j w_j(t0)*L_j(t); actual - cf is the composition
+   effect. A "breakdown" toggle chooses which composition dimension is frozen — age,
+   sex, or the full age x sex cells. Everything is recomputed in the browser from the
+   10 sex x age cells (CELL_SHARE_*, CELL_LFPR_*), so any base year AND any breakdown
+   works with no server. See demoCompute()/groupsFor() at the top of this file.
+   -------------------------------------------------------------------- */
+{
+    id: 'aging-participation',
+    tab: 'Demographic Composition',
+    requires: ['CELL_DATES',
+        'CELL_SHARE_M_16_24', 'CELL_SHARE_M_25_34', 'CELL_SHARE_M_35_44', 'CELL_SHARE_M_45_54', 'CELL_SHARE_M_55_pl',
+        'CELL_SHARE_F_16_24', 'CELL_SHARE_F_25_34', 'CELL_SHARE_F_35_44', 'CELL_SHARE_F_45_54', 'CELL_SHARE_F_55_pl',
+        'CELL_LFPR_M_16_24', 'CELL_LFPR_M_25_34', 'CELL_LFPR_M_35_44', 'CELL_LFPR_M_45_54', 'CELL_LFPR_M_55_pl',
+        'CELL_LFPR_F_16_24', 'CELL_LFPR_F_25_34', 'CELL_LFPR_F_35_44', 'CELL_LFPR_F_45_54', 'CELL_LFPR_F_55_pl'],
+    heading: 'Demographic Composition and Labor Force Participation',
+    subtitle: 'How much of the shift in participation is a changing demographic mix?',
+    prose: [
+        'The overall participation rate is a weighted average of the participation rates of different demographic groups, some higher and some lower, with weights equal to each group&rsquo;s share of the population. As the population&rsquo;s composition shifts, those weights move toward groups that participate more or less, changing the overall rate even if no group changes its own behavior.',
+        'This tool separates two forces behind the overall rate: the shifting demographic mix and groups&rsquo; own participation behavior. The main exercise holds the demographic mix fixed at a chosen <em>base year</em>, building a <strong>counterfactual</strong> that lets only the group participation rates evolve as observed. The gap between the actual rate and this counterfactual is the <strong>composition effect</strong>. Use the <em>Breakdown</em> control to hold the <em>age</em> mix fixed (sexes combined), the <em>sex</em> mix (ages combined), or the full <em>age &times; sex</em> mix. Change the base year to see how much the result depends on the reference point.',
+        'The <em>What&rsquo;s driving it</em> view breaks the full change in participation since the base year down group by group, into the part from the shifting demographic mix and the part from groups&rsquo; own changing participation rates. The <em>Decomposition</em> control sets how the mix part is measured: <em>Relative to average</em> (the default) weighs each group&rsquo;s change in population share against the overall rate, so a growing share of a group that participates below average registers as a drag &mdash; a group whose own rate has risen can still lower the total this way; <em>Own rate</em> instead weighs the share change by the group&rsquo;s own rate. The remaining views show the underlying group participation rates and population shares separately.'
+    ],
+    reference: 'Reference: Petrosky-Nadeau, 2026, "Labor Market Trends and Projections" (methodology note).',
+    hasCountry: false,
+    anchorPresets: [1980, 1990, 2000, 2007, 2019],
+    anchorDefault: 2000,
+    breakdownPresets: [{ v: 'age', label: 'Age' }, { v: 'sex', label: 'Sex' }, { v: 'agesex', label: 'Age × Sex' }],
+    breakdownDefault: 'age',
+    // Framing of the "What's driving it" view: both decompose the full change since
+    // the base into a composition (population-share) part + a behavioral (rate) part;
+    // they differ only in how the composition part is measured — 'relative' re-centers
+    // it on the base-period aggregate rate (so a below-average group that gains share
+    // reads as a drag), 'total' uses each group's own rate. Only the 'drivers' view
+    // reads state.framing; the other views hide this control.
+    framingPresets: [{ v: 'relative', label: 'Relative to average' }, { v: 'total', label: 'Own rate' }],
+    framingDefault: 'relative',
+    chartToggle: true,
+    kpis: function (country, drift, anchor) {
+        var st = state['aging-participation'];
+        var yr = anchor || st.anchor || 2000;
+        var bd = st.breakdown || 'age';
+        var r = demoCompute(bd, yr);
+        var i = r.n - 1;
+        function sgn(v) { return (v < 0 ? '' : '+') + v.toFixed(1) + ' pp'; }
+        // KPIs follow the active chart view. The "What's driving it" (drivers) view is
+        // the change decomposition, so its KPI trio reports the total change since the
+        // base and its two channels; every other view (counterfactual / rates / shares)
+        // is about the composition-constant level, so it shows the actual rate,
+        // counterfactual, and composition effect.
+        if (st.activeView === 'drivers') {
+            var tot = 0, comp = 0, beh = 0;
+            for (var gi = 0; gi < r.groups.length; gi++) {
+                var k = r.groups[gi].key;
+                tot += r.gtot[k][i]; comp += r.contrib[k][i]; beh += r.rate[k][i];
+            }
+            return [
+                { value: sgn(tot), label: 'Total change since ' + yr, note: fmtShortMY(CELL_DATES[i]), color: 'teal' },
+                { value: sgn(comp), label: 'Composition (' + BREAKDOWN_NOUN[bd] + ' mix)', color: 'salmon' },
+                { value: sgn(beh), label: 'Behavioral (group rates)', color: 'gray' }
+            ];
+        }
+        var eff = r.effect[i];
+        // effect = actual - cf. eff < 0 => actual sits BELOW the counterfactual line,
+        // i.e. actual is LOWER than it would be at the old composition.
+        var dir = eff < 0 ? 'lower' : 'higher';
+        var effLabel = bd === 'age' ? 'Aging effect' : 'Composition effect';
+        return [
+            { value: pct1(r.actual[i]), label: 'Participation rate', note: fmtShortMY(CELL_DATES[i]), color: 'teal' },
+            { value: pct1(r.cf[i]), label: 'Holding ' + BREAKDOWN_NOUN[bd] + ' mix fixed at ' + yr, color: 'salmon' },
+            { value: (eff < 0 ? '' : '+') + eff.toFixed(1) + ' pp', label: effLabel, note: 'actual is ' + Math.abs(eff).toFixed(1) + ' pp ' + dir, color: 'gray' }
+        ];
+    },
+    charts: [
+        {
+            id: 'counterfactual',
+            title: 'Actual vs. Counterfactual Participation',
+            viewLabel: 'Actual vs. counterfactual',
+            rangeSlider: false,
+            defaultYears: DEMO_RANGE_DEFAULT,
+            rangePresets: DEMO_RANGE_PRESETS,
+            hideControls: ['framing'],  // framing applies only to the "drivers" view
+            build: function () {
+                var st = state['aging-participation'];
+                var yr = st.anchor || 2000, bd = st.breakdown || 'age';
+                var r = demoCompute(bd, yr);
+                return {
+                    dates: CELL_DATES, recession: RECESSIONS.US,
+                    histEnd: CELL_DATES[CELL_DATES.length - 1],
+                    yLabel: 'Percent', yMin: undefined, yMax: undefined,
+                    valueFmt: function (v) { return v.toFixed(2) + '%'; },
+                    titleFmt: fmtShortMY,
+                    datasets: [
+                        { label: 'Participation rate (actual)', data: r.actual, borderColor: COL.teal, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 2, pointStyle: 'line' },
+                        // Solid salmon counterfactual, drawn on top; fill to the actual line
+                        // (previous dataset) shades the gap = the composition effect, so the
+                        // takeaway reads without eyeballing. Salmon is distinct from the teal
+                        // actual and, unlike gold, is not a standalone gender mapping elsewhere.
+                        { label: 'Holding ' + BREAKDOWN_NOUN[bd] + ' mix fixed at ' + yr, data: r.cf, borderColor: COL.salmon, borderWidth: 2.5, pointRadius: 0, tension: 0.1, spanGaps: false, order: 1, pointStyle: 'line', fill: '-1', backgroundColor: 'rgba(218,107,92,0.10)' }
+                    ]
+                };
+            },
+            source: function () {
+                var st = state['aging-participation'];
+                var yr = st.anchor || 2000, bd = st.breakdown || 'age';
+                return 'Source: author&rsquo;s calculations from Bureau of Labor Statistics (BLS) Current Population Survey (CPS) microdata. The counterfactual holds the ' + BREAKDOWN_NOUN[bd] + ' composition fixed at its ' + yr + ' value and lets the group participation rates evolve as observed; the gap is the composition effect. The data are seasonally adjusted and smoothed with a three month moving average.';
+            }
+        },
+        {
+            id: 'drivers',
+            title: 'What’s Driving the Change in Participation',
+            viewLabel: 'What’s driving it',
+            rangeSlider: false,
+            // Two aligned panels shown side by side: the OUTCOME (each group's
+            // contribution to the total change since the base) next to the INPUTS (its
+            // change in population share and in its own rate). Both share the canonical
+            // demographic row order (youngest to oldest age group), so reading a row
+            // across both panels shows WHY a group contributed what it did. Both bars are
+            // stacked composition (navy) + behavioral (gold), summing to the group total;
+            // the FRAMING toggle (state.framing) sets how the composition part is measured:
+            // 'relative' re-centers it on the base-period aggregate rate (a below-average
+            // group that gains share reads as a drag), 'total' uses each group's own rate.
+            // demadjRankedLatest(bd, yr, framing) returns the rows in that shared order.
+            panels: [
+                {
+                    id: 'contrib',
+                    caption: 'Contribution to the change',
+                    build: function () {
+                        var st = state['aging-participation'];
+                        var yr = st.anchor || 2000, bd = st.breakdown || 'age', fr = st.framing || 'relative';
+                        var ranked = demadjRankedLatest(bd, yr, fr);
+                        var labels = ranked.map(function (x) { return x.label; });
+                        // Stacked composition (navy) + behavioral (gold), summing to the group
+                        // total change since the base. Under 'relative' the composition part is
+                        // the re-centered relShare; under 'total' it is each group's own-rate share.
+                        var comp = ranked.map(function (x) { return fr === 'relative' ? x.relShare : x.share; });
+                        var rate = ranked.map(function (x) { return x.rate; });
+                        var compLabel = fr === 'relative' ? 'Composition (relative to ' + yr + ' average)' : 'Composition (population share)';
+                        return {
+                            chartType: 'bar', labels: labels, baseYear: yr, framing: fr,
+                            datasets: [
+                                { label: compLabel, data: comp, backgroundColor: COL.navy, borderWidth: 0, stack: 'g' },
+                                { label: 'Behavioral (participation rate)', data: rate, backgroundColor: COL.gold, borderWidth: 0, stack: 'g' }
+                            ]
+                        };
+                    },
+                    optionsFor: function (spec) {
+                        var axisText = 'Contribution to total change since ' + spec.baseYear + ' (pp)';
+                        return {
+                            responsive: true, maintainAspectRatio: !isMobile(), aspectRatio: 1.1,
+                            indexAxis: 'y',
+                            interaction: { mode: 'index', intersect: false, axis: 'y' },
+                            plugins: {
+                                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'rect', boxWidth: isMobile() ? 12 : 18, padding: isMobile() ? 8 : 10, color: COL.text, font: { family: FONT, size: isMobile() ? 10 : 11 } } },
+                                tooltip: { callbacks: {
+                                    title: function (c) { return c[0].label; },
+                                    label: function (c) {
+                                        var v = c.parsed.x, sign = v >= 0 ? '+' : '';
+                                        return c.dataset.label.replace(/ \(.*\)$/, '') + ': ' + sign + v.toFixed(2) + ' pp';
+                                    },
+                                    footer: function (items) {
+                                        var tot = items.reduce(function (s, it) { return s + it.parsed.x; }, 0);
+                                        return 'Total: ' + (tot >= 0 ? '+' : '') + tot.toFixed(2) + ' pp';
+                                    }
+                                } }
+                            },
+                            scales: {
+                                y: { stacked: true, ticks: { color: COL.text, font: { size: isMobile() ? 11 : 13, family: FONT } }, grid: { display: false } },
+                                x: { stacked: true, title: { display: true, text: axisText, color: COL.text, font: { size: isMobile() ? 11 : 12, family: FONT } }, ticks: { color: COL.text, font: { size: isMobile() ? 11 : 12, family: FONT } }, grid: { color: 'rgba(0,0,0,0.06)' } }
+                            }
+                        };
+                    }
+                },
+                {
+                    id: 'change',
+                    caption: 'What changed',
+                    build: function () {
+                        var st = state['aging-participation'];
+                        var yr = st.anchor || 2000, bd = st.breakdown || 'age', fr = st.framing || 'relative';
+                        var ranked = demadjRankedLatest(bd, yr, fr);
+                        return {
+                            chartType: 'bar', labels: ranked.map(function (x) { return x.label; }),
+                            baseYear: yr,
+                            datasets: [
+                                // navy = share change (the driver of the contribution),
+                                // gray = own-rate change (a companion diagnostic).
+                                { label: 'Population share (pp of 16+ population)', data: ranked.map(function (x) { return x.dShare; }), backgroundColor: COL.navy, borderWidth: 0, order: 2 },
+                                { label: 'Own participation rate (pp)', data: ranked.map(function (x) { return x.dRate; }), backgroundColor: COL.gray, borderWidth: 0, order: 1 }
+                            ]
+                        };
+                    },
+                    optionsFor: function (spec) {
+                        return {
+                            responsive: true, maintainAspectRatio: !isMobile(), aspectRatio: 1.1,
+                            indexAxis: 'y',
+                            interaction: { mode: 'index', intersect: false, axis: 'y' },
+                            plugins: {
+                                legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'rect', boxWidth: isMobile() ? 12 : 18, padding: isMobile() ? 8 : 10, color: COL.text, font: { family: FONT, size: isMobile() ? 10 : 11 } } },
+                                tooltip: { callbacks: {
+                                    title: function (c) { return c[0].label + '  (change since ' + spec.baseYear + ')'; },
+                                    label: function (c) {
+                                        var sign = c.parsed.x >= 0 ? '+' : '';
+                                        var unit = c.datasetIndex === 0 ? ' pp of population' : ' pp';
+                                        return c.dataset.label.replace(/ \(.*\)$/, '') + ': ' + sign + c.parsed.x.toFixed(2) + unit;
+                                    }
+                                } }
+                            },
+                            scales: {
+                                // y-axis labels hidden here: the left panel carries the group
+                                // names and both panels share the same (youngest-to-oldest) row order.
+                                y: { ticks: { display: false }, grid: { display: false } },
+                                x: { title: { display: true, text: 'Change since ' + spec.baseYear + ' (pp)', color: COL.text, font: { size: isMobile() ? 11 : 12, family: FONT } }, ticks: { color: COL.text, font: { size: isMobile() ? 11 : 12, family: FONT } }, grid: { color: 'rgba(0,0,0,0.06)' } }
+                            }
+                        };
+                    }
+                }
+            ],
+            source: function () {
+                var st = state['aging-participation'];
+                var yr = st.anchor || 2000, bd = st.breakdown || 'age', fr = st.framing || 'relative';
+                var noun = BREAKDOWN_NOUN[bd];
+                var left;
+                if (fr === 'total') {
+                    left = 'each ' + noun + ' group&rsquo;s contribution to the <em>total</em> change in participation since ' + yr + ', split into a composition part (w<sub>j</sub>(t) &minus; w<sub>j</sub>(' + yr + '))&nbsp;&middot;&nbsp;L<sub>j</sub>(t) (navy) and a behavioral part w<sub>j</sub>(' + yr + ')&nbsp;&middot;&nbsp;(L<sub>j</sub>(t) &minus; L<sub>j</sub>(' + yr + ')) (gold); the two sum to the group total and the groups sum to the aggregate change';
+                } else {
+                    left = 'each ' + noun + ' group&rsquo;s contribution to the total change since ' + yr + ', with the composition part measured <em>relative to the ' + yr + ' aggregate rate</em>, (w<sub>j</sub>(t) &minus; w<sub>j</sub>(' + yr + '))&nbsp;&middot;&nbsp;(L<sub>j</sub>(t) &minus; LFPR(' + yr + ')) (navy), plus the behavioral part (gold). Re-centering leaves the aggregate change unchanged but re-attributes it, so a below-average group that gains share reads as a drag';
+                }
+                return 'Source: author&rsquo;s calculations from BLS Current Population Survey microdata. <strong>Left:</strong> ' + left + '. <strong>Right:</strong> the change since ' + yr + ' in that group&rsquo;s share of the 16+ population (navy) and in its own participation rate (gray). Both panels share the same order, from youngest to oldest ' + noun + ' group, so a row reads across.';
+            }
+        },
+        {
+            id: 'rates',
+            title: 'Group Participation Rates',
+            viewLabel: 'Group rates',
+            rangeSlider: false,
+            defaultYears: DEMO_RANGE_DEFAULT,
+            rangePresets: DEMO_RANGE_PRESETS,
+            hideControls: ['anchor', 'framing'],  // base-year-independent; framing is drivers-only
+            build: function () {
+                var st = state['aging-participation'];
+                var yr = st.anchor || 2000, bd = st.breakdown || 'age';
+                var r = demoCompute(bd, yr);
+                var ds = r.groups.map(function (grp) {
+                    return { label: grp.label, data: r.L[grp.key], borderColor: grp.color, borderWidth: 2, pointRadius: 0, tension: 0.1, spanGaps: false, pointStyle: 'line' };
+                });
+                return {
+                    dates: CELL_DATES, recession: RECESSIONS.US,
+                    histEnd: CELL_DATES[CELL_DATES.length - 1],
+                    yLabel: 'Percent', valueFmt: function (v) { return v.toFixed(1) + '%'; }, titleFmt: fmtShortMY,
+                    endLabels: true,
+                    datasets: ds
+                };
+            },
+            source: function () {
+                var bd = state['aging-participation'].breakdown || 'age';
+                return 'Source: author&rsquo;s calculations from BLS Current Population Survey microdata. Labor force participation rate of each ' + BREAKDOWN_NOUN[bd] + ' group, seasonally adjusted. These group rates are the behavioral component held to their observed path in the counterfactual. The data are seasonally adjusted and smoothed with a three month moving average.';
+            }
+        },
+        {
+            id: 'shares',
+            title: 'Group Population Shares',
+            viewLabel: 'Group shares',
+            rangeSlider: false,
+            defaultYears: DEMO_RANGE_DEFAULT,
+            rangePresets: DEMO_RANGE_PRESETS,
+            hideControls: ['anchor', 'framing'],  // base-year-independent; framing is drivers-only
+            build: function () {
+                var st = state['aging-participation'];
+                var yr = st.anchor || 2000, bd = st.breakdown || 'age';
+                var r = demoCompute(bd, yr);
+                var ds = r.groups.map(function (grp) {
+                    var pct = r.w[grp.key].map(function (v) { return v * 100; });
+                    return { label: grp.label, data: pct, borderColor: grp.color, borderWidth: 2, pointRadius: 0, tension: 0.1, spanGaps: false, pointStyle: 'line' };
+                });
+                return {
+                    dates: CELL_DATES, recession: RECESSIONS.US,
+                    histEnd: CELL_DATES[CELL_DATES.length - 1],
+                    yLabel: 'Percent of 16+ population', valueFmt: function (v) { return v.toFixed(1) + '%'; }, titleFmt: fmtShortMY,
+                    endLabels: true,
+                    datasets: ds
+                };
+            },
+            source: function () {
+                var bd = state['aging-participation'].breakdown || 'age';
+                return 'Source: author&rsquo;s calculations from BLS Current Population Survey microdata. Each ' + BREAKDOWN_NOUN[bd] + ' group&rsquo;s share of the population aged 16+.';
+            }
+        }
+    ],
+    download: { href: 'assets/data/demographic_cells_data.csv', label: 'Download data (CSV)', note: 'sex &times; age cell population shares and participation rates, monthly since 1976.' },
+    technical: [
+        { label: 'Method', html: '<p>The aggregate participation rate is a population-share-weighted sum of the group-specific participation rates, <em>LFPR<sub>t</sub></em> = &sum;<sub>j</sub> <em>&omega;<sup>p</sup><sub>j</sub></em>(t) &middot; <em>lf<sub>j</sub></em>(t), where <em>&omega;<sup>p</sup><sub>j</sub></em> is group <em>j</em>&rsquo;s share of the 16+ population and <em>lf<sub>j</sub></em> its participation rate. The composition-constant counterfactual fixes the population shares at a chosen base date <em>t</em><sub>0</sub> while letting the group rates evolve as observed, <em>LFPR<sup>cf</sup><sub>t</sub></em> = &sum;<sub>j</sub> <em>&omega;<sup>p</sup><sub>j</sub></em>(<em>t</em><sub>0</sub>) &middot; <em>lf<sub>j</sub></em>(t); the <strong>composition effect</strong> is the difference. Because the effect is additive, it splits into per-group <strong>contributions</strong> (<em>&omega;<sup>p</sup><sub>j</sub></em>(t) &minus; <em>&omega;<sup>p</sup><sub>j</sub></em>(<em>t</em><sub>0</sub>)) &middot; <em>lf<sub>j</sub></em>(t). The <em>What&rsquo;s driving it</em> view instead decomposes the full change in participation since <em>t</em><sub>0</sub> into each group&rsquo;s composition part and a behavioral part <em>&omega;<sup>p</sup><sub>j</sub></em>(<em>t</em><sub>0</sub>) &middot; (<em>lf<sub>j</sub></em>(t) &minus; <em>lf<sub>j</sub></em>(<em>t</em><sub>0</sub>)); its <em>Decomposition</em> control measures the composition part against either the base-period aggregate rate (<em>relative to average</em>) or the group&rsquo;s own rate. The <em>Breakdown</em> control chooses the grouping <em>j</em>: the five age groups (sexes combined), the two sexes (ages combined), or ten age &times; sex cells.</p>' },
+        { label: 'Sources', html: '<p>BLS Current Population Survey microdata (January 1976 onward), seasonally adjusted with X-13ARIMA-SEATS and smoothed with a centered 3-month moving average.</p>' }
+    ]
+},
+
+/* --- 5. Labor market flows (CPS) — pending export ------------------- */
 {
     id: 'labor-market-flows',
     tab: 'Labor Market Flows',
@@ -804,6 +1402,48 @@ function kpiHtml(kpis) {
    most-important controls, gate the rest. */
 function buildControlGroups(cat, chartSpec) {
     var g = {};
+    // Anchor-year toggle (category-wide): pick the base year at which the age
+    // composition is frozen for the counterfactual. Active = the current
+    // state.anchor. Rendered on every chart card in the category so both views
+    // carry the control; updateAnchor syncs button state across the whole panel.
+    if (cat.anchorPresets) {
+        var curAnchor = state[cat.id].anchor;
+        var abtns = cat.anchorPresets.map(function (yr) {
+            var on = yr === curAnchor;
+            return '<button class="dash-toggle dash-anchor' + (on ? ' active' : '') + '" ' +
+                'data-anchor="' + yr + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + yr + '</button>';
+        }).join('');
+        g.anchor = '<div class="chart-control-group dash-anchor-group" role="group" aria-label="Base year">' +
+            '<span class="chart-control-label">Base year</span>' + abtns + '</div>';
+    }
+    // Breakdown toggle (category-wide): which composition dimension the counterfactual
+    // freezes — age marginal, sex marginal, or the full age x sex cells. Active = the
+    // current state.breakdown. Like anchor, rendered on every chart card; updateBreakdown
+    // syncs button state across the whole panel.
+    if (cat.breakdownPresets) {
+        var curBd = state[cat.id].breakdown;
+        var bbtns = cat.breakdownPresets.map(function (o) {
+            var on = o.v === curBd;
+            return '<button class="dash-toggle dash-breakdown' + (on ? ' active' : '') + '" ' +
+                'data-breakdown="' + o.v + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + o.label + '</button>';
+        }).join('');
+        g.breakdown = '<div class="chart-control-group dash-breakdown-group" role="group" aria-label="Breakdown">' +
+            '<span class="chart-control-label">Breakdown</span>' + bbtns + '</div>';
+    }
+    // Framing toggle (category-wide): whether the "What's driving it" views show the
+    // composition-constant effect (share channel only) or the full change since the
+    // base (share + rate), and — for the latter — whether the composition part is
+    // read relative to the base-period aggregate rate. Active = state.framing.
+    if (cat.framingPresets) {
+        var curFr = state[cat.id].framing;
+        var fbtns = cat.framingPresets.map(function (o) {
+            var on = o.v === curFr;
+            return '<button class="dash-toggle dash-framing' + (on ? ' active' : '') + '" ' +
+                'data-framing="' + o.v + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + o.label + '</button>';
+        }).join('');
+        g.framing = '<div class="chart-control-group dash-framing-group" role="group" aria-label="Decomposition">' +
+            '<span class="chart-control-label">Decomposition</span>' + fbtns + '</div>';
+    }
     // Country toggle
     if (cat.hasCountry) {
         g.country = '<div class="chart-control-group" role="group" aria-label="Country">' +
@@ -856,20 +1496,26 @@ function buildControlGroups(cat, chartSpec) {
     // Range presets that FILTER the data (discrete windows; replaces the slider).
     // Default active = the option whose years is null ('All'), else the first.
     if (chartSpec.rangePresets) {
-        var cur = state[cat.id].rangeYears[chartSpec.id] || null;
+        var cur = rangeKey(state[cat.id].rangeYears[chartSpec.id]);
         var rbtns = chartSpec.rangePresets.map(function (p) {
-            var on = (p.years || null) === cur;
+            var on = rangeKey(p.years) === cur;
+            var tok = (p.years === null || p.years === undefined) ? 'null'
+                : (typeof p.years === 'object' && p.years.since ? 'since:' + p.years.since : p.years);
             return '<button class="dash-toggle dash-range-preset' + (on ? ' active' : '') + '" ' +
-                'data-years="' + (p.years === null ? 'null' : p.years) + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + p.label + '</button>';
+                'data-years="' + tok + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + p.label + '</button>';
         }).join('');
         g.range = '<div class="chart-control-group" role="group" aria-label="Time range">' +
             '<span class="chart-control-label">Range</span>' + rbtns + '</div>';
     }
+    // Per-chart control suppression: some views don't respond to a category-wide
+    // control (e.g. the group-rate / group-share views are base-year-independent),
+    // so drop those groups on that chart rather than showing an inert toggle.
+    (chartSpec.hideControls || []).forEach(function (k) { delete g[k]; });
     return g;
 }
 
 // Canonical left-to-right order of control groups on either tier.
-var CONTROL_ORDER = ['country', 'smoothing', 'drift', 'projection', 'range'];
+var CONTROL_ORDER = ['breakdown', 'framing', 'anchor', 'country', 'smoothing', 'drift', 'projection', 'range'];
 
 // Everyday control rail (above the chart): every group NOT gated by chartSpec.advanced.
 function controlsHtml(cat, chartSpec) {
@@ -923,10 +1569,35 @@ function rangeSliderHtml(prefix, startLabel, endLabel) {
 
 function chartCardHtml(cat, chartSpec, hidden) {
     var prefix = chartPrefix(cat, chartSpec);
+    // Two-panel view (chartSpec.panels): render side-by-side canvases (stacking on
+    // mobile via CSS) instead of a single canvas. Controls + source + share row are
+    // shared for the card. No range slider on panel views.
+    if (chartSpec.panels) {
+        var panelsHtml = chartSpec.panels.map(function (p) {
+            var cap = p.caption ? '<p class="dash-panel-caption">' + p.caption + '</p>' : '';
+            return '<div class="dash-panel">' + cap +
+                '<div class="chart-canvas-wrap"><canvas id="canvas_' + prefix + '__' + p.id + '" role="img" ' +
+                'aria-label="' + (chartSpec.title + ' — ' + (p.caption || p.id)).replace(/"/g, '&quot;') + '"></canvas></div>' +
+                '</div>';
+        }).join('');
+        var recNoteP = '';
+        var shareP = '<div class="dash-share-row">' +
+            '<button class="dash-share dash-share-png" data-cat="' + cat.id + '" data-chart="' + chartSpec.id + '" ' +
+            'title="Download this chart as a PNG image">Download PNG</button>' +
+            '</div>';
+        return '<div class="dashboard-chart-card" data-chart="' + chartSpec.id + '"' + (hidden ? ' hidden' : '') + '>' +
+            '<div class="dashboard-chart-head"><h3>' + chartSpec.title + '</h3></div>' +
+            controlsHtml(cat, chartSpec) +
+            '<div class="dash-panel-row">' + panelsHtml + '</div>' +
+            recNoteP +
+            '<p class="dashboard-source" id="source_' + prefix + '"></p>' +
+            shareP +
+            '</div>';
+    }
     var spec0 = chartSpec.build('US');
-    var dates = spec0.dates;
-    var startL = fmtShortMY(dates[0]), endL = fmtShortMY(dates[dates.length - 1]);
-    var sliderMarkup = chartSpec.rangeSlider ? rangeSliderHtml(prefix, startL, endL) : '';
+    var dates = spec0.dates || [];
+    var sliderMarkup = (chartSpec.rangeSlider && dates.length)
+        ? rangeSliderHtml(prefix, fmtShortMY(dates[0]), fmtShortMY(dates[dates.length - 1])) : '';
     // The slider renders inline below the chart UNLESS it's gated into the "Chart
     // options" disclosure (sliderInAdvanced) — then advancedControlsHtml carries it.
     var slider = (chartSpec.rangeSlider && !chartSpec.sliderInAdvanced) ? sliderMarkup : '';
@@ -967,8 +1638,14 @@ function chartSwitchHtml(cat) {
             'data-chart-view="' + c.id + '" aria-pressed="' + (i === 0 ? 'true' : 'false') + '">' +
             (c.viewLabel || c.title) + '</button>';
     }).join('');
+    // When the category also carries persistent data toggles (breakdown / base year),
+    // signpost that those apply across every view, since all three groups share the
+    // same pill look and could otherwise read as one undifferentiated set.
+    var hint = (cat.breakdownPresets || cat.anchorPresets)
+        ? '<p class="chart-view-hint">The breakdown and base year below apply to every view.</p>'
+        : '';
     return '<div class="chart-view-switch" role="group" aria-label="Chart view">' +
-        '<span class="chart-control-label">View</span>' + segs + '</div>';
+        '<span class="chart-control-label">View</span>' + segs + '</div>' + hint;
 }
 
 /* "About this measure" box — the explanatory prose + reference, rendered
@@ -1046,19 +1723,48 @@ function buildSpec(cat, chartSpec) {
     return spec;
 }
 
+/* Build a Chart for one categorical panel/canvas from a (spec, optionsFor). */
+function buildPanelChart(canvasId, spec, optionsFor) {
+    var canvas = document.getElementById(canvasId);
+    if (!canvas) return null;
+    var chartType = spec.chartType || (spec.datasets.some(function (d) { return d.type === 'bar'; }) ? 'bar' : 'line');
+    return new Chart(canvas, {
+        type: chartType,
+        data: { labels: spec.labels || spec.dates, datasets: spec.datasets },
+        options: optionsFor ? optionsFor(spec) : baseOptions(spec),
+        plugins: [recessionPlugin, endLabelPlugin]
+    });
+}
+
 /* Build a Chart instance for a chartSpec, wire slider/presets/source. */
 function buildChart(cat, chartSpec) {
     var prefix = chartPrefix(cat, chartSpec);
     var country = state[cat.id].country;
+
+    // Two-panel view: build one Chart per panel; the entry carries `charts` (the
+    // list of panel Chart instances) instead of a single `chart`.
+    if (chartSpec.panels) {
+        var panelCharts = chartSpec.panels.map(function (p) {
+            return buildPanelChart('canvas_' + prefix + '__' + p.id, p.build(), p.optionsFor);
+        });
+        document.getElementById('source_' + prefix).innerHTML = chartSpec.source(country);
+        state[cat.id].charts[chartSpec.id] = { charts: panelCharts, spec: chartSpec, prefix: prefix, applyPreset: null };
+        return;
+    }
+
     var spec = buildSpec(cat, chartSpec);
     var canvas = document.getElementById('canvas_' + prefix);
+    // A chart may be categorical (spec.labels + custom axes via chartSpec.optionsFor)
+    // rather than the default time-series (spec.dates + baseOptions).
+    var chartType = spec.chartType || (spec.datasets.some(function (d) { return d.type === 'bar'; }) ? 'bar' : 'line');
     var chart = new Chart(canvas, {
-        type: spec.datasets.some(function (d) { return d.type === 'bar'; }) ? 'bar' : 'line',
-        data: { labels: spec.dates, datasets: spec.datasets },
-        options: baseOptions(spec),
-        plugins: [recessionPlugin]
+        type: chartType,
+        data: { labels: spec.labels || spec.dates, datasets: spec.datasets },
+        options: chartSpec.optionsFor ? chartSpec.optionsFor(spec) : baseOptions(spec),
+        plugins: [recessionPlugin, endLabelPlugin]
     });
     chart.$recessions = spec.recession;
+    chart.$endLabels = spec.endLabels;
     document.getElementById('source_' + prefix).innerHTML = chartSpec.source(country);
 
     var entry = { chart: chart, spec: chartSpec, applyPreset: null, prefix: prefix, histEnd: spec.histEnd };
@@ -1218,13 +1924,111 @@ function updateProjection(cat, showProj) {
     ga('toggle_projection', { show: showProj, page: 'data', category: cat.id });
 }
 
-/* Range preset: filter the chart's data to a trailing window of `years` (null =
-   All). Rebuilds via buildSpec (which slices the built data), so the time axis
-   always fits the visible points — no axis clamp, no mis-drawn lines. */
-function updateRange(cat, chartSpec, years) {
+/* Rebuild one chart entry in place from the current state (used by the category-wide
+   anchor and breakdown toggles). Handles both single-canvas entries and two-panel
+   entries (entry.charts = [Chart, ...] built from chartSpec.panels). Refreshes the
+   shared source line too. */
+function rebuildChartEntry(cat, chartSpec, entry) {
+    if (!entry) return;
     var st = state[cat.id];
-    if ((st.rangeYears[chartSpec.id] || null) === (years || null)) return;
-    st.rangeYears[chartSpec.id] = years || null;
+    if (chartSpec.panels) {
+        chartSpec.panels.forEach(function (p, i) {
+            var chart = entry.charts[i];
+            if (!chart) return;
+            var spec = p.build();
+            chart.data.labels = spec.labels || spec.dates;
+            chart.data.datasets = spec.datasets;
+            if (p.optionsFor) chart.options = p.optionsFor(spec);
+            chart.update();
+        });
+    } else {
+        var spec = buildSpec(cat, chartSpec);
+        entry.chart.data.labels = spec.labels || spec.dates;
+        entry.chart.data.datasets = spec.datasets;
+        if (spec.recession !== undefined) entry.chart.$recessions = spec.recession;
+        // Categorical charts carry their own options builder; re-apply so axis
+        // titles/tooltips that reference the year/breakdown update too.
+        if (chartSpec.optionsFor) entry.chart.options = chartSpec.optionsFor(spec);
+        entry.chart.update();
+    }
+    document.getElementById('source_' + entry.prefix).innerHTML = chartSpec.source(st.country);
+}
+
+/* Anchor-year toggle: change the base year at which the composition is held fixed,
+   then rebuild every chart in the category (the counterfactual line and the drivers
+   panels depend on it) and refresh the KPI strip. Category-wide, so it syncs the
+   button state across all chart cards in the panel. */
+function updateAnchor(cat, year) {
+    var st = state[cat.id];
+    if (st.anchor === year) return;
+    st.anchor = year;
+    cat.charts.forEach(function (chartSpec) {
+        rebuildChartEntry(cat, chartSpec, st.charts[chartSpec.id]);
+    });
+    if (cat.kpis) {
+        document.getElementById('kpis_' + cat.id).innerHTML = kpiHtml(cat.kpis(st.country, null, year));
+    }
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-anchor').forEach(function (btn) {
+        var on = parseInt(btn.dataset.anchor, 10) === year;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    ga('select_anchor_year', { year: year, page: 'data', category: cat.id });
+}
+
+/* Breakdown toggle: change which composition dimension the counterfactual freezes
+   (age / sex / age x sex), then rebuild every chart in the category and refresh the
+   KPI strip. Category-wide, mirrors updateAnchor (some views change their number of
+   series across breakdowns, so datasets are fully replaced). */
+function updateBreakdown(cat, value) {
+    var st = state[cat.id];
+    if (st.breakdown === value) return;
+    st.breakdown = value;
+    cat.charts.forEach(function (chartSpec) {
+        rebuildChartEntry(cat, chartSpec, st.charts[chartSpec.id]);
+    });
+    if (cat.kpis) {
+        document.getElementById('kpis_' + cat.id).innerHTML = kpiHtml(cat.kpis(st.country, null, st.anchor));
+    }
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-breakdown').forEach(function (btn) {
+        var on = btn.dataset.breakdown === value;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    ga('select_breakdown', { breakdown: value, page: 'data', category: cat.id });
+}
+
+/* Framing toggle: switch the "What's driving it" views between the composition
+   effect and the full change-since-base decomposition (and its relative variant),
+   then rebuild every chart in the category and refresh the KPI strip. Category-wide,
+   mirrors updateBreakdown. */
+function updateFraming(cat, value) {
+    var st = state[cat.id];
+    if (st.framing === value) return;
+    st.framing = value;
+    cat.charts.forEach(function (chartSpec) {
+        rebuildChartEntry(cat, chartSpec, st.charts[chartSpec.id]);
+    });
+    if (cat.kpis) {
+        document.getElementById('kpis_' + cat.id).innerHTML = kpiHtml(cat.kpis(st.country, null, st.anchor));
+    }
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-framing').forEach(function (btn) {
+        var on = btn.dataset.framing === value;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    ga('select_framing', { framing: value, page: 'data', category: cat.id });
+}
+
+/* Range preset: filter the chart's data to a window. `range` is a trailing-year
+   number, a {since:YYYY} fixed-start object, or null (full history). Rebuilds via
+   buildSpec (which slices the built data), so the time axis always fits the
+   visible points — no axis clamp, no mis-drawn lines. */
+function updateRange(cat, chartSpec, range) {
+    var st = state[cat.id];
+    var key = rangeKey(range);
+    if (rangeKey(st.rangeYears[chartSpec.id]) === key) return;
+    st.rangeYears[chartSpec.id] = parseRangeToken(range);
     var entry = st.charts[chartSpec.id];
     if (entry) {
         var spec = buildSpec(cat, chartSpec);
@@ -1236,16 +2040,23 @@ function updateRange(cat, chartSpec, years) {
     var card = document.querySelector('#panel-' + cat.id + ' .dashboard-chart-card[data-chart="' + chartSpec.id + '"]');
     if (card) {
         card.querySelectorAll('.dash-range-preset').forEach(function (btn) {
-            var by = btn.dataset.years === 'null' ? null : parseInt(btn.dataset.years, 10);
-            var on = by === (years || null);
+            var on = rangeKey(btn.dataset.years) === key;
             btn.classList.toggle('active', on);
             btn.setAttribute('aria-pressed', on ? 'true' : 'false');
         });
     }
-    ga('select_range', { years: years || 'all', page: 'data', category: cat.id, chart: chartSpec.id });
+    ga('select_range', { years: key === 'full' ? 'all' : key, page: 'data', category: cat.id, chart: chartSpec.id });
 }
 
 /* ---------- Chart-view switch (shared by click handler + deep link) ---- */
+// All Chart instances backing an entry (one for a single-canvas chart, N for a
+// two-panel view). Empty array if the entry hasn't been built.
+function entryCharts(e) {
+    if (!e) return [];
+    if (e.charts) return e.charts.filter(Boolean);
+    return e.chart ? [e.chart] : [];
+}
+
 function switchChartView(cat, viewId) {
     var panel = document.getElementById('panel-' + cat.id);
     if (!panel) return;
@@ -1253,8 +2064,7 @@ function switchChartView(cat, viewId) {
         var show = card.dataset.chart === viewId;
         card.hidden = !show;
         if (show) {
-            var e = state[cat.id].charts[viewId];
-            if (e && e.chart) e.chart.resize();
+            entryCharts(state[cat.id].charts[viewId]).forEach(function (c) { c.resize(); });
         }
     });
     panel.querySelectorAll('.dash-chart-view').forEach(function (b) {
@@ -1263,6 +2073,13 @@ function switchChartView(cat, viewId) {
         b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     state[cat.id].activeView = viewId;
+    // KPIs follow the active view for categories whose KPI strip depends on it
+    // (Demographic Composition: level readout on the counterfactual/rates/shares
+    // views, change decomposition on the drivers view).
+    if (cat.kpis) {
+        var kEl = document.getElementById('kpis_' + cat.id);
+        if (kEl) kEl.innerHTML = kpiHtml(cat.kpis(state[cat.id].country, null, state[cat.id].anchor));
+    }
 }
 
 /* ---------- Share: deep-link state encode/decode ----------------------
@@ -1295,8 +2112,12 @@ function buildShareHash(cat, chartId) {
     // still encode r=lo-hi.
     var chartSpec = chartId ? cat.charts.find(function (c) { return c.id === chartId; }) : null;
     if (chartSpec && chartSpec.rangePresets) {
-        var yy = state[cat.id].rangeYears[chartId];
-        if (yy) params.push('y=' + yy);
+        // Always encode the range token (including 'null' = full history) so a
+        // shared link round-trips whichever preset is active — the default may be a
+        // fixed start (e.g. since:1999) rather than full, so an absent param is
+        // ambiguous. rangeKey gives 'full' | 'yN' | 'since:YYYY'; map to the token.
+        var rk = rangeKey(state[cat.id].rangeYears[chartId]);
+        params.push('y=' + (rk === 'full' ? 'null' : rk.indexOf('since:') === 0 ? rk : rk.slice(1)));
     } else {
         var r = chartId ? chartRange(cat.id, chartId) : null;
         if (r && !(r.lo === 0 && r.hi === 100)) params.push('r=' + r.lo + '-' + r.hi);
@@ -1332,9 +2153,10 @@ function applyViewState(cat, params) {
     }
     var targetChart = viewId || (cat.charts[0] && cat.charts[0].id);
     var targetSpec = cat.charts.find(function (c) { return c.id === targetChart; });
-    if (params.y && targetSpec && targetSpec.rangePresets) {
-        var yr = parseInt(params.y, 10);
-        if (!isNaN(yr)) updateRange(cat, targetSpec, yr);
+    if (params.y != null && targetSpec && targetSpec.rangePresets) {
+        // params.y === 'null' is a valid value (full history), distinct from the
+        // fixed-start default, so apply it too. parseRangeToken('null') -> null.
+        updateRange(cat, targetSpec, parseRangeToken(params.y));
     }
     if (params.r) {
         var m = params.r.split('-');
@@ -1363,15 +2185,20 @@ function copyShareLink(btn) {
 }
 function downloadChartPng(catId, chartId) {
     var entry = state[catId] && state[catId].charts[chartId];
-    if (!entry || !entry.chart) return;
-    var src = entry.chart.canvas;
-    // Chart.js canvas is transparent; composite onto white so the PNG isn't see-through.
+    var srcs = entryCharts(entry).map(function (c) { return c.canvas; });
+    if (!srcs.length) return;
+    // Chart.js canvases are transparent; composite onto white so the PNG isn't
+    // see-through. Two-panel views are laid out side by side with a small gutter.
+    var gap = srcs.length > 1 ? 24 : 0;
+    var w = srcs.reduce(function (s, c) { return s + c.width; }, 0) + gap * (srcs.length - 1);
+    var h = srcs.reduce(function (m, c) { return Math.max(m, c.height); }, 0);
     var out = document.createElement('canvas');
-    out.width = src.width; out.height = src.height;
+    out.width = w; out.height = h;
     var ctx = out.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, out.width, out.height);
-    ctx.drawImage(src, 0, 0);
+    var x = 0;
+    srcs.forEach(function (c) { ctx.drawImage(c, x, 0); x += c.width + gap; });
     var a = document.createElement('a');
     a.href = out.toDataURL('image/png');
     a.download = catId + '-' + chartId + '.png';
@@ -1404,8 +2231,7 @@ function activate(catId, fromHash) {
     } else if (built[catId]) {
         // ensure correct sizing after being unhidden
         cat.charts.forEach(function (chartSpec) {
-            var e = state[catId].charts[chartSpec.id];
-            if (e) e.chart.resize();
+            entryCharts(state[catId].charts[chartSpec.id]).forEach(function (c) { c.resize(); });
         });
     }
     // keep the active tab in view on the horizontally-scrolling mobile tab row
@@ -1442,6 +2268,30 @@ function initTabs() {
 /* ---------- Delegated handlers: country toggle + technical details ----- */
 function initDelegates() {
     document.getElementById('dashboardPanels').addEventListener('click', function (e) {
+        // Breakdown toggle (which composition dimension the counterfactual freezes)
+        var bd = e.target.closest('.dash-breakdown');
+        if (bd) {
+            var bdpanel = bd.closest('.dashboard-panel');
+            var bdcat = CATEGORIES.find(function (c) { return 'panel-' + c.id === bdpanel.id; });
+            updateBreakdown(bdcat, bd.dataset.breakdown);
+            return;
+        }
+        // Framing toggle (composition effect vs. total change vs. relative)
+        var fr = e.target.closest('.dash-framing');
+        if (fr) {
+            var frpanel = fr.closest('.dashboard-panel');
+            var frcat = CATEGORIES.find(function (c) { return 'panel-' + c.id === frpanel.id; });
+            updateFraming(frcat, fr.dataset.framing);
+            return;
+        }
+        // Anchor-year toggle (base year for the composition-constant counterfactual)
+        var an = e.target.closest('.dash-anchor');
+        if (an) {
+            var anpanel = an.closest('.dashboard-panel');
+            var ancat = CATEGORIES.find(function (c) { return 'panel-' + c.id === anpanel.id; });
+            updateAnchor(ancat, parseInt(an.dataset.anchor, 10));
+            return;
+        }
         var ct = e.target.closest('.dash-toggle[data-country]');
         if (ct) {
             var panel = ct.closest('.dashboard-panel');
@@ -1480,8 +2330,8 @@ function initDelegates() {
             var rcat = CATEGORIES.find(function (c) { return 'panel-' + c.id === rpanel.id; });
             var rcard = rp.closest('.dashboard-chart-card');
             var rcs = rcat.charts.find(function (c) { return c.id === rcard.dataset.chart; });
-            var yv = rp.dataset.years === 'null' ? null : parseInt(rp.dataset.years, 10);
-            if (rcs) updateRange(rcat, rcs, yv);
+            // data-years is a token: 'null', a trailing-year number, or 'since:YYYY'.
+            if (rcs) updateRange(rcat, rcs, parseRangeToken(rp.dataset.years));
             return;
         }
         var dt = e.target.closest('.dash-detail-toggle');
@@ -1554,7 +2404,7 @@ function positionTabs() {
 /* ---------- Boot ------------------------------------------------------- */
 function init() {
     // init per-category state
-    CATEGORIES.forEach(function (c) { state[c.id] = { country: 'US', charts: {}, smoothing: (c.id === 'breakeven-payrolls' ? 12 : 0), drift: 'full', showProj: true, rangeYears: {} }; });
+    CATEGORIES.forEach(function (c) { state[c.id] = { country: 'US', charts: {}, smoothing: (c.id === 'breakeven-payrolls' ? 12 : 0), drift: 'full', showProj: true, rangeYears: {}, anchor: (c.anchorDefault || null), breakdown: (c.breakdownDefault || null), framing: (c.framingDefault || null) }; });
     // Seed each chart's default range window from its spec's defaultYears (if any),
     // so the initial active preset + filtered view match (e.g. breakeven -> 5Y).
     CATEGORIES.forEach(function (c) {
@@ -1584,8 +2434,9 @@ function init() {
         if (!activeId || !built[activeId]) return;
         var cat = CATEGORIES.find(function (c) { return c.id === activeId; });
         cat.charts.forEach(function (cs) {
-            var e = state[activeId].charts[cs.id];
-            if (e) e.chart.resize();
+            // entryCharts() returns every Chart for the entry — the single canvas
+            // or both panels of a two-panel view (which has no e.chart).
+            entryCharts(state[activeId].charts[cs.id]).forEach(function (ch) { ch.resize(); });
         });
     });
 

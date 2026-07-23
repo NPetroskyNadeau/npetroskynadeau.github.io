@@ -132,9 +132,10 @@
 }
 
 /* Color survives as a subtle tint on the value only (no accent bar / box). */
-.kpi-teal .kpi-value { color: #00837E; }
-.kpi-red  .kpi-value { color: #B63B36; }
-.kpi-gray .kpi-value { color: #555555; }
+.kpi-teal   .kpi-value { color: #00837E; }
+.kpi-red    .kpi-value { color: #B63B36; }
+.kpi-gray   .kpi-value { color: #555555; }
+.kpi-salmon .kpi-value { color: #C0554A; } /* counterfactual; slightly darker than the line for text contrast */
 
 .kpi-label {
     font-size: 0.85rem;
@@ -167,6 +168,22 @@
         min-height: 420px;
         max-height: 620px;
     }
+    /* Controls: stack the groups and let each pill row scroll horizontally rather
+       than clip (the 5 base-year pills overflow a 390px width). Tighter pills fit
+       more per row. Keeps every control reachable without pushing the chart far
+       down the page. */
+    .chart-controls { flex-direction: column; align-items: stretch; gap: 0.5rem 0; }
+    .chart-control-group {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 2px;
+    }
+    .chart-control-group > .dash-toggle { flex: 0 0 auto; }
+    .dash-toggle { padding: 0.3rem 0.6rem; }
+    /* View switcher: keep it compact so the chart stays near the top of the fold. */
+    .chart-view-switch { gap: 0.35rem; }
+    .chart-view-switch .dash-toggle { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
 }
 
 /* ---- Prose + technical details (mirrors styles.css .data-* patterns) -- */
@@ -262,6 +279,14 @@
 }
 .dash-chart-view { /* inherits .dash-toggle look via shared class in markup */ }
 
+/* Signpost that the persistent breakdown / base-year toggles apply across views. */
+.chart-view-hint {
+    font-size: 0.8rem;
+    color: #777;
+    margin: -0.4rem 0 0.75rem;
+    font-style: italic;
+}
+
 /* ---- Chart card ------------------------------------------------------- */
 .dashboard-chart-card {
     background: #ffffff;
@@ -339,6 +364,30 @@
     position: relative;
     width: 100%;
     margin: 0.75rem 0 0.5rem;
+}
+
+/* ---- Two-panel view (cause/effect side by side) ----------------------- */
+.dash-panel-row {
+    display: flex;
+    gap: 1.25rem;
+    align-items: stretch;
+    margin: 0.75rem 0 0.5rem;
+}
+.dash-panel {
+    flex: 1 1 0;
+    min-width: 0; /* allow the flex children to shrink instead of overflowing */
+}
+.dash-panel .chart-canvas-wrap { margin: 0.25rem 0 0; }
+.dash-panel-caption {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #1a2332;
+    text-align: center;
+    margin: 0 0 0.25rem;
+}
+@media (max-width: 700px) {
+    /* Stack the two panels vertically on narrow screens; each keeps its own labels. */
+    .dash-panel-row { flex-direction: column; gap: 1rem; }
 }
 
 /* ---- Range slider (dual-thumb) — ported from styles.css .range-* ------ */
