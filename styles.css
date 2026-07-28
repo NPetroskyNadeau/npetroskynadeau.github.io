@@ -1367,6 +1367,32 @@ main {
     margin-bottom: 0.75rem;
 }
 
+/* Inline figure within an expanded note — spans both columns */
+.note-full-figure {
+    column-span: all;
+    margin: 1.25rem 0 0.5rem;
+    text-align: center;
+}
+
+.note-full-figure img {
+    width: 100%;
+    max-width: 760px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.note-full-figure figcaption {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #777;
+    margin-top: 0.5rem;
+    text-align: left;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .data-download {
     color: #2c5aa0;
     text-decoration: none;
