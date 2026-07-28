@@ -1367,11 +1367,29 @@ main {
     margin-bottom: 0.75rem;
 }
 
-/* Inline figure within an expanded note — spans both columns */
+/* Flow variant for notes with inline figures — avoids the fragile
+   `column-span: all` inside a multi-column container (which caused text to
+   overlap/duplicate around the figure). The container is single-column; each
+   run of text is a two-column group and figures are full-width blocks between. */
+.note-full-flow {
+    column-count: initial;
+    column-gap: normal;
+}
+
+.note-full-flow .note-col-group {
+    column-count: 2;
+    column-gap: 2.5rem;
+}
+
+/* Inline figure within an expanded note — full width between column groups */
 .note-full-figure {
-    column-span: all;
+    column-span: all; /* used only by the legacy single-container layout */
     margin: 1.25rem 0 0.5rem;
     text-align: center;
+}
+
+.note-full-flow .note-full-figure {
+    column-span: auto; /* plain block; container is no longer multi-column */
 }
 
 .note-full-figure img {
@@ -1477,6 +1495,10 @@ main {
     }
 
     .note-full {
+        column-count: 1;
+    }
+
+    .note-full-flow .note-col-group {
         column-count: 1;
     }
 
