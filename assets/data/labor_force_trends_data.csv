@@ -5,7 +5,7 @@
 #   and re-aggregated; projection holds group rates fixed and applies Census population
 #   projections. See the accompanying methodology note.
 # Labor force level in thousands of persons; participation rate in percent.
-# Last actual observation: 2026-06; projection end: 2035-05; history/projection join: 2026-02.
+# Last actual observation: 2026-07; projection end: 2035-05; history/projection join: 2026-02.
 # Sources: BLS via FRED (CLF16OV) for the actual labor force level; author's
 #   demographic-decomposition trend from BLS CPS microdata; U.S. Census Bureau
 #   population projections for the forward path.
@@ -617,7 +617,7 @@ date,lf_actual_thousands,lf_trend_thousands,lf_projection_thousands,lfpr_actual_
 2026-04-01,169995.0,,170573.3,61.80,,62.17
 2026-05-01,170078.0,,170649.7,61.80,,62.16
 2026-06-01,169358.0,,170726.2,61.50,,62.16
-2026-07-01,,,170802.6,,,62.15
+2026-07-01,169094.0,,170802.6,61.40,,62.15
 2026-08-01,,,170879.1,,,62.15
 2026-09-01,,,170955.5,,,62.14
 2026-10-01,,,171032.0,,,62.14
