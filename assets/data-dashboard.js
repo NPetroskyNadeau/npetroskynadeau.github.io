@@ -676,20 +676,27 @@ var CATEGORIES = [
     subtitle: 'How hot or cold is the labor market, relative to its benchmarks?',
     prose: [
         'Policymakers monitor the unemployment rate closely, but the headline number alone does not reveal whether the labor market is running hot or cold. That assessment requires a benchmark.',
-        'Two complementary benchmarks emerge depending on the horizon of interest. The <em>longer-run</em> benchmark reflects the unemployment rate expected after all cyclical shocks dissipate; it moves slowly with demographics and structural features. The <em>stable-price</em> benchmark answers a different question: at what unemployment rate would inflation neither accelerate nor decelerate, given current conditions? This rate can shift quickly in response to large shocks.',
-        'These two benchmarks typically coincide, as they did at roughly 4 percent in late 2019, but can diverge sharply when large disturbances alter the short-run unemployment&ndash;inflation relationship. Use the toggle to switch between the United States and Canada; Canada&rsquo;s benchmarks sit well above U.S. levels.'
+        'The horizon of interest gives two complementary benchmarks. The <em>longer-run</em> benchmark reflects the unemployment rate expected after all cyclical shocks dissipate; it moves slowly with demographics and structural features. The <em>stable-price</em> benchmark answers a different question: at what unemployment rate would inflation neither accelerate nor decelerate, given current conditions? This rate can shift quickly in response to large shocks.',
+        'These two benchmarks typically coincide, as they did at roughly 4 percent in late 2019, but can diverge sharply when large disturbances alter the short-run unemployment&ndash;inflation relationship. Use the toggle to switch between the United States and Canada; Canada&rsquo;s benchmarks sit well above U.S. levels.',
+        'A third line answers a different question again. Rather than asking where unemployment settles, the <em>potential minimum</em> asks how low it could go, building the answer from the bottom up: what each of 120 demographic groups has reached when conditions are as good as they get, weighted by labor-force shares. It is shown for the United States only.'
     ],
-    reference: 'Reference: Crump, Nekarda, and Petrosky-Nadeau, "<a href="https://www.federalreserve.gov/econres/feds/unemployment-rate-benchmarks.htm" target="_blank">Unemployment Rate Benchmarks</a>," Finance and Economics Discussion Series 2020-072, 2020.',
+    reference: 'References: Crump, Nekarda, and Petrosky-Nadeau, "<a href="https://www.federalreserve.gov/econres/feds/unemployment-rate-benchmarks.htm" target="_blank">Unemployment Rate Benchmarks</a>," Finance and Economics Discussion Series 2020-072, 2020; Bok, Crump, Nekarda, and Petrosky-Nadeau, "<a href="https://www.frbsf.org/economic-research/publications/working-papers/2023/25/" target="_blank">Estimating Natural Rates of Unemployment: A Primer</a>," Federal Reserve Bank of San Francisco Working Paper 2023-25, 2023.',
     hasCountry: true,
     kpis: function (country) {
         var d = country === 'CA' ? SP_DATA_CA : SP_DATA;
         var unrate = lastNonNull(col(d, 1)), usp = lastNonNull(col(d, 2)), ulr = lastNonNull(col(d, 3));
         var date = lastNonNullDate(d.map(function (r) { return r[0]; }), col(d, 1));
-        return [
+        var out = [
             { value: pct1(unrate), label: 'Unemployment rate', note: date ? fmtQuarter(date) : '', color: 'red' },
             { value: pct1(usp), label: 'Stable-price benchmark (U-SP)', note: 'preferred estimate', color: 'navy' },
             { value: pct1(ulr), label: 'Longer-run benchmark (U-LR)', note: country === 'CA' ? 'model' : 'CBO', color: 'gray' }
         ];
+        // Potential minimum: US only. SP_DATA_CA has no 5th column (the Canadian
+        // estimate exists but is not published here), so this is gated, not nulled.
+        if (country !== 'CA') {
+            out.push({ value: pct1(lastNonNull(col(d, 4))), label: 'Potential minimum (U-PM)', note: 'bottom-up benchmark', color: 'gold' });
+        }
+        return out;
     },
     charts: [{
         id: 'benchmark',
@@ -705,33 +712,55 @@ var CATEGORIES = [
         build: function (country) {
             var d = country === 'CA' ? SP_DATA_CA : SP_DATA;
             var lrLabel = country === 'CA' ? 'U-LR (model)' : 'U-LR (CBO)';
+            var datasets = [
+                // pointStyle:'line' -> legend shows line-style markers (matching
+                // Breakeven), not the ambiguous hollow circles; the dashed U-LR
+                // then renders as a dashed line swatch via the legend's
+                // borderDash->lineDash copy in baseOptions.
+                // The actual rate is the subject; the benchmarks are the reference. Weight
+                // carries that hierarchy (2.5 primary / 2 secondary / 1.5 dashed U-LR is
+                // the same vocabulary the Breakeven chart uses), and order:-1 draws it
+                // over the benchmarks so the crossings in 1997-2007 don't break it up.
+                { label: 'Unemployment rate', data: col(d, 1), borderColor: COL.red, borderWidth: 2.5, pointRadius: 0, tension: 0.1, pointStyle: 'line', order: -1 },
+                { label: 'U-SP (preferred)', data: col(d, 2), borderColor: COL.navy, borderWidth: 2, pointRadius: 0, tension: 0.1, pointStyle: 'line' },
+                { label: lrLabel, data: col(d, 3), borderColor: COL.gray, borderWidth: 1.5, borderDash: [8, 4], pointRadius: 0, tension: 0.1, pointStyle: 'line' }
+            ];
+            // Potential minimum (US only). Gold, not teal: teal reads as navy on screen
+            // next to U-SP, and CIEDE2000 says the real problem was teal against the gray
+            // dashed U-LR — dE 4.6 under protanopia, i.e. the same color. Gold lifts the
+            // chart's weakest pair to 17.5 (red/gold under deuteranopia) and makes
+            // navy/gold the strongest pair here at 61.6. The cost is contrast against
+            // white, 3.1:1 vs teal's 4.6:1 — still over the 3:1 floor for a graphical
+            // object, and the reason the KPI swatch uses a darker gold for text.
+            // Solid throughout with no cutoff marker (NPN's call) — the held tail is
+            // disclosed in the "Potential minimum" technical box, not on the chart and
+            // no longer in the source line.
+            if (country !== 'CA') {
+                datasets.push({ label: 'U-PM (potential minimum)', data: col(d, 4), borderColor: COL.gold, borderWidth: 2, pointRadius: 0, tension: 0.1, pointStyle: 'line' });
+            }
             return {
                 dates: d.map(function (r) { return r[0]; }),
                 recession: RECESSIONS[country],
                 yLabel: 'Percent', yMin: 2, yMax: 14,
                 valueFmt: function (v) { return v.toFixed(2) + '%'; },
                 titleFmt: fmtQuarter,
-                datasets: [
-                    // pointStyle:'line' -> legend shows line-style markers (matching
-                    // Breakeven), not the ambiguous hollow circles; the dashed U-LR
-                    // then renders as a dashed line swatch via the legend's
-                    // borderDash->lineDash copy in baseOptions.
-                    { label: 'Unemployment rate', data: col(d, 1), borderColor: COL.red, borderWidth: 2, pointRadius: 0, tension: 0.1, pointStyle: 'line' },
-                    { label: 'U-SP (preferred)', data: col(d, 2), borderColor: COL.navy, borderWidth: 2, pointRadius: 0, tension: 0.1, pointStyle: 'line' },
-                    { label: lrLabel, data: col(d, 3), borderColor: COL.gray, borderWidth: 1.5, borderDash: [8, 4], pointRadius: 0, tension: 0.1, pointStyle: 'line' }
-                ]
+                datasets: datasets
             };
         },
         source: function (country) {
             return country === 'CA'
                 ? 'Source: author&rsquo;s estimates following Bok, Crump, Nekarda, and Petrosky-Nadeau (2023), applied to Statistics Canada and Bank of Canada data through 2026:Q1. U-SP begins 2000:Q1; U-LR is the model estimate.'
-                : 'Source: Bok, Crump, Nekarda, and Petrosky-Nadeau, "Estimating Natural Rates of Unemployment: A Primer" (2023), updated through 2026:Q1. CBO NROU from the Congressional Budget Office.';
+                // Keep this to one clause per plotted series. The potential minimum's
+                // method, its 2018:Q2 cutoff and the carry-forward all live in the
+                // "Potential minimum" technical box instead (NPN's call).
+                : 'Source: U-SP follows Bok, Crump, Nekarda, and Petrosky-Nadeau, "Estimating Natural Rates of Unemployment: A Primer" (2023), updated through 2026:Q1. The potential minimum is the author&rsquo;s calculation applying that paper&rsquo;s method; see Technical Details. CBO NROU from the Congressional Budget Office.';
         }
     }],
-    download: { href: 'assets/data/unemployment_benchmarks_data.csv', label: 'Download data (CSV)', note: 'includes United States and Canada, with suggested citation in the file header.' },
+    download: { href: 'assets/data/unemployment_benchmarks_data.csv', label: 'Download data (CSV)', note: 'includes United States and Canada, with suggested citation in the file header; the potential-minimum column is United States only.' },
     technical: [
         { label: 'Model', html: '<p>The estimate comes from a Phillips curve relationship embedded in a state-space model. The observation equation links changes in inflation to the unemployment gap&mdash;the difference between the actual unemployment rate and the unobserved natural rate&mdash;which follows a random walk. Parameters are estimated by maximum likelihood over 1985:Q1&ndash;2019:Q4 (excluding the pandemic), and the Kalman filter tracks the natural rate through the latest quarter. One parameter, the volatility of the natural-rate random walk, is calibrated to avoid a well-known identification problem.</p><p><strong>Canada.</strong> The Canadian stable-price rate uses the same model estimated over 2000:Q1&ndash;2019:Q4 (the exchange-rate control&rsquo;s data begin in 1999). The Canadian long-run rate is a demographic decomposition weighting each group&rsquo;s unemployment rate by its labor-force share.' },
-        { label: 'Data', html: '<p>The model takes three inputs as quarterly averages of monthly BLS/FRED data: the civilian unemployment rate, core PCE inflation (year-over-year), and the broad trade-weighted dollar index (year-over-year). The preferred specification uses a counterfactual unemployment rate that removes excess temporary layoffs relative to their 2019:Q4 share, so the pandemic spike is not read as a jump in the natural rate. The estimation sample runs 1985:Q1&ndash;2019:Q4; the filter extends the estimate through 2026:Q1.</p><p><strong>Canada.</strong> Canadian estimates use Labour Force Survey unemployment, the Bank of Canada&rsquo;s CPI-trim core inflation, and the Canadian effective exchange rate, with the same temporary-layoff adjustment.</p>' }
+        { label: 'Potential minimum', html: '<p><strong>United States only.</strong> This series is the author&rsquo;s calculation, applying the method set out in the working paper referenced above to data through 2026:Q1. It is not an estimate reported in that paper, whose own figures end in 2021:Q4 and treat the closing quarters differently, as described below. The potential minimum takes a different approach to a benchmark, adapting to unemployment a method DeLong and Summers (1988) developed for potential output. The labor force is divided into 120 groups by sex, age, education, and race or ethnicity. Within each group, the estimate traces a floor forward through the sample. In any given quarter that floor declines at the slowest rate consistent with the lowest unemployment rate the group goes on to record over the following eight years. The benchmark is the sum of those group floors, weighted by labor-force shares. Dividing the labor force into groups rather than treating it as a whole lowers the resulting benchmark a touch, as each group&rsquo;s minimum is not always reached in the same quarter.</p><p><strong>End of sample.</strong> The eight-year look-ahead means that on data ending in 2026:Q1, the last quarter the method can estimate is 2018:Q2. Each group keeps its estimated floor from that quarter thereafter, so the benchmark moves only with the changing composition of the labor force. That amounts to a net 0.02 percentage point through 2026:Q1, though the path is not flat: it declines about a tenth of a percentage point in 2020, when the pandemic changed who was in the labor force. The line is drawn solid throughout, but its closing quarters carry the last estimate forward rather than adding new ones.</p><p><strong>Unemployment has run below it.</strong> The unemployment rate averaged 3.5% from mid-2022 through mid-2023, a few hundredths of a percentage point below this benchmark. That is not a contradiction. The benchmark is built from each group&rsquo;s lowest recorded rate, not from a bound on what any group can achieve next, and in these closing quarters each group&rsquo;s floor is fixed at its 2018:Q2 value. Groups that went on to better their own records can therefore pull the aggregate below it.</p>' },
+        { label: 'Data', html: '<p>The model takes three inputs as quarterly averages of monthly BLS/FRED data: the civilian unemployment rate, core PCE inflation (year-over-year), and the broad trade-weighted dollar index (year-over-year). The preferred specification uses a counterfactual unemployment rate that removes excess temporary layoffs relative to their 2019:Q4 share, so the pandemic spike is not read as a jump in the natural rate. The estimation sample runs 1985:Q1&ndash;2019:Q4; the filter extends the estimate through 2026:Q1.</p><p><strong>Canada.</strong> Canadian estimates use Labour Force Survey unemployment, the Bank of Canada&rsquo;s CPI-trim core inflation, and the Canadian effective exchange rate, with the same temporary-layoff adjustment.</p><p><strong>Potential minimum.</strong> The 120-group panel of unemployment rates and labor-force shares is built from Current Population Survey (CPS) microdata. The group series are seasonally adjusted with X-13ARIMA-SEATS. October 2025 is missing from the survey and is imputed as the average of September and November. The panel begins in 1976; the chart starts in 1985 to match the other two series.</p>' }
     ]
 },
 

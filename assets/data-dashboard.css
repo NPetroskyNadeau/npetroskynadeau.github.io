@@ -136,6 +136,7 @@
 .kpi-red    .kpi-value { color: #B63B36; }
 .kpi-gray   .kpi-value { color: #555555; }
 .kpi-salmon .kpi-value { color: #C0554A; } /* counterfactual; slightly darker than the line for text contrast */
+.kpi-gold   .kpi-value { color: #a06a08; } /* potential minimum; darker than the #c8850a line — the line hex is 3.1:1 on white, which passes for a graphic but not for text, and this is 4.6:1 */
 
 .kpi-label {
     font-size: 0.85rem;
