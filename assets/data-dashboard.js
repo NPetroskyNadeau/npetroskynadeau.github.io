@@ -10,6 +10,8 @@
      - SP_DATA, SP_DATA_CA                         (unemployment benchmarks)
      - BE_DATES/PAYROLL_GROWTH/BE_LR/BE_SR (+ _CA)  (breakeven payrolls)
      - LFT_DATES, LFT_LF_ACTUAL/TREND/PROJ, LFT_LFPR_ACTUAL/TREND/PROJ
+     - UF_DATES, UF_URATE, UF_USS, UF_INFLOW, UF_OUTFLOW, UF_DELTA_EU/NEU,
+       UF_F_UE/UNE                                  (unemployment flows)
    ===================================================================== */
 (function () {
 "use strict";
@@ -1376,17 +1378,139 @@ var CATEGORIES = [
     ]
 },
 
-/* --- 5. Labor market flows (CPS) — pending export ------------------- */
+/* --- 5. Unemployment flows (CPS) ------------------------------------- */
+/* Replaces the former `labor-market-flows` "Coming soon" stub. Series are exported by
+   NPNs Data Tools/Labor Turnover/Urate_accounting/export_website_flows.py.
+   Text is maintained in NPN Website/Claude support files/export_uflows_page_text.py
+   (the .docx it writes is NPN's review copy); keep the two in step.
+   No KPI strip here by NPN's call -- this tab opens straight into the chart. */
 {
-    id: 'labor-market-flows',
-    tab: 'Labor Market Flows',
-    heading: 'Labor Market Flows',
-    subtitle: '',
-    prose: [],
-    reference: '',
+    id: 'unemployment-flows',
+    tab: 'Unemployment Flows',
+    requires: ['UF_DATES', 'UF_URATE', 'UF_USS', 'UF_INFLOW', 'UF_OUTFLOW',
+               'UF_DELTA_EU', 'UF_DELTA_NEU', 'UF_F_UE', 'UF_F_UNE'],
+    heading: 'Unemployment Rate Flow Accounting',
+    subtitle: 'How do the flows into and out of unemployment move the rate?',
+    prose: [
+        'The unemployment rate changes from month to month through two flows. Some workers who were employed or outside the labor force become unemployed, and some workers who were unemployed either find work or stop looking for it. The number of unemployed rises when the first flow exceeds the second and falls when it does not, so the change in unemployment can be accounted for by the two flows that produce it.',
+        'This tool measures both flows as monthly rates. The inflow rate counts everyone who becomes unemployed this month, whether they were employed or outside the labor force, and it is measured (approximately) relative to the number employed in the previous month. The outflow rate is (approximately) the share of the previous month&rsquo;s unemployed who are no longer unemployed, either because they found a job or left the labor force. Both are measured directly from Bureau of Labor Statistics (BLS) Current Population Survey (CPS) labor force status flows, following Petrosky-Nadeau and Valletta (2020).',
+        'Together the two rates imply a steady state rate of unemployment: the rate that would eventually prevail if both rates held at their current values indefinitely. It equals the inflow rate divided by the sum of the two rates. This ratio also provides a very good approximation of the actual unemployment rate when the inflow and outflow rates for the same month are used, and the approximation (teal) is plotted against the actual rate (red).',
+        'Use the <em>View</em> control to switch between the unemployment rate and the flow rates, the <em>Rate</em> control to choose the inflow or the outflow rate, and the <em>Detail</em> control to show a rate on its own or with its two components.'
+    ],
+    reference: 'Reference: Petrosky-Nadeau and Valletta, "<a href="https://www.frbsf.org/wp-content/uploads/wp2020-18.pdf" target="_blank">Unemployment Paths in a Pandemic Economy</a>," Federal Reserve Bank of San Francisco Working Paper 2020-18, 2020.',
     hasCountry: false,
-    pending: true,
-    kpis: null, charts: [], technical: []
+    kpis: null,
+    chartToggle: true,
+    // Rate/Detail drive the flow-rate view only; the unemployment-rate view suppresses
+    // them via hideControls so no inert toggle is shown.
+    ratePresets: [{ v: 'out', label: 'Outflow f' }, { v: 'in', label: 'Inflow &delta;' }],
+    detailPresets: [{ v: 'total', label: 'Total' }, { v: 'comp', label: 'Components' }],
+    rateDefault: 'out', detailDefault: 'total',
+    charts: [{
+        id: 'urate',
+        viewLabel: 'Unemployment rate',
+        title: 'Unemployment Rate and Its Flows Steady State Approximation',
+        rangeSlider: true,
+        sliderInAdvanced: true,
+        presets: [{ label: '10Y', years: 10 }, { label: '20Y', years: 20 }, { label: 'Max', years: null }],
+        hideControls: ['rate', 'detail'],
+        build: function () {
+            return {
+                dates: UF_DATES,
+                recession: RECESSIONS.US,
+                yLabel: 'Percent',
+                // Hard window, following the Unemployment Benchmarks chart's treatment of this
+                // same series. Without it the April-2020 steady state (19.03%) stretches the
+                // axis to 20 and squashes 1990-2019 into the lower half of the panel.
+                // NOTE the ceiling is 16, not the Benchmarks chart's 14: that chart plots
+                // QUARTERLY data peaking at 13.00, so its cap clips nothing, whereas monthly
+                // unemployment peaks at 14.77. A 14 cap here would truncate the headline
+                // series itself. At 16 the actual rate is fully visible and only the
+                // steady-state overshoot (one month) runs off-edge.
+                yMin: 2, yMax: 16,
+                valueFmt: function (v) { return v.toFixed(2) + '%'; },
+                titleFmt: fmtShortMY,   // matches every other monthly chart on this page
+                datasets: [
+                    // The actual rate is the subject and is drawn in the same red the
+                    // Unemployment Benchmarks tab uses for this same series; order:-1
+                    // keeps it above the approximation where they cross.
+                    { label: 'Unemployment rate', data: UF_URATE, borderColor: COL.red, borderWidth: 2.5, pointRadius: 0, tension: 0.1, pointStyle: 'line', spanGaps: false, order: -1 },
+                    // Teal, at NPN's call: against the white background teal is 4.6:1 where
+                    // gold was only 3.1:1, so the line simply reads better. Teal vs red is
+                    // 1.24:1 luminance contrast (lower than gold's 1.86:1) but the hues are
+                    // opposed rather than both warm, which is what actually separates two
+                    // overlapping lines. Because the two are close in LIGHTNESS, the dash is
+                    // load-bearing here -- it is what survives greyscale printing and keeps
+                    // the pair legible where they overlap. baseOptions copies borderDash onto
+                    // the legend marker, so the key shows a dashed swatch too.
+                    { label: 'Steady state approximation implied by the flow rates', data: UF_USS, borderColor: COL.teal, borderWidth: 2, borderDash: [6, 4], pointRadius: 0, tension: 0.1, pointStyle: 'line', spanGaps: false }
+                ]
+            };
+        },
+        source: function () {
+            return 'Source: Bureau of Labor Statistics (BLS) Current Population Survey, monthly and seasonally adjusted, individuals aged 16 and over. The steady state approximation is the author&rsquo;s calculation following Petrosky-Nadeau and Valletta, &ldquo;Unemployment Paths in a Pandemic Economy&rdquo; (2020).';
+        }
+    }, {
+        id: 'flows',
+        viewLabel: 'Flow rates',
+        title: 'Flows Into and Out of Unemployment',
+        rangeSlider: true,
+        sliderInAdvanced: true,
+        presets: [{ label: '10Y', years: 10 }, { label: '20Y', years: 20 }, { label: 'Max', years: null }],
+        build: function () {
+            // Reads the category-wide rate/detail state directly (build() never receives
+            // them as arguments), with defensive defaults for the bare build('US') call
+            // that chartCardHtml makes while laying out the slider.
+            var st = state['unemployment-flows'];
+            var isIn = (st && st.rate ? st.rate : 'out') === 'in';
+            var comp = (st && st.detail ? st.detail : 'total') === 'comp';
+            var total = {
+                label: isIn ? 'Inflow rate' : 'Outflow rate',
+                data: isIn ? UF_INFLOW : UF_OUTFLOW,
+                borderColor: isIn ? COL.salmon : COL.teal,
+                borderWidth: 2.5, pointRadius: 0, tension: 0.1, pointStyle: 'line', spanGaps: false, order: -1
+            };
+            var datasets = [total];
+            if (comp) {
+                datasets.push({
+                    label: isIn ? 'Job separation (employment to unemployment)' : 'Job finding (unemployment to employment)',
+                    data: isIn ? UF_DELTA_EU : UF_F_UE,
+                    borderColor: COL.dark, borderWidth: 2, pointRadius: 0, tension: 0.1, pointStyle: 'line', spanGaps: false
+                });
+                datasets.push({
+                    label: isIn ? 'Entry and rescaling, combined' : 'Exit and rescaling, combined',
+                    data: isIn ? UF_DELTA_NEU : UF_F_UNE,
+                    // Navy in the inflow view, gold in the outflow view. Gold against the
+                    // salmon inflow total is 1.09:1 contrast (dE00 10.0 deuteranopia), the
+                    // weakest pair on the page; gold against the teal outflow total is fine.
+                    borderColor: isIn ? COL.navy : COL.gold,
+                    borderWidth: 2, pointRadius: 0, tension: 0.1, pointStyle: 'line', spanGaps: false
+                });
+            }
+            return {
+                dates: UF_DATES,
+                recession: RECESSIONS.US,
+                yLabel: 'Percent',
+                valueFmt: function (v) { return v.toFixed(2) + '%'; },
+                titleFmt: fmtShortMY,   // matches every other monthly chart on this page
+                datasets: datasets
+            };
+        },
+        source: function () {
+            var st = state['unemployment-flows'];
+            var base = 'Source: Bureau of Labor Statistics (BLS) Current Population Survey (CPS) labor force status flows, monthly and seasonally adjusted, individuals aged 16 and over. Rates are the author&rsquo;s calculation following Petrosky-Nadeau and Valletta (2020)';
+            if ((st && st.detail ? st.detail : 'total') === 'comp') {
+                return base + '. Each component is measured against the previous month&rsquo;s employment or unemployment level.';
+            }
+            return base + ': the inflow rate divides entries into unemployment by those not unemployed a month earlier, and the outflow rate divides exits from unemployment by those unemployed a month earlier.';
+        }
+    }],
+    download: { href: 'assets/data/urate_flows_data.csv', label: 'Download data (CSV)', note: 'monthly unemployment rate, steady state, inflow and outflow rates and their components, since 1990, with suggested citation in the file header.' },
+    technical: [
+        { label: 'Definitions', html: '<p>Let u be the unemployment rate, &delta; the inflow rate, and f the outflow rate. The flows are measured between labor force statuses in consecutive months: EU and NU count workers moving into unemployment from employment and from outside the labor force, and UE and UN count workers moving out of unemployment to employment and to outside the labor force. With LF the labor force,</p><p style="text-align:center;">&delta;<sub>t</sub> = (NU<sub>t</sub> + EU<sub>t</sub>) / (LF<sub>t</sub> &middot; (1 &minus; u<sub>t&minus;1</sub>)),&nbsp;&nbsp;&nbsp; f<sub>t</sub> = (UE<sub>t</sub> + UN<sub>t</sub>) / (LF<sub>t</sub> &middot; u<sub>t&minus;1</sub>).</p><p>The two rates account for the change in the unemployment rate:</p><p style="text-align:center;">u<sub>t</sub> = u<sub>t&minus;1</sub> + &delta;<sub>t</sub>(1 &minus; u<sub>t&minus;1</sub>) &minus; f<sub>t</sub> &middot; u<sub>t&minus;1</sub> + &otilde;<sub>t</sub>.</p><p>The residual &otilde; collects transitions not captured by the four flow series and the effect of a labor force that changes size from month to month. Over the sample it averages about 0.01 percentage point in absolute value. Setting u<sub>t</sub> = u<sub>t&minus;1</sub> and dropping the residual gives the steady state approximation plotted on the first view,</p><p style="text-align:center;">u<sub>t</sub> &asymp; &delta;<sub>t</sub> / (&delta;<sub>t</sub> + f<sub>t</sub>).</p>' },
+        { label: 'Components', html: '<p>Each aggregate rate is the sum of an employment-side component and a combined term involving non-participation flows (appendix B of Petrosky-Nadeau and Valletta 2020). The employment-side components use the previous month&rsquo;s level as their base,</p><p style="text-align:center;">&delta;<sup>eu</sup><sub>t</sub> = EU<sub>t</sub> / E<sub>t&minus;1</sub>,&nbsp;&nbsp;&nbsp; f<sup>ue</sup><sub>t</sub> = UE<sub>t</sub> / U<sub>t&minus;1</sub>,</p><p>where E is employment and U is unemployment. The combined terms are the difference between each aggregate rate and its employment-side component. They gather the flows between unemployment and outside the labor force together with the factor that rescales the previous month&rsquo;s labor force to the current month&rsquo;s.</p>' },
+        { label: 'Data', html: '<p>Monthly, seasonally adjusted BLS series for individuals aged 16 and over: the labor force status flows LNS17400000 (employment to unemployment), LNS17600000 (not in the labor force to unemployment), LNS17100000 (unemployment to employment) and LNS17900000 (unemployment to not in the labor force), together with the employment and unemployment levels LNS12000000 and LNS13000000. The labor force is the sum of the two levels.</p><p>The sample begins in January 1990. BLS publishes the labor force status flows from February 1990 onward.</p><p>The Current Population Survey was not collected in October 2025, so no series is available for that month. Because the flow rates compare consecutive months, they are also undefined for November 2025. The lines break across the missing months rather than interpolating them.</p>' }
+    ]
 }
 
 ]; /* end CATEGORIES */
@@ -1477,6 +1601,31 @@ function buildControlGroups(cat, chartSpec) {
         g.framing = '<div class="chart-control-group dash-framing-group" role="group" aria-label="Decomposition">' +
             '<span class="chart-control-label">Decomposition</span>' + fbtns + '</div>';
     }
+    // Rate toggle (category-wide): which of two same-units-but-different-scale series a
+    // chart shows -- used by Unemployment Flows to pick the outflow or the inflow hazard.
+    // Same shape as breakdown/framing; updateRate syncs button state across the panel.
+    if (cat.ratePresets) {
+        var curRt = state[cat.id].rate;
+        var rtbtns = cat.ratePresets.map(function (o) {
+            var on = o.v === curRt;
+            return '<button class="dash-toggle dash-rate' + (on ? ' active' : '') + '" ' +
+                'data-rate="' + o.v + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + o.label + '</button>';
+        }).join('');
+        g.rate = '<div class="chart-control-group dash-rate-group" role="group" aria-label="Flow rate">' +
+            '<span class="chart-control-label">Rate</span>' + rtbtns + '</div>';
+    }
+    // Detail toggle (category-wide): show a series on its own, or broken into the
+    // components that sum to it. Companion to the rate toggle above.
+    if (cat.detailPresets) {
+        var curDt = state[cat.id].detail;
+        var dtbtns = cat.detailPresets.map(function (o) {
+            var on = o.v === curDt;
+            return '<button class="dash-toggle dash-detail' + (on ? ' active' : '') + '" ' +
+                'data-detail="' + o.v + '" aria-pressed="' + (on ? 'true' : 'false') + '">' + o.label + '</button>';
+        }).join('');
+        g.detail = '<div class="chart-control-group dash-detail-group" role="group" aria-label="Detail">' +
+            '<span class="chart-control-label">Detail</span>' + dtbtns + '</div>';
+    }
     // Country toggle
     if (cat.hasCountry) {
         g.country = '<div class="chart-control-group" role="group" aria-label="Country">' +
@@ -1548,7 +1697,7 @@ function buildControlGroups(cat, chartSpec) {
 }
 
 // Canonical left-to-right order of control groups on either tier.
-var CONTROL_ORDER = ['breakdown', 'framing', 'anchor', 'country', 'smoothing', 'drift', 'projection', 'range'];
+var CONTROL_ORDER = ['breakdown', 'framing', 'rate', 'detail', 'anchor', 'country', 'smoothing', 'drift', 'projection', 'range'];
 
 // Everyday control rail (above the chart): every group NOT gated by chartSpec.advanced.
 function controlsHtml(cat, chartSpec) {
@@ -1602,6 +1751,16 @@ function rangeSliderHtml(prefix, startLabel, endLabel) {
         '</div></div>';
 }
 
+/* Screen-reader summary for a chart canvas. Factored out of chartCardHtml so that
+   rebuildChartEntry can refresh it: the label is built from the CURRENT series list, and
+   controls that change which series are plotted (e.g. the Rate / Detail toggles) would
+   otherwise leave an assistive-technology user reading the default series forever. */
+function ariaFor(chartSpec, spec) {
+    var srLabels = spec.datasets.map(function (d) { return d.label; }).join(', ');
+    return chartSpec.title + '. Line and bar chart showing: ' + srLabels +
+        '. Full data available via the download link below.';
+}
+
 function chartCardHtml(cat, chartSpec, hidden) {
     var prefix = chartPrefix(cat, chartSpec);
     // Two-panel view (chartSpec.panels): render side-by-side canvases (stacking on
@@ -1639,8 +1798,7 @@ function chartCardHtml(cat, chartSpec, hidden) {
     var slider = (chartSpec.rangeSlider && !chartSpec.sliderInAdvanced) ? sliderMarkup : '';
     var advSlider = (chartSpec.rangeSlider && chartSpec.sliderInAdvanced) ? sliderMarkup : '';
     // Screen-reader summary of the chart (canvas is otherwise opaque to AT).
-    var srLabels = spec0.datasets.map(function (d) { return d.label; }).join(', ');
-    var aria = chartSpec.title + '. Line and bar chart showing: ' + srLabels + '. Full data available via the download link below.';
+    var aria = ariaFor(chartSpec, spec0);
     var recNote = spec0.recession && spec0.recession.length
         ? '<p class="dashboard-source dashboard-rec-note">Shaded vertical bands mark ' + (cat.hasCountry ? 'recessions (NBER for the United States; standard dating for Canada)' : 'recessions (NBER)') + '.</p>'
         : '';
@@ -1985,6 +2143,11 @@ function rebuildChartEntry(cat, chartSpec, entry) {
         // titles/tooltips that reference the year/breakdown update too.
         if (chartSpec.optionsFor) entry.chart.options = chartSpec.optionsFor(spec);
         entry.chart.update();
+        // Refresh the screen-reader summary: a control that swaps the plotted series
+        // (Rate / Detail) changes what the chart shows, so the static label written at
+        // markup time would go stale.
+        var cv = document.getElementById('canvas_' + entry.prefix);
+        if (cv) cv.setAttribute('aria-label', ariaFor(chartSpec, spec));
     }
     document.getElementById('source_' + entry.prefix).innerHTML = chartSpec.source(st.country);
 }
@@ -2053,6 +2216,45 @@ function updateFraming(cat, value) {
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
     ga('select_framing', { framing: value, page: 'data', category: cat.id });
+}
+
+/* Rate toggle: switch which flow hazard the chart draws (outflow / inflow). The two
+   differ by an order of magnitude; the y-axis follows because Chart.js auto-scales to the
+   replaced datasets (these charts set no fixed yMin/yMax). Category-wide, mirrors
+   updateFraming; no KPI strip on the category that uses this. */
+function updateRate(cat, value) {
+    var st = state[cat.id];
+    if (st.rate === value) return;
+    st.rate = value;
+    cat.charts.forEach(function (chartSpec) {
+        // Charts that hide this control don't depend on it; skip their redraw.
+        if ((chartSpec.hideControls || []).indexOf('rate') !== -1) return;
+        rebuildChartEntry(cat, chartSpec, st.charts[chartSpec.id]);
+    });
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-rate').forEach(function (btn) {
+        var on = btn.dataset.rate === value;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    ga('select_rate', { rate: value, page: 'data', category: cat.id });
+}
+
+/* Detail toggle: show the selected rate on its own, or split into the two components
+   that sum to it. Changes the number of series, so datasets are fully replaced. */
+function updateDetail(cat, value) {
+    var st = state[cat.id];
+    if (st.detail === value) return;
+    st.detail = value;
+    cat.charts.forEach(function (chartSpec) {
+        if ((chartSpec.hideControls || []).indexOf('detail') !== -1) return;
+        rebuildChartEntry(cat, chartSpec, st.charts[chartSpec.id]);
+    });
+    document.querySelectorAll('#panel-' + cat.id + ' .dash-detail').forEach(function (btn) {
+        var on = btn.dataset.detail === value;
+        btn.classList.toggle('active', on);
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    ga('select_detail', { detail: value, page: 'data', category: cat.id });
 }
 
 /* Range preset: filter the chart's data to a window. `range` is a trailing-year
@@ -2143,6 +2345,8 @@ function buildShareHash(cat, chartId) {
     if (cat.hasCountry) params.push('c=' + state[cat.id].country);
     if (cat.chartToggle && chartId) params.push('v=' + chartId);
     if (state[cat.id].smoothing) params.push('s=' + state[cat.id].smoothing);
+    if (cat.ratePresets) params.push('rt=' + state[cat.id].rate);
+    if (cat.detailPresets) params.push('dt=' + state[cat.id].detail);
     // rangePresets charts encode the trailing-year window as y=N; slider charts
     // still encode r=lo-hi.
     var chartSpec = chartId ? cat.charts.find(function (c) { return c.id === chartId; }) : null;
@@ -2185,6 +2389,16 @@ function applyViewState(cat, params) {
     if (params.s) {
         var w = parseInt(params.s, 10);
         if (!isNaN(w)) updateSmoothing(cat, w);
+    }
+    // Rate / Detail: validate against the declared presets so a hand-edited hash can't
+    // put the category into a state no button represents.
+    if (params.rt && cat.ratePresets &&
+        cat.ratePresets.some(function (o) { return o.v === params.rt; })) {
+        updateRate(cat, params.rt);
+    }
+    if (params.dt && cat.detailPresets &&
+        cat.detailPresets.some(function (o) { return o.v === params.dt; })) {
+        updateDetail(cat, params.dt);
     }
     var targetChart = viewId || (cat.charts[0] && cat.charts[0].id);
     var targetSpec = cat.charts.find(function (c) { return c.id === targetChart; });
@@ -2319,6 +2533,24 @@ function initDelegates() {
             updateFraming(frcat, fr.dataset.framing);
             return;
         }
+        // Rate toggle (which flow hazard the Unemployment Flows chart draws)
+        var rt = e.target.closest('.dash-rate');
+        if (rt) {
+            var rtpanel = rt.closest('.dashboard-panel');
+            var rtcat = CATEGORIES.find(function (c) { return 'panel-' + c.id === rtpanel.id; });
+            updateRate(rtcat, rt.dataset.rate);
+            return;
+        }
+        // Detail toggle (total series, or split into its components). NOTE: named dtl,
+        // not dt -- the technical-details branch below already uses `dt` in this same
+        // function scope, and .dash-detail must not be confused with .dash-detail-toggle.
+        var dtl = e.target.closest('.dash-detail');
+        if (dtl) {
+            var dtlpanel = dtl.closest('.dashboard-panel');
+            var dtlcat = CATEGORIES.find(function (c) { return 'panel-' + c.id === dtlpanel.id; });
+            updateDetail(dtlcat, dtl.dataset.detail);
+            return;
+        }
         // Anchor-year toggle (base year for the composition-constant counterfactual)
         var an = e.target.closest('.dash-anchor');
         if (an) {
@@ -2438,7 +2670,7 @@ function positionTabs() {
 /* ---------- Boot ------------------------------------------------------- */
 function init() {
     // init per-category state
-    CATEGORIES.forEach(function (c) { state[c.id] = { country: 'US', charts: {}, smoothing: (c.id === 'breakeven-payrolls' ? 12 : 0), drift: 'full', showProj: true, rangeYears: {}, anchor: (c.anchorDefault || null), breakdown: (c.breakdownDefault || null), framing: (c.framingDefault || null) }; });
+    CATEGORIES.forEach(function (c) { state[c.id] = { country: 'US', charts: {}, smoothing: (c.id === 'breakeven-payrolls' ? 12 : 0), drift: 'full', showProj: true, rangeYears: {}, anchor: (c.anchorDefault || null), breakdown: (c.breakdownDefault || null), framing: (c.framingDefault || null), rate: (c.rateDefault || null), detail: (c.detailDefault || null) }; });
     // Seed each chart's default range window from its spec's defaultYears (if any),
     // so the initial active preset + filtered view match (e.g. breakeven -> 5Y).
     CATEGORIES.forEach(function (c) {
