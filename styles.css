@@ -901,6 +901,17 @@ main {
     font-style: italic;
 }
 
+/* Conference programs (research.html #conferences): each paper lists all its authors on a
+   .collab-venue line with the presenting author in <strong>, which is the convention the
+   source programs themselves use. Plain <strong> would stay bold-italic grey and barely
+   read, so set it upright and a step darker — it has to be findable when the presenter sits
+   mid-list among five coauthors. Scoped to the section so no other .collab-venue changes. */
+#conferences .collab-venue strong {
+    color: #555;
+    font-style: normal;
+    font-weight: 600;
+}
+
 /* Compact Paper Cards (for Economic Letters) */
 .papers-list-compact {
     display: grid;
@@ -1919,11 +1930,17 @@ footer {
     }
 
     .hero-section-links {
-        gap: 1rem;
+        gap: 0.5rem 1rem;
+        /* Research has four links ("Working Papers" ... "Other Works"). Without wrapping
+           they shrink and each label breaks mid-phrase on a ~390px phone. Wrap the nav
+           to a second row instead and keep every label whole. Harmless for the three-link
+           Insights hero, which still fits on one row. */
+        flex-wrap: wrap;
     }
 
     .hero-section-links a {
         font-size: 0.9rem;
+        white-space: nowrap;
     }
 }
 
