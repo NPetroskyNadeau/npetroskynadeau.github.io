@@ -912,6 +912,20 @@ main {
     font-weight: 600;
 }
 
+/* The publication line on a conference paper sits third, under two italic grey lines, and has
+   to be findable when a card lists six papers — without outranking the paper title, which
+   leads the entry. So the emphasis goes on the journal name and nowhere else: it is the
+   informative part, and the only part that varies, so it gives the eye a landing point that
+   does not repeat down the card. The label stays in the quiet italic grey of the lines above
+   it. An earlier version put the brand blue on the label instead, which drew the eye to the
+   word "Published" twelve times over and away from the titles. Journal contrast on the white
+   card: 9.7:1. */
+#conferences .paper-published .pub-journal {
+    color: #444;
+    font-style: normal;
+    font-weight: 600;
+}
+
 /* Compact Paper Cards (for Economic Letters) */
 .papers-list-compact {
     display: grid;
