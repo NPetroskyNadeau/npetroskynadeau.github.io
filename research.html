@@ -87,6 +87,16 @@
                     <h2>Working Papers</h2>
                     <div class="papers-list">
 
+                        <div class="paper-card" id="dual-mandate-price-stability">
+                            <h3 class="paper-title">A Dual Mandate Can Support Price Stability</h3>
+                            <p class="paper-authors">Brent Bundick, Nicolas Petrosky-Nadeau</p>
+                            <p class="paper-venue"><a href="assets/papers/BPN_DualM_Hist_Dep_2026_08_18.pdf" target="_blank" class="journal-link">FRBSF Working Paper 2026-17</a></p>
+                            <button class="abstract-toggle" onclick="toggleAbstract(this)">Show Abstract</button>
+                            <div class="paper-abstract" style="display: none;">
+                                <p>Since employment dynamics are persistent, a central bank's dual mandate to promote maximum employment and price stability naturally generates history dependence in monetary policy. This history dependence under a dual mandate flattens the reduced-form Phillips curve, reduces the volatility of inflation in response to demand shocks, and improves outcomes at the zero lower bound. Moreover, we show that a dual mandate can be observationally equivalent to average inflation targeting following a demand shock. However, this equivalence breaks down in the presence of supply shocks. We first illustrate these findings analytically and then examine their quantitative importance in a model with nominal rigidities and labor search frictions calibrated to match U.S. business-cycle moments. An employment mandate can naturally provide the benefits associated with history-dependent policy frameworks.</p>
+                            </div>
+                        </div>
+
                         <div class="paper-card" id="do-vibes-predict-recessions">
                             <h3 class="paper-title">Do Vibes Predict Recessions? Evidence from a Big-Data Forecasting Framework</h3>
                             <p class="paper-authors">Nicolas Petrosky-Nadeau, Yeji Sung, Daniel J. Wilson</p>
@@ -652,6 +662,17 @@
             });
         });
 
+        // Track self-hosted paper PDFs (assets/papers/) as downloads
+        document.querySelectorAll('a[href^="assets/papers/"]').forEach(link => {
+            link.addEventListener('click', function() {
+                gtag('event', 'file_download', {
+                    'file_name': this.getAttribute('href').split('/').pop(),
+                    'file_type': 'pdf',
+                    'link_text': this.textContent.trim()
+                });
+            });
+        });
+
         // Track external links (journal sites, Google Scholar, ORCID, etc.)
         document.querySelectorAll('a[target="_blank"]').forEach(link => {
             link.addEventListener('click', function() {
@@ -666,6 +687,7 @@
                 else if (url.includes('journals.uchicago.edu')) category = 'journal_link_uchicago';
                 else if (url.includes('federalreserve.gov')) category = 'journal_link_fed';
                 else if (url.includes('frbsf.org')) category = 'working_paper';
+                else if (url.includes('/assets/papers/')) category = 'working_paper';
                 else if (url.includes('onlinelibrary.wiley.com')) category = 'journal_link_wiley';
 
                 gtag('event', 'click', {
