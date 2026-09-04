@@ -2,63 +2,69 @@
 # Suggested citation: Petrosky-Nadeau, N. (2026). Breakeven payroll growth estimates.
 #   Method: Petrosky-Nadeau and Stewart (2024), FRBSF Economic Letter 2024-18.
 # United States: BLS via FRED (CLF16OV, PAYEMS); reference unemployment rate 4.4%.
+#   Estimates match the published series plotted on the website: the trend labor force is
+#   extended with a demographic projection before filtering, so the latest month is an
+#   interior point rather than a one-sided endpoint. Historical months only.
 # Canada: Statistics Canada (LFS 14-10-0287; SEPH 14-10-0223); reference unemployment rate 6.0%.
+#   No demographic projection is available for Canada, so its estimates are filtered on
+#   actual data alone and the latest months are more sensitive to revision.
 country,date,lr_breakeven_thousands_per_month,sr_breakeven_thousands_per_month,actual_payroll_growth_thousands_per_month
-United States,2022-01-01,74.7,198.8,190.0
-United States,2022-02-01,74.7,201.9,819.0
-United States,2022-03-01,74.7,204.7,490.0
-United States,2022-04-01,74.7,207.1,308.0
-United States,2022-05-01,74.7,209.1,301.0
-United States,2022-06-01,74.7,210.7,434.0
-United States,2022-07-01,74.7,212.0,714.0
-United States,2022-08-01,74.7,212.8,290.0
-United States,2022-09-01,74.7,213.2,220.0
-United States,2022-10-01,74.7,213.2,357.0
-United States,2022-11-01,74.7,212.7,303.0
-United States,2022-12-01,74.7,211.9,100.0
-United States,2023-01-01,74.7,210.6,434.0
-United States,2023-02-01,74.7,208.9,290.0
-United States,2023-03-01,74.7,206.8,68.0
-United States,2023-04-01,74.7,204.3,241.0
-United States,2023-05-01,74.7,201.4,280.0
-United States,2023-06-01,74.7,198.1,225.0
-United States,2023-07-01,74.7,194.4,163.0
-United States,2023-08-01,74.7,190.4,218.0
-United States,2023-09-01,74.7,186.0,156.0
-United States,2023-10-01,74.7,181.3,159.0
-United States,2023-11-01,74.7,176.3,127.0
-United States,2023-12-01,74.7,171.0,154.0
-United States,2024-01-01,74.7,165.5,175.0
-United States,2024-02-01,74.7,159.7,206.0
-United States,2024-03-01,74.7,153.6,228.0
-United States,2024-04-01,74.7,147.4,64.0
-United States,2024-05-01,74.7,141.0,78.0
-United States,2024-06-01,74.7,134.4,87.0
-United States,2024-07-01,74.7,127.7,53.0
-United States,2024-08-01,74.6,120.9,9.0
-United States,2024-09-01,74.6,114.1,155.0
-United States,2024-10-01,74.6,107.2,33.0
-United States,2024-11-01,74.6,100.2,134.0
-United States,2024-12-01,74.6,93.3,237.0
-United States,2025-01-01,74.6,86.4,-48.0
-United States,2025-02-01,74.6,79.6,42.0
-United States,2025-03-01,74.6,72.8,67.0
-United States,2025-04-01,74.6,66.2,108.0
-United States,2025-05-01,74.6,59.6,13.0
-United States,2025-06-01,74.6,53.3,-20.0
-United States,2025-07-01,74.6,47.1,64.0
-United States,2025-08-01,74.6,41.1,-70.0
-United States,2025-09-01,74.6,35.3,76.0
-United States,2025-10-01,74.6,29.7,-140.0
-United States,2025-11-01,74.6,24.4,41.0
-United States,2025-12-01,74.6,19.4,-17.0
-United States,2026-01-01,74.6,14.6,160.0
-United States,2026-02-01,74.6,10.1,-156.0
-United States,2026-03-01,74.6,6.0,214.0
-United States,2026-04-01,74.5,2.1,148.0
-United States,2026-05-01,74.5,-1.4,63.0
-United States,2026-06-01,74.5,-4.6,20.0
-United States,2026-07-01,74.5,-7.5,-23.0
+United States,2022-01-01,76.2,206.7,190.0
+United States,2022-02-01,76.3,208.3,819.0
+United States,2022-03-01,76.4,209.6,490.0
+United States,2022-04-01,76.5,210.7,308.0
+United States,2022-05-01,76.5,211.4,301.0
+United States,2022-06-01,76.6,211.8,434.0
+United States,2022-07-01,76.7,211.9,714.0
+United States,2022-08-01,76.8,211.7,290.0
+United States,2022-09-01,76.8,211.2,220.0
+United States,2022-10-01,76.9,210.3,357.0
+United States,2022-11-01,77.0,209.1,303.0
+United States,2022-12-01,77.1,207.5,100.0
+United States,2023-01-01,77.2,205.7,434.0
+United States,2023-02-01,77.2,203.5,290.0
+United States,2023-03-01,77.3,201.0,68.0
+United States,2023-04-01,77.4,198.2,241.0
+United States,2023-05-01,77.5,195.1,280.0
+United States,2023-06-01,77.6,191.8,225.0
+United States,2023-07-01,77.6,188.1,163.0
+United States,2023-08-01,77.7,184.2,218.0
+United States,2023-09-01,77.8,180.1,156.0
+United States,2023-10-01,77.9,175.7,159.0
+United States,2023-11-01,78.0,171.1,127.0
+United States,2023-12-01,78.1,166.3,154.0
+United States,2024-01-01,78.1,161.3,175.0
+United States,2024-02-01,78.2,156.2,206.0
+United States,2024-03-01,78.3,150.9,228.0
+United States,2024-04-01,78.4,145.5,64.0
+United States,2024-05-01,78.5,140.0,78.0
+United States,2024-06-01,78.6,134.4,87.0
+United States,2024-07-01,78.7,128.8,53.0
+United States,2024-08-01,78.7,123.1,9.0
+United States,2024-09-01,78.8,117.4,155.0
+United States,2024-10-01,78.9,111.7,33.0
+United States,2024-11-01,79.0,106.1,134.0
+United States,2024-12-01,79.1,100.5,237.0
+United States,2025-01-01,79.2,95.0,-48.0
+United States,2025-02-01,79.3,89.5,42.0
+United States,2025-03-01,79.4,84.2,67.0
+United States,2025-04-01,79.5,79.0,108.0
+United States,2025-05-01,79.5,74.0,13.0
+United States,2025-06-01,79.6,69.1,-20.0
+United States,2025-07-01,79.7,64.4,64.0
+United States,2025-08-01,79.8,59.9,-70.0
+United States,2025-09-01,79.9,55.7,76.0
+United States,2025-10-01,80.0,51.6,-140.0
+United States,2025-11-01,80.1,47.8,41.0
+United States,2025-12-01,80.2,44.3,-17.0
+United States,2026-01-01,80.3,41.0,160.0
+United States,2026-02-01,80.4,38.0,-156.0
+United States,2026-03-01,80.5,35.2,214.0
+United States,2026-04-01,80.5,32.8,148.0
+United States,2026-05-01,80.6,30.6,63.0
+United States,2026-06-01,80.7,28.7,31.0
+United States,2026-07-01,80.8,27.1,21.0
+United States,2026-08-01,80.9,25.9,162.0
 Canada,2022-01-01,21.7,40.6,-13.0
 Canada,2022-02-01,21.7,41.0,129.0
 Canada,2022-03-01,21.7,41.4,134.0
