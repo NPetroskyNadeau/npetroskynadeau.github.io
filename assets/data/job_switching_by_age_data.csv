@@ -1,31 +1,28 @@
 # Job Switching by Age, Indexed to Each Group's 2015-2019 Average
 # Nicolas Petrosky-Nadeau, September 2026
 #
-# Monthly data, January 2012 to June 2026. Each series is an age group's rate of
-#   moving directly from one employer to another (an employer-to-employer, or
-#   job-to-job, transition), expressed as an index with that group's own
-#   2015-2019 average set to 100.
+# Monthly, January 2012 to June 2026. Each series is an age group's employer-to-employer
+# transition rate, the share of the employed moving directly to a new employer, indexed to
+# that group's own 2015-2019 average. Levels are not comparable across groups, hence the
+# indexing: that average is 4.84% of employment per month at ages 16-24, 2.14% at 25-54 and
+# 1.63% at 55 and over. Index x base rate / 100 returns the rate in percent.
 #
-#   Levels are not comparable across groups, which is why each group is indexed
-#   to itself. The 2015-2019 average monthly transition rate is 4.84% of
-#   employment for ages 16-24, 2.14% for ages 25-54, and 1.63% for ages 55 and
-#   older. Multiply an index value by the group's base rate and divide by 100 to
-#   recover the rate in percent of employment.
+# Method. The rate is not seasonally adjusted and the seasonal is large, over half the level
+# of the series at ages 16-24, so each group is smoothed with a 2x12 centered moving average:
+# 13 months, half weight on the two end months. Such a window holds every calendar month
+# exactly once, which is what removes the seasonal.
 #
-#   idx_16_24, idx_25_54, idx_55_plus: the indexed rates (2015-2019 = 100).
-#   window: "full" where the 12-month moving average is computed on a complete
-#     window; "tapered" from April 2025 on, where the window is clipped (about
-#     6.5 effective months at June 2026) and computed on seasonally adjusted
-#     data, since a shortened window does not cancel a monthly seasonal.
-#     October and November 2025 were not collected by the Current Population
-#     Survey and fall inside the tapered stretch. Tapered values can revise as
-#     further months are added.
+# window = full where all 13 months are observed; tapered from April 2025, where the window
+# is clipped, the surviving weights renormalized, and the input seasonally adjusted, since a
+# partial window no longer removes the seasonal. It narrows to an effective 6.5 months at
+# June 2026, and tapered values revise as months are added.
 #
-#   Source: Fujita, Moscarini and Postel-Vinay (2024), "Measuring
-#   Employer-to-Employer Reallocation," American Economic Journal:
-#   Macroeconomics 16(3), 1-51, replication package applied to matched Current
-#   Population Survey microdata (Bureau of Labor Statistics), with author's
-#   calculations.
+# October and November 2025 were not collected by the CPS; the index there averages the
+# observed months around them.
+#
+# Source: Fujita, Moscarini and Postel-Vinay (2024), "Measuring Employer-to-Employer
+# Reallocation," AEJ: Macroeconomics 16(3), 1-51, replication package on matched Current
+# Population Survey microdata, with author's calculations.
 #
 date,idx_16_24,idx_25_54,idx_55_plus,window
 2012-01,96.91,95.45,98.03,full
