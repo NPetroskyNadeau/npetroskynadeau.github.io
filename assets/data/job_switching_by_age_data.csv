@@ -3,19 +3,7 @@
 #
 # Monthly, January 2012 to June 2026. Each series is an age group's employer-to-employer
 # transition rate, the share of the employed moving directly to a new employer, indexed to
-# that group's own 2015-2019 average. Levels are not comparable across groups, hence the
-# indexing: that average is 4.84% of employment per month at ages 16-24, 2.14% at 25-54 and
-# 1.63% at 55 and over. Index x base rate / 100 returns the rate in percent.
-#
-# Method. The rate is not seasonally adjusted and the seasonal is large, over half the level
-# of the series at ages 16-24, so each group is smoothed with a 2x12 centered moving average:
-# 13 months, half weight on the two end months. Such a window holds every calendar month
-# exactly once, which is what removes the seasonal.
-#
-# window = full where all 13 months are observed; tapered from April 2025, where the window
-# is clipped, the surviving weights renormalized, and the input seasonally adjusted, since a
-# partial window no longer removes the seasonal. It narrows to an effective 6.5 months at
-# June 2026, and tapered values revise as months are added.
+# that group's own 2015-2019 average. Each group is smoothed with a 13 month centered moving average, tapered from April 2025.
 #
 # October and November 2025 were not collected by the CPS; the index there averages the
 # observed months around them.
