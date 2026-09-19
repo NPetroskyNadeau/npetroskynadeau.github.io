@@ -3,7 +3,8 @@
 #
 # Monthly, January 2012 to June 2026. Each series is an age group's employer-to-employer
 # transition rate, the share of the employed moving directly to a new employer, indexed to
-# that group's own 2015-2019 average. Each group is smoothed with a 13 month centered moving average, tapered from April 2025.
+# that group's own 2015-2019 average. Each group is smoothed with a 13 month centered
+# moving average, tapered from April 2025.
 #
 # October and November 2025 were not collected by the CPS; the index there averages the
 # observed months around them.
