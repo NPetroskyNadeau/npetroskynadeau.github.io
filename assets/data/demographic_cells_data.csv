@@ -1,7 +1,7 @@
 # Sex x age cell population shares and participation rates, monthly
 #   1976-02 to 2026-02
 # Nicolas Petrosky-Nadeau
-# Suggested citation: Petrosky-Nadeau, 2026, "Labor Market Trends and Projections" (methodology note).
+# Suggested citation: Petrosky-Nadeau, 2026, “Labor Market Trends and Projections” (methodology note).
 # For each of ten sex x age cells (Men/Women x 16-24, 25-34, 35-44, 45-54, 55+):
 #   share_{sex}_{age}: cell population share (fraction, sums to ~1 across cells each month)
 #   lfpr_{sex}_{age}: cell labor force participation rate (percent)

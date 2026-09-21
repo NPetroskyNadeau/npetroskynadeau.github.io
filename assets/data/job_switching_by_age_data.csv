@@ -9,8 +9,8 @@
 # October and November 2025 were not collected by the CPS; the index there averages the
 # observed months around them.
 #
-# Source: Fujita, Moscarini and Postel-Vinay (2024), "Measuring Employer-to-Employer
-# Reallocation," AEJ: Macroeconomics 16(3), 1-51, replication package on matched Current
+# Source: Fujita, Moscarini and Postel-Vinay (2024), “Measuring Employer-to-Employer
+# Reallocation,” AEJ: Macroeconomics 16(3), 1-51, replication package on matched Current
 # Population Survey microdata, with author's calculations.
 #
 date,idx_16_24,idx_25_54,idx_55_plus,window

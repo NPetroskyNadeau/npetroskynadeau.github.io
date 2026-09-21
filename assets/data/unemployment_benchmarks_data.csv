@@ -21,16 +21,16 @@
 # of the labor force. Not published for Canada.
 #
 # Method: Bok, Crump, Nekarda, and Petrosky-Nadeau,
-#   "Estimating Natural Rates of Unemployment: A Primer," Federal Reserve Bank of
+#   “Estimating Natural Rates of Unemployment: A Primer,” Federal Reserve Bank of
 #   San Francisco Working Paper 2023-25, 2023. https://doi.org/10.24148/wp2023-25
 #   (u_PM follows Appendix A.1.2, which adapts DeLong and Summers (1988).)
-#   See also Crump, Nekarda, and Petrosky-Nadeau, "Unemployment Rate Benchmarks,"
+#   See also Crump, Nekarda, and Petrosky-Nadeau, “Unemployment Rate Benchmarks,”
 #   Finance and Economics Discussion Series 2020-072, 2020.
 #
 # Sources: United States - BLS, CBO, and CPS microdata.
 #          Canada - Statistics Canada (Labour Force Survey) and Bank of Canada.
 #
-# Suggested citation: Nicolas Petrosky-Nadeau, "Benchmark Rates of Unemployment,"
+# Suggested citation: Nicolas Petrosky-Nadeau, “Benchmark Rates of Unemployment,”
 #   https://npetroskynadeau.github.io/data.html (accessed [date]).
 #
 country,date,quarter,unemployment_rate,u_SP_preferred,u_LR,u_PM

@@ -21,7 +21,7 @@
 # lagged denominator. October 2025 is blank throughout (the CPS was not collected that
 # month); the flow-based series are additionally blank for November 2025.
 #
-# Method: Petrosky-Nadeau and Valletta, "Unemployment Paths in a Pandemic Economy,"
+# Method: Petrosky-Nadeau and Valletta, “Unemployment Paths in a Pandemic Economy,”
 #   Federal Reserve Bank of San Francisco, May 2020, eqs. 3-4 (aggregate rates) and
 #   appendix B (components). https://www.frbsf.org/wp-content/uploads/wp2020-18.pdf
 #
@@ -29,7 +29,7 @@
 #          LNS17600000, LNS17100000, LNS17900000) and levels (LNS12000000,
 #          LNS13000000), monthly, seasonally adjusted, individuals aged 16 and over.
 #
-# Suggested citation: Nicolas Petrosky-Nadeau, "Unemployment Rate Flow Accounting,"
+# Suggested citation: Nicolas Petrosky-Nadeau, “Unemployment Rate Flow Accounting,”
 #   https://npetroskynadeau.github.io/data.html (accessed [date]).
 #
 date,urate,urate_ss,inflow_delta,outflow_f,delta_job_loss,delta_combined,f_job_finding,f_combined
