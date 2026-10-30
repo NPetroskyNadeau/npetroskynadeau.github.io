@@ -6,6 +6,7 @@
     <meta name="description" content="Insights by Nicolas Petrosky-Nadeau - Economic Notes, data visualizations, and FRBSF Economic Letters.">
     <title>Insights - Nicolas Petrosky-Nadeau</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="canonical" href="https://npetroskynadeau.github.io/insights.html">
 
     <!-- Google Analytics 4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1XR01WLXJ"></script>
@@ -18,6 +19,27 @@
             'cookie_flags': 'SameSite=None;Secure'
         });
     </script>
+    <!-- BEGIN GENERATED: insights-head -->
+    <script>
+        // Old tile anchors (insights.html#<id>, linked from LinkedIn posts, comments and the
+        // homepage) now have pages of their own: send them there before the page draws.
+        (function () {
+            var moved = {"econ-note-2026-01": "notes/2026-01.html", "econ-note-2026-02": "notes/2026-02.html", "econ-note-2026-03": "notes/2026-03.html", "econ-note-2026-04": "notes/2026-04.html", "econ-note-2026-05": "notes/2026-05.html", "econ-note-2026-06": "notes/2026-06.html", "econ-note-2026-07": "notes/2026-07.html", "econ-note-2026-08": "notes/2026-08.html", "econ-note-2026-09": "notes/2026-09.html", "beveridge-standstill": "posts/2026-04-17-beveridge-standstill.html", "women-lfpr-us-ca": "posts/2026-05-02-women-lfpr-us-ca.html", "job-finding-rates-young": "posts/2026-05-18-job-finding-rates-young.html", "aging-lfpr": "posts/2026-07-14-aging-lfpr.html", "job-switching-by-age": "posts/2026-09-14-job-switching-by-age.html", "startups-firms-vs-jobs": "posts/2026-09-24-startups-firms-vs-jobs.html", "job-switcher-wage-growth": "posts/2026-10-13-job-switcher-wage-growth.html", "mover-premium-by-age": "posts/2026-10-16-mover-premium-by-age.html", "experienced-wage-growth": "posts/2026-10-30-experienced-wage-growth.html"};
+            var id = location.hash.slice(1);
+            if (moved[id]) { location.replace(moved[id]); }
+        })();
+        // Which card was opened, from the landing page or an archive.
+        document.addEventListener('click', function (e) {
+            var card = e.target.closest && e.target.closest('.ins-card');
+            if (card && window.gtag) {
+                gtag('event', 'select_content', {
+                    'content_type': card.getAttribute('data-kind'),
+                    'item_id': card.getAttribute('data-slug')
+                });
+            }
+        });
+    </script>
+    <!-- END GENERATED: insights-head -->
 </head>
 <body>
     <header>
@@ -31,6 +53,7 @@
                         <a href="insights.html" class="active">Insights &#9660;</a>
                         <ul class="dropdown-menu">
                             <li><a href="insights.html#notes">Economic Notes</a></li>
+                            <li><a href="insights.html#posts">Economic Posts</a></li>
                             <li><a href="insights.html#videos">Videos</a></li>
                             <li><a href="insights.html#letters">Economic Letters</a></li>
                         </ul>
@@ -54,6 +77,7 @@
             <h1>Insights</h1>
             <nav class="hero-section-links">
                 <a href="#notes">Economic Notes</a>
+                <a href="#posts">Economic Posts</a>
                 <a href="#videos">Videos</a>
                 <a href="#letters">Economic Letters</a>
             </nav>
@@ -62,386 +86,79 @@
 
     <main>
 
-        <!-- Economic Notes Tiles Section -->
+        <!-- BEGIN GENERATED: insights-cards (Claude support files/insights_build/build_insights.py; never edit by hand) -->
         <section class="section section-gray" id="notes">
             <div class="container">
-                <div class="section-header-inline">
+                <div class="ins-section-head">
                     <h2>Economic Notes</h2>
-                    <p class="section-subtitle">Brief insights on the economy with key charts</p>
-                    <div class="tile-nav">
-                        <button class="tile-arrow tile-arrow-left" aria-label="Scroll left">‹</button>
-                        <button class="tile-arrow tile-arrow-right" aria-label="Scroll right">›</button>
-                    </div>
+                    <p>Short research notes on the labor market, each built around one or two charts</p>
                 </div>
-
-                <div class="tiles-container">
-                    <div class="tiles-scroll">
-                        <!-- Economic Note 2026-09: Low Turnover Starts with the Shortest Jobs -->
-                        <div class="note-tile" id="econ-note-2026-09">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/econ-note-2026-09.png" alt="Stacked area chart of the quarterly separations rate in 30 states, 1999 to mid-2015, split by how long the job that ended had lasted: one quarter (dark blue, top), two quarters (red, middle), and three quarters or more (gray, bottom). The total falls from about 21% of jobs in 1999 to about 15.5% in 2015. Nearly all of the decline is in the dark blue and red areas: jobs ending within one quarter fall from about 8% to about 5%, while the gray area for longer jobs stays close to 7% throughout.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>Low Turnover Starts with the Shortest Jobs</h3>
-                                    <p>Much recent commentary describes a &ldquo;low hire, low fire&rdquo; labor market, but low turnover is not new: in the 30 states we follow, the rate at which jobs end each quarter has fallen by about one-third since 1999. Michael Pries and Richard Rogerson (2022) show that most of the decline came from jobs ending within their first quarter, and their model links it to better screening of matches before hiring. Updating their analysis through 2025Q3, the same pattern accounts for about 60% of the fall in separations since 2015.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">September 2026 &middot; Economic Note 2026-09 &middot; <a href="assets/data/turnover_short_jobs_data.csv" download class="data-download">Download Data (CSV)</a></p>
-                                </div>
-                            </div>
-                            <div class="note-full note-full-flow" style="display: none;">
-                                <div class="note-col-group">
-                                    <p>Much recent commentary describes the U.S. labor market as &ldquo;low hire, low fire&rdquo;: employers are adding few workers, but they are also letting few go. Low turnover is not new, however. In the 30 states we follow here, the rate at which jobs end each quarter has fallen by about one-third since 1999, and the hiring rate by a similar amount. Its causes can help us read the current moment.</p>
-                                    <p><strong>Which jobs stopped ending?</strong> A study by Michael Pries and Richard Rogerson (2022) asks which separations account for the decline. They use the Census Bureau&rsquo;s Quarterly Workforce Indicators (QWI), built from state unemployment insurance records, which show whether a worker was paid by the same employer in consecutive quarters. That lets them split separations by how long the job that ended had lasted: one quarter, two quarters, or longer.</p>
-                                    <p><strong>Most of the drop came from the shortest jobs.</strong> The chart at the top of this note reproduces their key figure with current data. Between 1999 and 2015, the separations rate fell about 25%. Jobs that ended within their first quarter (dark blue area) account for about 60% of that decline, and two-quarter jobs (red area) for about 24%. Separations from longer jobs (gray area) barely moved. The authors show that the pattern holds across age groups, industries, firm sizes, and states.</p>
-                                    <p><strong>Better screening, better matches.</strong> The authors then build a model of job search in which employers and job seekers get a noisy signal of match quality before hiring and learn the true quality on the job. When that signal becomes more accurate, fewer poor matches are formed in the first place, so fewer jobs end quickly. In their model, better matching accounts for about 40% of the overall fall in turnover. Alternatives, such as more efficient search or higher training costs, would imply implausibly large swings in job-finding and unemployment. The finding is consistent with evidence that employers have adopted screening tests and workforce analytics. In other words, part of the decline in turnover may reflect better matching rather than a less dynamic labor market.</p>
-                                </div>
-                                <figure class="note-full-figure">
-                                    <img src="assets/charts/econ-note-2026-09-extended.png" alt="Stacked area chart of the same quarterly separations rate by job length, extended from 1999 through the third quarter of 2025, with a dashed vertical line where the paper's sample ends in 2015. After 2015 the total edges up to about 16% in 2019, spikes to about 21% in early 2020 with the spring 2020 layoffs, peaks again near 17.5% in late 2021, and then declines to about 13.4% in 2025. The dark blue area for jobs ending within one quarter shrinks to about 3.8%, its lowest in the series, while the gray area for longer jobs stays near 7% outside of 2020.">
-                                    <figcaption>The decomposition in the chart at the top of this note, extended through 2025Q3 with the same data and states. The dashed line marks the end of the paper&rsquo;s sample (2015Q2).</figcaption>
-                                </figure>
-                                <div class="note-col-group">
-                                    <p><strong>The pattern continues.</strong> The chart above extends the data through the third quarter of 2025. In the year through September 2025 separations stood about 10% below their 2015 level. Once again, jobs ending within their first quarter account for about 60% of that decline. The share of new hires who leave within their first quarter has fallen from nearly 39% in 1999 to about 29% today.</p>
-                                    <p><strong>Reading today&rsquo;s low turnover.</strong> Taken together, the evidence suggests that today&rsquo;s low turnover partly continues a long-running shift toward fewer short-lived jobs. However, some caution is warranted as fewer hires can mechanically mean fewer short jobs, and slow hiring can reflect soft demand as much as better screening. Still, the fact that new hires are less likely to leave quickly suggests that a &ldquo;low fire&rdquo; labor market need not signal only lost dynamism. Telling the two apart will shape how we read the months ahead.</p>
-                                    <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                    <p class="note-source">Source: Pries, Michael J., and Richard Rogerson. &ldquo;<a href="https://doi.org/10.1257/mac.20190230" target="_blank" rel="noopener">Declining Worker Turnover: The Role of Short-Duration Employment Spells</a>.&rdquo; <em>American Economic Journal: Macroeconomics</em> 14(1): 260&ndash;300, 2022. Charts: author&rsquo;s calculations replicating the paper&rsquo;s Figure 3 with Census Bureau Quarterly Workforce Indicators (release R2026Q3), private sector, the paper&rsquo;s 30 states, quarterly, seasonally adjusted, 1999Q1 through 2025Q3; the areas stack to the total separations rate. The paper used a 2018 data release that is no longer published; current data put the 1999 level slightly lower, so the 1999&ndash;2015 decline is a little smaller than the paper reports, while the shares by job length match closely. Changes are measured between four-quarter averages.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Economic Post: Startups, Firms vs Jobs -->
-                        <div class="note-tile" id="startups-firms-vs-jobs">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/startups_firms_vs_jobs_2026.png" alt="Line chart of United States startup activity from 1979 to 2023, on two vertical axes. The teal line, read on the left axis, is startups as a percent of all employer firms; the salmon line, read on the right axis, is their percent of total employment. The two rise and fall together on a declining trend from the early 1980s through about 2012, from 12.8 and 3.2 percent to roughly 8 and 2 percent. After about 2015 they diverge: the teal line climbs to 9.1 percent by 2023, its steepest gains around the pandemic, while the salmon line stays near 1.8 percent, close to its lowest reading in the series. A dashed vertical line at 2012 marks the end of the data in the 2019 paper, and grey bands mark recessions.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>More New Firms, But Not More Jobs From Them</h3>
-                                    <p>Startups can be counted two ways, and for three decades it did not matter which you chose. New firms as a share of all businesses and the jobs they bring as a share of all employment fell together from the early 1980s through 2012, the decline in business formation that Benjamin Pugsley and Ayşegül Şahin documented and connected to slower employment growth and weaker recoveries.</p>
-                                    <p>The two have come apart since about 2015. Startups (teal) have gone from 7.6&percnt; of all employer firms in 2010 to 9.1&percnt; in 2023, recovering roughly a third of their earlier decline, with the steepest gains around the pandemic. Their share of employment (salmon) has not moved with them: at 1.8&percnt; it sits close to its lowest reading in the whole series and essentially where it was a decade ago.</p>
-                                    <p>Whatever is generating more new businesses is generating notably smaller ones.</p>
-                                    <p class="note-date">Economic Post &middot; September 24, 2026 &middot; <a href="assets/data/startups_firms_vs_jobs_data.csv" download class="data-download">Download Data (CSV)</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Economic Post: Job Switching by Age -->
-                        <div class="note-tile" id="job-switching-by-age">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/job_switching_by_age_2026.png" alt="Line chart of job switching by age from 2012 to mid-2026, each age group's rate of moving directly from one employer to another indexed to its own 2015 to 2019 average. The three lines run close together through the 2010s and converge again at the 2022 peak near 109. They separate afterward: 55 and over (gold) rises to about 111, prime-age 25 to 54 (salmon) comes back to about 104, and 16 to 24 (teal) falls to a trough near 90 in early 2024 and recovers only to about 94.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>Job Switching Came Back, But Not for the Young</h3>
-                                    <p>Job switching is where much early-career wage growth begins. The strong labor market of 2022 lifted it for every age group at once; the recovery since 2024 has left the young behind.</p>
-                                    <p>Each line is an age group&rsquo;s rate of moving straight from one employer to another, measured against its own 2015&ndash;2019 average, because the levels are not comparable across groups: 16-to-24-year-olds switch employers about three times as often as workers over 55. At the 2022 peak the three ran within about three index points of each other; they have pulled apart since. The over-55s (gold) are about ten percent above their pre-pandemic norm and prime-age workers (salmon) have come back around it, while the young (teal), who bottomed ten percent below in early 2024, are still six percent short.</p>
-                                    <p>The series are 12-month moving averages, and the most recent stretch is computed on a shortened window, so those months can revise as the survey adds data. The downloadable file flags them.</p>
-                                    <p class="note-date">Economic Post &middot; September 14, 2026 &middot; <a href="assets/data/job_switching_by_age_data.csv" download class="data-download">Download Data (CSV)</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Economic Note 2026-08: Two Ways to a Higher Unemployment Rate -->
-                        <div class="note-tile" id="econ-note-2026-08">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/econ-note-2026-08.png" alt="Line chart of the unemployment rate and a counterfactual, percent, 12-month trailing averages from mid-2023 through July 2026. The dark navy line, the actual unemployment rate, rises steadily from about 3.55% to about 4.33%. The gold dashed line, what the rate would have been if only job-finding had changed while the rate of entry into unemployment stayed at its 2023 level, tracks the navy line until early 2024 and then flattens near 3.85% to 3.93%, ending about 0.4 percentage point below the actual rate.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>Two Ways to a Higher Unemployment Rate</h3>
-                                    <p>The unemployment rate was 3.6% in early 2023 and had risen to about 4.5% by the end of 2025. Two very different labor markets could produce that rise: one in which more workers are losing jobs, and one in which the unemployed are simply taking longer to find work. The headline rate cannot tell the two apart, but the monthly flows into and out of unemployment can. Both margins have moved since 2023. Holding one at its 2023 level at a time, the higher rate of entry into unemployment accounts for roughly 42% of the rise in the implied rate and slower exits for roughly 54%. The underlying series are on the <a href="data.html#unemployment-flows">Data page</a>.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">August 2026 &middot; Economic Note 2026-08</p>
-                                </div>
-                            </div>
-                            <div class="note-full note-full-flow" style="display: none;">
-                                <div class="note-col-group">
-                                    <p><strong>The ins and outs of unemployment.</strong> Every month some workers enter unemployment and others leave it. Expressing each as a monthly rate lets us weigh what each margin contributed to the rise in unemployment. The inflow rate tracks entries into unemployment relative to the number employed a month earlier. The outflow rate tracks exits from unemployment relative to the number unemployed a month earlier. Both margins take into account that some people move into and out of the labor force, and so also make a minor adjustment for the size of the labor force.</p>
-                                    <p><strong>Both margins have moved since 2023.</strong> The Bureau of Labor Statistics (BLS) Current Population Survey (CPS) measures both flows directly. The 12-month average of the inflow rate has risen from 1.96% to 2.13% since June 2023, while the outflow rate has fallen from 53.1% to 47.8%, as the two panels below show. To assess what those movements mean for unemployment, we use a simple relation that holds very well in the data: the unemployment rate is closely approximated by the ratio of the inflow rate to the sum of the inflow and outflow rates. The <a href="data.html#unemployment-flows">Unemployment Flows tab on the Data page</a> carries the evidence for how well.</p>
-                                </div>
-                                <figure class="note-full-figure">
-                                    <img src="assets/charts/econ-note-2026-08-flow-rates.png" alt="Two-panel line chart of monthly unemployment flow rates, January 2023 through July 2026, each panel showing the monthly rate as a faint line with the 12-month trailing average in bold. The left panel, in salmon, is entries into unemployment relative to the number employed a month earlier; the bold average falls to about 1.94% through 2023, then rises to roughly 2.17% by early 2026 before easing to 2.13%. The right panel, in teal, is exits from unemployment relative to the number unemployed a month earlier; the bold average declines fairly steadily from about 54.7% at the start of 2023 to about 47.8% at the end. Both monthly lines break at October and November 2025.">
-                                    <figcaption>Rates of entry into and exit from unemployment, January 2023 through July 2026. Faint lines are monthly rates; bold lines are 12-month trailing averages, the basis on which the rates quoted in the text are measured. Entries (left) are measured relative to the number employed a month earlier, exits (right) relative to the number unemployed a month earlier. The monthly lines break at October and November 2025, which are unavailable because the survey was not collected in October.</figcaption>
-                                </figure>
-                                <div class="note-col-group">
-                                    <p><strong>Slower unemployment outflows are not the whole story.</strong> The two rates differ by an order of magnitude in level, so a small absolute change in the inflow rate carries as much weight as a large one in the outflow rate. In proportional terms the two moved almost symmetrically, the inflow rate up about 9% and the outflow rate down about 10%. Holding one rate at its 2023 level and letting the other evolve as observed, the higher inflow rate accounts for roughly 42% of the rise in the implied unemployment rate and slower job-finding for roughly 54%. The Figure at the top of this note puts the same arithmetic in levels: with the inflow rate held at its 2023 level and the outflow rate alone changing, the unemployment rate would have averaged about 3.9% over the past year rather than 4.3%.</p>
-                                    <p><strong>Separations remain historically low.</strong> A labor market in which both margins are contributing is a different setting from one in which only job-finding has cooled. Whether the inflow rate keeps climbing is worth watching. It remains low by the standards of the past three decades: the inflow rate averaged 2.85% from 1990 through 2019, well above its current level, though only a little above its 2019 average of about 2%. Monthly series for both rates, together with their components and the approximation above, are now on the <a href="data.html#unemployment-flows">Data page</a>.</p>
-                                    <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                    <p class="note-source">Source: Bureau of Labor Statistics, Current Population Survey labor force status flows (LNS17400000, LNS17600000, LNS17100000, LNS17900000) and employment and unemployment levels (LNS12000000, LNS13000000), monthly, seasonally adjusted, through July 2026, with author&rsquo;s calculations. Flow rates follow Petrosky-Nadeau and Valletta (2020), &ldquo;<a href="https://www.frbsf.org/wp-content/uploads/wp2020-18.pdf" target="_blank" rel="noopener">Unemployment Paths in a Pandemic Economy</a>,&rdquo; Federal Reserve Bank of San Francisco Working Paper 2020-18, equations 3 and 4. Charts use 12-month trailing averages; the counterfactual is the steady-state rate implied by the two flows, which over this window rose 0.71 percentage points against the actual rate&rsquo;s 0.78. October and November 2025 carry no flow rates because the survey was not collected in October; nothing is interpolated.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Economic Note 2026-07: Keeping Up with Inflation, One Job Change at a Time -->
-                        <div class="note-tile" id="econ-note-2026-07">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/econ-note-2026-07.png" alt="Dual-axis line chart from January 2021 to mid-2026. The teal line, left axis, is one-year-ahead inflation expectations from the New York Fed Survey of Consumer Expectations; the red line, right axis, is the job-to-job (employer-to-employer) transition rate. Both climb together through 2021 and peak within a few months of each other in the first half of 2022, expectations near 6.6% and job switching near 2.45% of the employed, then fall together. Since mid-2025 both turn up again, expectations rising from about 3.0% to 3.6% and the job-to-job rate from 2.14% to 2.32%.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>Keeping Up with Inflation, One Job Change at a Time</h3>
-                                    <p>Higher inflation expectations push workers to search for new jobs when wages are set in nominal terms. In the New York Fed&rsquo;s Survey of Consumer Expectations, a 1 percentage point rise in expected inflation raises the chance of searching for new work by about 0.7 percentage point, enough to account for roughly 40% of the post-pandemic increase in job-to-job transitions. The relationship fit 2021 to 2024 closely; both series have turned up again recently, though wage growth has not yet followed.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">August 2026 &middot; Economic Note 2026-07</p>
-                                </div>
-                            </div>
-                            <div class="note-full" style="display: none;">
-                                <p>During 2021 and 2022, workers changed jobs at an unusually rapid pace. A recent paper points to a basic force behind it: workers were trying to keep up with inflation.</p>
-                                <p><strong>The question.</strong> Most wages are set in nominal terms, fixed in dollars and adjusted only now and then. When prices rise, the real value of a paycheck erodes between raises. Does the expectation of that erosion push workers to look for a new job?</p>
-                                <p><strong>What the authors find.</strong> Laura Pilossoph and Jane Ryngaert (2026) find that it does. Combining a survey experiment with the New York Fed&rsquo;s Survey of Consumer Expectations (SCE), they find that a 1 percentage point increase in expected inflation raises the chance a worker searches for new work by about 0.7 percentage point. Applied to the post-pandemic rise in expectations, that response can account for roughly 40% of the increase in job-to-job transitions through mid-2022.</p>
-                                <p>The Figure shows the two series the mechanism connects. One-year inflation expectations (teal line, left axis) and the job-to-job transition rate (red line, right axis) climbed together through 2021 and peaked within a few months of each other in the first half of 2022, expectations near 6.6% and job switching near 2.45% of the employed. In other words, expectations and job changes rose and fell as a pair through the inflation episode.</p>
-                                <p><strong>Why it matters.</strong> Changing jobs is one of the main ways workers secure raises. If inflation expectations drive search, and search drives job changes, then inflation can feed back into wages through the labor market itself, worker by worker.</p>
-                                <p><strong>The picture in 2026.</strong> The mechanism fit the 2021&ndash;24 episode closely. Since mid-2025 both series have turned up again, with expectations rising from about 3.0% to 3.6% and the job-to-job rate from 2.14% to 2.32%. Yet one piece is missing this time. Wage growth has not picked up alongside the renewed job switching. Whether that reflects a labor market that gives workers less leverage, or simply a lag before the pressure shows through, is not yet clear. The authors&rsquo; results suggest it is worth watching.</p>
-                                <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                <p class="note-source">Source: Pilossoph, Laura and Jane M. Ryngaert. &ldquo;<a href="https://drive.google.com/file/d/12RetdHiKBPcLBcYiUIQeflGGNE6mQzfV/view" target="_blank" rel="noopener">Job Search, Wages, and Inflation</a>.&rdquo; Working paper, 2026. Chart: author&rsquo;s calculations using the New York Fed Survey of Consumer Expectations (one-year-ahead inflation expectations) and the Fujita, Moscarini, and Postel-Vinay employer-to-employer transition series; centered moving averages (expectations three-month, job-to-job rate six-month), January 2021 through June 2026.</p>
-                            </div>
-                        </div>
-
-                        <!-- Economic Note 2026-06: What the Overall Participation Rate Hides -->
-                        <div class="note-tile" id="econ-note-2026-06">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/econ-note-2026-06.png" alt="Screenshot of the interactive Demographic Composition dashboard on the Data page. A view switcher offers Actual vs. counterfactual, What's driving it, Group rates, and Group shares, with a summary strip reading 62.1% participation rate, 66.8% holding the age mix fixed at 2000, and a minus 4.7 percentage point aging effect. The displayed chart plots the actual participation rate (teal) falling from about 67% near 2000 to about 62% by 2026 against a counterfactual holding the year-2000 age mix fixed (salmon) that stays near 67%, with the gap between them shaded.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>What the Overall Participation Rate Hides</h3>
-                                    <p>The overall labor force participation rate, the share of the population working or looking for work, has fallen about 5 percentage points since 2000, which is often read as a sign that fewer Americans want to work. But an aggregate rate blends how people behave with how the population is composed. Demographic adjustment separates the two, and it shows that population aging, not weaker attachment to work, accounts for almost the entire decline. You can explore the full decomposition in the <a href="data.html#aging-participation">interactive dashboard on the Data page</a>.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">July 2026 &middot; Economic Note 2026-06</p>
-                                </div>
-                            </div>
-                            <div class="note-full note-full-flow" style="display: none;">
-                                <div class="note-col-group">
-                                    <p><strong>One number, two forces.</strong> An aggregate rate like this blends two things that move separately. The first is behavior: whether people in a given group choose to participate in the labor market. The second is composition: how large each group is in the population. When the population ages, its mix shifts toward older people who tend to participate at lower rates. This leads the aggregate rate to fall even if no one changes their own behavior. Separating the two is what demographic adjustment does. We hold the age distribution fixed at a base date, say the mix in 2000, let each age group participate at its actual current rate, and ask what the aggregate would have been.</p>
-                                    <p><strong>Aging, not attachment.</strong> The Figure above shows the result. The actual rate (teal line) falls from a peak near 67% to about 62% today. The counterfactual holding the 2000 age mix fixed (salmon line) barely moves, sitting near 67% throughout. The two lines are indistinguishable through the 1990s and diverge only after 2000, as the large baby-boom cohorts age into their lower-participation retirement years. Aging alone accounts for about 4.7 of the 5 percentage point decline.</p>
-                                    <p><strong>What is driving it.</strong> The Figure below opens up that change group by group. The right panel shows what actually moved: the 55-and-older share of the population rose about 11 percentage points since 2000, while every younger group&rsquo;s share shrank. The left panel turns those movements into contributions to the aggregate change. Here I weigh each group&rsquo;s shift in share against the overall 2000 participation rate of about 67%, so a group that grows but participates below that average registers as a drag. By that measure the growing 55-and-older share is the single largest drag, subtracting about 3.3 points through composition, even though this group&rsquo;s own participation rate has risen. In other words, aging pulls the aggregate down not because older people withdrew from work, but because the population shifted toward a group that works less than the average.</p>
-                                </div>
-                                <figure class="note-full-figure">
-                                    <img src="assets/charts/econ-note-2026-06-drivers.png" alt="Two-panel chart of what is driving the change in participation since 2000, with age groups ordered youngest to oldest across both panels. The left panel shows each group's contribution to the total change in the participation rate, in percentage points, split into a composition part measured relative to the 2000 aggregate rate (navy) and a behavioral own-rate part (gold), with diamonds marking each group's total; the 55-and-older group is the largest drag, about minus 3.3 points from composition partly offset by a positive own-rate contribution. The right panel shows the change since 2000 in each group's share of the 16-and-older population (navy) and in its own participation rate (gray); the 55-and-older share rises about 11 percentage points.">
-                                    <figcaption>What is driving the change in participation since 2000, age groups youngest to oldest. Left, each group&rsquo;s contribution to the total change, in percentage points, split into a composition part measured relative to the 2000 aggregate participation rate (navy) and a behavioral own-rate part (gold); diamonds mark each group&rsquo;s total. Right, the change since 2000 in each group&rsquo;s share of the 16-and-older population (navy) and in its own participation rate (gray). Both panels share one row order.</figcaption>
-                                </figure>
-                                <div class="note-col-group">
-                                    <p><strong>Why it matters.</strong> Demographic adjustment tells you whether a change in participation really is a signal of the state of the labor market or an accounting artifact from changing demographics. To explore other cuts, an <a href="data.html#aging-participation">interactive version is now on the Data page</a>, where you can hold the age, sex, or age-and-sex mix fixed at a range of base years and see the decomposition update.</p>
-                                    <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                    <p class="note-source">Source: Current Population Survey (BLS) and author&rsquo;s calculations, via the Labor Force Trends project&rsquo;s demographic decomposition. Seasonally adjusted, three-month moving average; monthly through February 2026. Age-only composition-constant counterfactual, base January 2000; age composition effect &minus;4.66 percentage points at the latest reading. Figure 2 is an age-only shift-share of the total change since 2000 into composition and behavioral parts.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Economic Post: The Role of Aging in the LFPR Decline -->
-                        <div class="note-tile" id="aging-lfpr">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/aging_lfpr_2026.png" alt="Line chart comparing the actual U.S. labor force participation rate (teal, falling from about 67% in 2000 to about 62% in 2026) with a counterfactual that holds the age distribution of the population fixed at its year-2000 mix while each age group participates at its actual current rate (gold, roughly flat near 67%), from 1990 to 2026. The two lines coincide through the 1990s and diverge only after 2000, showing that population aging accounts for nearly the entire decline.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>Aging, Not Attachment, Explains the Falling LFPR</h3>
-                                    <p>I often hear that Americans are less willing to work than they used to be, pointing to a participation rate that has fallen about five points since 2000.</p>
-                                    <p>The teal line shows that decline, from a peak near 67% to about 62% today. The gold line asks a different question: what would participation have done if the age distribution of the population had simply stayed at its 2000 mix, with each age group participating as it actually does now? Almost nothing&mdash;it sits near 67% throughout. Nearly the entire drop is the baby-boom cohorts aging into their retirement years, not a generation stepping back from work.</p>
-                                    <p class="note-date">Economic Post &middot; July 14, 2026 &middot; <a href="assets/data/aging_lfpr_data.csv" download class="data-download">Download Data (CSV)</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Economic Note 2026-05: How Many Jobs Is Enough? -->
-                        <div class="note-tile" id="econ-note-2026-05">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/econ-note-2026-05.png" alt="Line chart of payroll growth against breakeven estimates, thousands of jobs per month, 2023 to 2028. Light gray bars show monthly payroll growth. A teal line, the 12-month average of payroll growth, falls from about 150,000 in 2024 to roughly 40,000 by mid-2026, tracking closely alongside the gold short-run breakeven line the whole way down to near 20,000. The navy long-run breakeven line holds steady near 80,000. Dashed continuations after June 2026 show the short-run line turning back up toward the long-run line by the end of the decade.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>How Many Jobs Is Enough?</h3>
-                                    <p>The most useful number to have in hand when reading the monthly jobs report may be the pace of hiring that would hold the unemployment rate steady, the &ldquo;breakeven&rdquo; pace. Over the past two years, job growth has cooled sharply, from roughly 150,000 to about 40,000 jobs a month, yet unemployment has changed little. The reason is that breakeven fell just as fast. Looking ahead, breakeven is set to rise again as labor force growth returns to its slower demographic trend.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">July 2026 &middot; Economic Note 2026-05</p>
-                                </div>
-                            </div>
-                            <div class="note-full" style="display: none;">
-                                <p>The most useful number to have in hand when reading the monthly jobs report may be the pace of hiring that would hold the unemployment rate steady. Economists call it the &ldquo;breakeven&rdquo; pace. Add jobs faster than breakeven and unemployment falls; slower, and it rises.</p>
-                                <h4>Where Breakeven Comes From</h4>
-                                <p>Breakeven is labor force growth translated into jobs needed to hold unemployment steady. Each month new workers enter the labor force, and hiring has to keep up just to absorb them. So we build breakeven from the labor force itself&mdash;its recent path and its projected path&mdash;rather than from payrolls. Labor force growth has both a shorter and a longer trend, which gives two breakeven estimates. A long-run estimate isolates slow-moving demographic forces: population growth, aging, and the trend in participation. A short-run estimate adds the medium-frequency swings that come from, for instance, immigration and shifts in participation. We define the long-run measure as the multi-decade trend in the size of the labor force, and the short-run as movements over a period of about six years (Petrosky-Nadeau and Stewart 2024). Extending the labor force with Census population projections lets us carry both estimates forward.</p>
-                                <h4>Job Growth Has Tracked Short-Run Breakeven Down</h4>
-                                <p>The Figure plots both estimates against the 12-month average of payroll growth (teal line). Over the past two years that average has fallen from roughly 150,000 to about 40,000 jobs a month, staying close to short-run breakeven (gold line) the whole way down. Short-run breakeven now sits near 20,000, well below the long-run estimate of about 80,000 (navy line). Because hiring and breakeven fell together, the gap between them stayed small. And it is that gap that moves unemployment. In other words, job growth cooled sharply without raising unemployment: the number of jobs needed to keep pace fell just as fast.</p>
-                                <h4>Why Short-Run Breakeven Is Set to Rise</h4>
-                                <p>The dashed lines extend each estimate forward, and the short-run measure turns back up, climbing from near 20,000 toward the long-run pace of about 80,000 by the end of the decade. The reason is that short-run breakeven is low today precisely because labor force growth is running below its demographic trend, held down by a pullback in immigration and a flattening in participation after its post-pandemic rebound. As those transitory forces fade, labor force inflows revert to the slower demographic pace, and the number of jobs needed to keep the unemployment rate constant rises back toward 80,000.</p>
-                                <h4>Why It Matters</h4>
-                                <p>Recent payrolls offer a first, tentative sign of this turn. The 12-month average has edged up from about 10,000 early in 2026 to roughly 40,000 in June. It is too soon to read much into so short a run of data. But if hiring and breakeven climb together, unemployment could stay steady even as the labor market firms&mdash;the same arithmetic that kept it steady on the way down, now working in reverse.</p>
-                                <p>These estimates and the projection are now an <a href="data.html#breakeven-payrolls">interactive chart on the Data page</a>, where readers can adjust the smoothing of payroll growth and see how the short-run estimate depends on how the recent trend is extrapolated.</p>
-                                <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                <p class="note-source">Source: Bureau of Labor Statistics payroll employment (CES) and labor force (Current Population Survey) via FRED; U.S. Census Bureau population projections; and author's calculations. Breakeven method from Petrosky-Nadeau and Stewart (2024). Breakeven series through June 2026; projection to December 2028. Reference unemployment rate 4.4%.</p>
-                            </div>
-                        </div>
-
-                        <!-- Economic Note 2026-04: When the Curve Moves, It's Hard to Stick the Landing -->
-                        <div class="note-tile" id="econ-note-2026-04">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/econ-note-2026-04.png" alt="Scatter plot of core PCE inflation (year-over-year) against the unemployment-to-vacancy ratio, monthly. A solid blue line shows the nonlinear Phillips curve fitted through 2023, steep at ratios below 1.0 and flat above. Teal dots (normal times, 2000 to 2017) cluster along the curve. Pink dots (steep tradeoff, since March 2022) descend down the steep segment from a March 2022 peak near a 0.5 ratio and 5.6% inflation. Gold dots (recent, since January 2025) sit above the fitted curve at a ratio near 1.0, with the highlighted May 2026 point at 3.4% inflation versus about 2.5% predicted by the curve. A dashed blue line illustrates an outward shift of the curve through the recent points.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>When the Curve Moves, It's Hard to Stick the Landing</h3>
-                                    <p>In 2023, my coauthors and I mapped a soft landing down a stable Phillips curve, achieved mainly by shrinking job vacancies rather than raising unemployment. For a while, that is roughly what happened. But the readings since January 2025 no longer sit on that curve. At a fairly normal degree of labor market slack, core PCE inflation has held near 3% and climbed to 3.4% by May 2026, about 0.9 percentage point above what the 2023 curve predicts.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">July 2026 &middot; Economic Note 2026-04</p>
-                                </div>
-                            </div>
-                            <div class="note-full" style="display: none;">
-                                <p>In 2023, my coauthors and I sketched a path for a soft landing (Crust, Lansing, and Petrosky-Nadeau 2023). A nonlinear Phillips curve, relating core inflation to the ratio of unemployed workers to job vacancies, was very steep when that ratio sat below 1.0. So a modest easing of a red-hot labor market, achieved mainly by shrinking job openings rather than raising unemployment, could bring inflation down without a recession. For a while, that is roughly what happened.</p>
-                                <p>The path down assumed the curve itself would hold still. As the 2023 analysis put it, inflation would fall back toward 2% &ldquo;provided that the Phillips curve remains stable with well-anchored inflation expectations.&rdquo;</p>
-                                <h4>What the Data Now Show</h4>
-                                <p>The recent readings no longer sit on that curve. The Figure updates the relationship with data through May 2026. From the March 2022 peak (red dot, unemployment-to-vacancy ratio near 0.5, core PCE inflation of 5.6%), the economy descended along the steep segment much as expected. But the points since January 2025 (gold) have settled at a ratio close to 1.0, a fairly normal degree of slack, while inflation has held near 3% and climbed to 3.4% by May 2026. The fitted 2023 curve (solid blue line) implies about 2.5% at that ratio. In other words, inflation is running roughly 0.9 percentage point above where the historical curve places it.</p>
-                                <p>That gap is the signature of a curve moving outward (dashed line), rather than the economy sliding along a fixed curve. A useful benchmark is 2018 and 2019, when a comparably tight market ran inflation of only about 1.8%, well below the current rate despite less slack. Negative supply shocks, from tariffs to disruptions in energy markets, can produce exactly the pattern we see, lifting the inflation associated with any given level of slack.</p>
-                                <h4>Why It Matters</h4>
-                                <p>If the curve has shifted rather than the economy simply having stalled on the way down, the remaining distance to 2% is no longer a matter of a little more labor market cooling. It would require the curve to move back, or a significant slowing in demand.</p>
-                                <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                <p class="note-source">Source: Crust, Lansing, and Petrosky-Nadeau. &ldquo;Reducing Inflation along a Nonlinear Phillips Curve.&rdquo; <em>FRBSF Economic Letter</em> 2023-17. Chart: Bureau of Labor Statistics (JOLTS, Current Population Survey), Bureau of Economic Analysis, and author's calculations; data through May 2026. Solid line is the nonlinear Phillips curve fitted through 2023; dashed line illustrates an outward shift through the recent data.</p>
-                            </div>
-                        </div>
-
-                        <!-- Economic Note 2026-03: A Longer View of Layoffs -->
-                        <div class="note-tile" id="econ-note-2026-03">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/econ-note-2026-03.png" alt="Line chart of the monthly layoff rate as a share of employment, 1978 to 2026, shown as 12-month moving averages. The teal line (prime-age workers 25 to 54) and the faint blue line (all workers 16 and older) both spike in every recession and fall back in expansions, with little overall trend. The salmon line (JOLTS layoffs and discharges, from December 2000) tracks the household-survey series closely over the years they share. The current prime-age trough sits near 1%, in line with prior strong-expansion lows.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>How Unusual Is Today's Low-Fire Labor Market?</h3>
-                                    <p>Commentators describe today's labor market as &ldquo;low-fire,&rdquo; but that reading rests largely on JOLTS, which began only in 2000 and spans just two recessions. A household-survey layoff series reaching back to 1978 shows the layoff rate has little trend over nearly five decades once the aging of the workforce is taken into account. Today's low level among prime-age workers is close to what prior strong expansions produced.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">June 2026 &middot; Economic Note 2026-03</p>
-                                </div>
-                            </div>
-                            <div class="note-full" style="display: none;">
-                                <p>Commentators increasingly describe the current U.S. labor market as a &ldquo;low-hire, low-fire&rdquo; environment: firms are reluctant to add workers but equally reluctant to let them go. The low-fire half of that description rests largely on the Job Openings and Labor Turnover Survey (JOLTS), where the layoffs and discharges rate has held near record lows. JOLTS, however, began only in December 2000. It spans just two recessions, too few to judge whether today's low layoff rate is genuinely unusual or simply what a strong labor market looks like.</p>
-                                <p>Research by <a href="https://sites.google.com/site/kathrinellieroth" target="_blank" rel="noopener">Kathrin Ellieroth</a> and <a href="https://ammichau.github.io/res.html" target="_blank" rel="noopener">Amanda Michaud</a> offers a way to extend the view (Ellieroth and Michaud, 2024). The authors build a monthly series of layoffs from the Bureau of Labor Statistics (BLS) Current Population Survey (CPS), the household survey, by linking individuals across consecutive months and classifying each job separation by its stated reason. Their series, which they update and <a href="https://sites.google.com/qlmonthly.com/home" target="_blank" rel="noopener">publish monthly</a>, reaches back to 1978 and covers six recessions. Because it draws on the household survey, it can also be broken out by worker characteristics in ways JOLTS cannot, such as by age. The Figure plots the CPS layoff rate for all workers age 16 and older (blue line) and for prime-age workers, those 25 to 54 (teal line), alongside the JOLTS layoffs and discharges rate where it is available (salmon line). All series rise sharply in every recession and recede in each expansion.</p>
-                                <p>Taking the long view, the layoff rate shows little trend, or at most a mild one, over nearly five decades once the aging of the workforce is taken into account. That is, the mild downward trend in the overall layoff rate may be related to the changing age composition of the workforce: focusing on the core of the workforce, people aged 25 to 54 years old, removes most of the downward trend. The prime-age layoff rate troughs at around 1% in each of the expansions in the sample. This perspective isn&rsquo;t evident when considering the JOLTS layoff rate alone.</p>
-                                <p><strong>Why it matters:</strong> This longer perspective, together with accounting for the aging of the workforce, reframes the low-fire narrative. A low layoff rate, particularly among prime-age workers, is not a recent departure but a recurring feature of late-expansion labor markets. The current level, though a touch low, is not out of line with what prior strong economies produced. The value of the Ellieroth and Michaud series is that it lets us see this regularity at all. Seen beside the CPS measure, the JOLTS record covers only the most recent stretch of an otherwise stable history. As such, the low layoff rate of today looks less puzzling. Whether this persists will depend on the path of the broader economy.</p>
-                                <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                <p class="note-source">Source: Ellieroth, Kathrin and Amanda Michaud. &ldquo;Quits, Layoffs, and Labor Supply.&rdquo; Working paper, 2024. Chart shows the CPS layoff rate (share of employment), seasonally adjusted, as 12-month moving averages; JOLTS layoffs and discharges shown from December 2000.</p>
-                            </div>
-                        </div>
-
-                        <!-- Note: Job Finding Rates of the Young -->
-                        <div class="note-tile" id="job-finding-rates-young">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/job_finding_rates_young_2026.png" alt="Line chart showing unemployed-to-employed flow rates from 2017 to 2026 for young workers ages 16 to 24 (teal, thick line) and prime-age workers 25 to 54 (gold, thinner line). Both groups tracked near 28% before the pandemic. Starting in 2024, young workers' rate fell sharply to 24% while prime-age held near 26%. A shaded teal area highlights the persistent gap.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>Young Workers Are Finding Fewer Jobs</h3>
-                                    <p>When young workers describe a tougher labor market, this is what it looks like in the data.</p>
-                                    <p>Before the pandemic, young (16&ndash;24) and prime-age (25&ndash;54) workers found jobs at nearly the same rate&mdash;about 28% transitioned from unemployment to employment each month. That symmetry broke in 2024. Job-finding rates for young workers dropped to around 24% while prime-age workers held near 26%. The gap has persisted into 2026 with no sign of closing.</p>
-                                    <p class="note-date">Economic Post &middot; May 18, 2026 &middot; <a href="assets/data/job_finding_rates_young_prime_data.csv" download class="data-download">Download Data (CSV)</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="note-tile" id="econ-note-2026-02">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/econ-note-2026-02.png" alt="Line chart showing stationary distributions of year-on-year inflation under two monetary policy rules. The dashed blue line (deviations rule) spreads widely with a long left tail into deflationary territory. The solid red line (shortfalls rule) shifts inflation outcomes toward higher rates, virtually eliminating outcomes below 2%.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>From Deviations to Shortfalls</h3>
-                                    <p>In 2020, the Fed changed one word in its employment mandate&mdash;from &ldquo;deviations&rdquo; to &ldquo;shortfalls.&rdquo; A calibrated model shows this asymmetry raises average inflation by roughly 90 basis points but virtually eliminates episodes at the zero lower bound, dropping ZLB frequency from 26% to less than 1%.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">May 2026 · Economic Note 2026-02</p>
-                                </div>
-                            </div>
-                            <div class="note-full" style="display: none;">
-                                <p>In August 2020, the Federal Reserve revised its Statement on Longer-Run Goals and Monetary Policy Strategy. One change stood out in how the Fed described its employment mandate. The previous framework guided monetary policy to respond to &ldquo;deviations&rdquo; of employment from its maximum level&mdash;tightening when the labor market ran hot, easing when it ran cold. The revised framework narrowed this to &ldquo;shortfalls,&rdquo; leading policy to respond only when employment fell below its maximum. In other words, a tight labor market would no longer, on its own, trigger a policy response.</p>
-                                <h4>The Question</h4>
-                                <p>What are the consequences of this asymmetry? Does removing the response to above-maximum employment come at a cost?</p>
-                                <p>In Bundick and Petrosky-Nadeau (2025) we explore this question using a New Keynesian model with labor market frictions&mdash;hiring costs, separations, and a matching process for workers and firms&mdash;alongside a zero lower bound (ZLB) on interest rates. The key mechanism is straightforward: by not responding to above-maximum employment, the shortfalls rule removes one channel through which monetary policy anchors inflation expectations.</p>
-                                <h4>What the Model Finds</h4>
-                                <p>Under the shortfalls rule, average inflation in the calibrated model rises by approximately 90 basis points relative to the symmetric deviations rule. The figure illustrates this shift. The solid blue line shows the distribution of year-on-year inflation under the deviations rule, which spreads widely and evenly, extending into deflationary territory. By contrast, the dashed red line shows the shortfalls rule shifting the distribution of inflation outcomes toward higher rates on average, and significantly reducing episodes of inflation below the 2% target.</p>
-                                <p>This is not simply a level shift. Because the central bank no longer tightens in response to an overheating labor market, demand-driven expansions generate higher inflation than under the symmetric rule. The asymmetry in the policy rule produces an asymmetry in inflation outcomes.</p>
-                                <h4>When the Bias Can Be Beneficial</h4>
-                                <p>The higher average inflation carries an important upside. Under the deviations rule, the economy reaches the ZLB&mdash;where the central bank can no longer reduce rates&mdash;approximately 26% of the time. Under the shortfalls rule, that frequency drops to less than 1%. In other words, the inflation bias acts as insurance in that higher average inflation keeps interest rates elevated enough that the central bank retains room to cut in downturns.</p>
-                                <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                <p class="note-source">Source: Bundick, Brent and Nicolas Petrosky-Nadeau. &ldquo;Employment Shortfalls and the Zero Lower Bound.&rdquo; <em>American Economic Journal: Macroeconomics</em>, 2025. Chart adapted from Figure 4.</p>
-                            </div>
-                        </div>
-
-                        <div class="note-tile" id="econ-note-2026-01">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/labor_market_concentration_2026.png" alt="Stacked bar chart showing monthly payroll employment growth by industry sector from 2023 H1 through March 2026. Red bars (education and health) and pink bars (leisure and hospitality) dominate recent periods, while most other sectors show near-zero or negative contributions. Black diamond markers show net totals.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>One Sector Carries the Labor Market</h3>
-                                    <p>2026's first three months of payroll data come on the heels of concerns that job gains have been driven by a single sector in recent years. While headlines focus on overall numbers, the underlying pattern shows education and health services essentially carrying the entire labor market. Most other major sectors are either contracting or stagnant.</p>
-                                    <button class="note-toggle" onclick="toggleNote(this)">Read Note</button>
-                                    <p class="note-date">May 2026 · Economic Note 2026-01</p>
-                                </div>
-                            </div>
-                            <div class="note-full" style="display: none;">
-                                <p>2026's first three months of payroll data come on the heels of concerns that job gains have been driven by a single sector in recent years. While headlines focus on overall numbers, the underlying pattern shows education and health services essentially carrying the entire labor market. Most other major sectors are either contracting or stagnant.</p>
-                                <p>What comes next depends on whether other sectors stabilize and resume hiring, and whether education and health services can continue shouldering the entire burden of job creation. March's data offer some hope: several sectors that contracted in February are back to growth. But until job growth broadens convincingly beyond education and health services, the labor market feels uncomfortably balanced on a narrow base.</p>
-                                <h4>From Broad-Based to Narrow</h4>
-                                <p>Industry-level employment data from the Bureau of Labor Statistics show how the breadth of job growth has narrowed since the robust gains of 2023. Payroll gains averaged 256,000 per month in the first half of that year, with broad contributions across multiple sectors. By late 2025, that growth had disappeared—the second half saw average net monthly losses of 16,000 jobs as sectors shed workers simultaneously.</p>
-                                <h4>Volatility Masks the Trends</h4>
-                                <p>Early 2026 shows large swings that cloud our view of underlying trends in sectoral job growth. January's 156,000 gain collapsed to a 125,000 loss in February before rebounding to 168,000 in March. This illustrates the challenge of reading the labor market with each incoming data release.</p>
-                                <p>Yet across these three months, education and health services combined with leisure and hospitality accounted for the vast majority of job creation, continuing the overall pattern of previous years. Finance and information posted consecutive losses, while transportation and warehousing swung from +26,000 in January to -37,000 in February to +21,000 in March. It is too soon to tell what trends are taking hold in 2026.</p>
-                                <h4>The Sustainability Question</h4>
-                                <p>One question going forward is whether an economy can sustain expansion when job creation concentrates so heavily in one sector while others stagnate. History isn't all that reassuring—broad-based employment growth typically characterizes healthy expansions.</p>
-                                <p class="note-author">Nicolas Petrosky-Nadeau</p>
-                                <p class="note-source">Data: Bureau of Labor Statistics, Current Employment Statistics (seasonally adjusted). Chart shows six-month averages (2023–2025) and monthly values (2026) for eight industry groups.</p>
-                            </div>
-                        </div>
-
-                        <!-- Note: Women's LFPR US vs Canada -->
-                        <div class="note-tile" id="women-lfpr-us-ca">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/lfpr_women_us_ca_2026.png" alt="Line chart comparing women's labor force participation rate ages 25-54 in the United States (salmon) and Canada (dark navy) from 1988 to 2026. Both start near 72% in 1988. Canada rises steadily to 85% while the US stalls after 2000. Annotations show the gap widened to 8.0 percentage points by 2018 and has since narrowed to 6.6 pp as the US reached a record 78.5%.">
-                                </div>
-                                <div class="note-content">
-                                    <h3>Started Together, Diverged, Now Narrowing</h3>
-                                    <p>In 1988, women's labor force participation in the US and Canada was nearly identical — both around 72%.</p>
-                                    <p>Then the paths split. Canada kept climbing. The US peaked around 2000 and stalled for two decades. By 2018, the gap had widened to 8 percentage points. But look at the salmon line recently — US women's participation has surged to a record 78.5%, narrowing the gap to 6.6 pp.</p>
-                                    <p class="note-date">Economic Post · May 2, 2026 · <a href="assets/data/lfpr_women_25_54_us_ca_data.csv" download class="data-download">Download Data (CSV)</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Note: Beveridge Standstill -->
-                        <div class="note-tile" id="beveridge-standstill">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/beveridge_standstill_2026.png" alt="Beveridge curve showing job vacancy rate vs unemployment rate from March 2022 to February 2026">
-                                </div>
-                                <div class="note-content">
-                                    <h3>Fourteen Months in Place</h3>
-                                    <p>Fourteen months. That's how long the labor market has been stuck at the same point on the Beveridge curve.</p>
-                                    <p>Coming out of the pandemic the story was a steep favorable tradeoff—vacancies falling along the steep portion of the curve with little change in unemployment. The yellow dots show what happened next: nothing. Since January 2025, we've hovered at 4% unemployment and 3.5-4% vacancies month after month.</p>
-                                    <p>The descent stopped. Now we wait to see which direction it breaks in 2026.</p>
-                                    <p class="note-date">Economic Post · April 17, 2026 · <a href="assets/data/beveridge_curve_data.csv" download class="data-download">Download Data (CSV)</a></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Note 2: Breakeven Employment -->
-                        <div class="note-tile">
-                            <div class="note-tile-top">
-                                <div class="note-chart">
-                                    <img src="assets/charts/breakeven_employment_2026.png" alt="Chart showing monthly payroll employment compared to break-even employment with fixed and variable labor force participation from 2022 to 2026">
-                                </div>
-                                <div class="note-content">
-                                    <h3>The Benchmark Moved</h3>
-                                    <p>Recent job growth averaging around 20k per month looks soft. But is it?</p>
-                                    <p>Timely analysis by Dallas and San Francisco Fed economists shows break-even employment—the job growth needed to keep unemployment stable—peaked at 250k monthly in 2023, fell to 10k by mid-2025, and to near zero by year-end.</p>
-                                    <p>The reason: Net outflows of unauthorized immigrants averaging -55k per month combined with declining labor force participation. What this means: The benchmark moved. Payroll gains that would have signaled economic slack just two years ago are now consistent with a balanced labor market.</p>
-                                    <p class="note-date">Economic Post · April 15, 2026</p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
+                <div class="ins-grid ins-grid-notes">
+                    <a class="ins-card" href="notes/2026-09.html" data-kind="economic_note" data-slug="2026-09">
+                        <span class="ins-card-thumb"><img src="assets/charts/econ-note-2026-09.png" alt="" loading="lazy"></span>
+                        <span class="ins-card-meta">Note 2026-09 &middot; September 2026</span>
+                        <span class="ins-card-title">Low Turnover Starts with the Shortest Jobs</span>
+                        <span class="ins-card-takeaway">Most of the fall in job turnover since 1999 came from jobs that end within their first quarter, and the pattern has continued through 2025.</span>
+                    </a>
+                    <a class="ins-card" href="notes/2026-08.html" data-kind="economic_note" data-slug="2026-08">
+                        <span class="ins-card-thumb"><img src="assets/charts/econ-note-2026-08.png" alt="" loading="lazy"></span>
+                        <span class="ins-card-meta">Note 2026-08 &middot; August 2026</span>
+                        <span class="ins-card-title">Two Ways to a Higher Unemployment Rate</span>
+                        <span class="ins-card-takeaway">Unemployment rose from 3.6% to about 4.5% between early 2023 and late 2025. The flows into and out of unemployment show which margin moved.</span>
+                    </a>
+                    <a class="ins-card" href="notes/2026-07.html" data-kind="economic_note" data-slug="2026-07">
+                        <span class="ins-card-thumb"><img src="assets/charts/econ-note-2026-07.png" alt="" loading="lazy"></span>
+                        <span class="ins-card-meta">Note 2026-07 &middot; August 2026</span>
+                        <span class="ins-card-title">Keeping Up with Inflation, One Job Change at a Time</span>
+                        <span class="ins-card-takeaway">A 1 point rise in expected inflation raises the chance of searching for a new job by about 0.7 point, roughly 40% of the post-pandemic rise in job switching.</span>
+                    </a>
+                    <a class="ins-card" href="notes/2026-06.html" data-kind="economic_note" data-slug="2026-06">
+                        <span class="ins-card-thumb"><img src="assets/charts/econ-note-2026-06-counterfactual.png" alt="" loading="lazy"></span>
+                        <span class="ins-card-meta">Note 2026-06 &middot; July 2026</span>
+                        <span class="ins-card-title">What the Overall Participation Rate Hides</span>
+                        <span class="ins-card-takeaway">Population aging, not weaker attachment to work, accounts for most of the 5-point fall in participation since 2000.</span>
+                    </a>
                 </div>
+                <p class="ins-more"><a href="notes/index.html">All Economic Notes (9) &rarr;</a></p>
             </div>
         </section>
+
+        <section class="section section-white" id="posts">
+            <div class="container">
+                <div class="ins-section-head">
+                    <h2>Economic Posts</h2>
+                    <p>One chart and one data fact, released as the data come in, with the data to download</p>
+                </div>
+                <div class="ins-grid ins-grid-posts">
+                    <a class="ins-card" href="posts/2026-10-30-experienced-wage-growth.html" data-kind="economic_post" data-slug="2026-10-30-experienced-wage-growth">
+                        <span class="ins-card-thumb"><img src="assets/charts/experienced_wage_growth_2026.png" alt="" loading="lazy"></span>
+                        <span class="ins-card-meta">October 30, 2026</span>
+                        <span class="ins-card-title">Wage Growth Has Tilted Toward Experience</span>
+                        <span class="ins-card-takeaway">The wage-growth gap between 21-to-30 and 35-to-54-year-olds has narrowed to 1.8 points, mostly because mid-career raises picked up.</span>
+                    </a>
+                    <a class="ins-card" href="posts/2026-10-16-mover-premium-by-age.html" data-kind="economic_post" data-slug="2026-10-16-mover-premium-by-age">
+                        <span class="ins-card-thumb"><img src="assets/charts/mover_premium_by_age_2026.png" alt="" loading="lazy"></span>
+                        <span class="ins-card-meta">October 16, 2026</span>
+                        <span class="ins-card-title">Who Is Getting the Raise for Changing Jobs?</span>
+                        <span class="ins-card-takeaway">This year&rsquo;s premium for changing employers is going mostly to movers aged 35 to 54, while younger movers get a little less than usual.</span>
+                    </a>
+                    <a class="ins-card" href="posts/2026-10-13-job-switcher-wage-growth.html" data-kind="economic_post" data-slug="2026-10-13-job-switcher-wage-growth">
+                        <span class="ins-card-thumb"><img src="assets/charts/job_switcher_wage_growth_2026.png" alt="" loading="lazy"></span>
+                        <span class="ins-card-meta">October 13, 2026</span>
+                        <span class="ins-card-title">The Payoff to Changing Jobs Has Reopened</span>
+                        <span class="ins-card-takeaway">The wage premium for changing jobs, gone in mid-2025, has reopened to 0.9 point as raises for stayers keep slowing.</span>
+                    </a>
+                    <a class="ins-card" href="posts/2026-09-24-startups-firms-vs-jobs.html" data-kind="economic_post" data-slug="2026-09-24-startups-firms-vs-jobs">
+                        <span class="ins-card-thumb"><img src="assets/charts/startups_firms_vs_jobs_2026.png" alt="" loading="lazy"></span>
+                        <span class="ins-card-meta">September 24, 2026</span>
+                        <span class="ins-card-title">More New Firms, But Not More Jobs From Them</span>
+                        <span class="ins-card-takeaway">Startups have won back about a third of their lost share of firms since 2010, but their share of jobs sits near a series low.</span>
+                    </a>
+                </div>
+                <p class="ins-more"><a href="posts/index.html">All Economic Posts (10) &rarr;</a></p>
+            </div>
+        </section>
+    <!-- END GENERATED: insights-cards -->
 
         <!-- Labor Market Insights Videos Section -->
         <section class="section section-white" id="videos">
@@ -457,6 +174,20 @@
 
                 <div class="tiles-container">
                     <div class="tiles-scroll video-tiles-scroll">
+                        <div class="video-tile" id="video-aging-participation">
+                            <div class="video-tile-top">
+                                <div class="video-tile-media">
+                                    <video src="assets/videos/aging_participation_animated_mobile.mp4" poster="assets/videos/aging_participation_poster.png" muted loop playsinline preload="metadata" aria-label="Animated chart in two acts: Why participation fell. First, the labor force participation rate (teal) falls from about 67% in 2000 to 62.1% by February 2026, while a counterfactual holding the year-2000 age mix fixed (salmon) ends near 66.8%, the shaded gap between them labelled as 4.7 percentage points of aging. Then a group-by-group bar chart of contributions to the change since 2000, split into a composition part (navy) and a behavioral own-rate part (gold) with diamonds marking each group's total, showing the 55-and-older group as the single largest drag at about minus 3.3 points from composition even though its own participation rate rose."></video>
+                                    <button class="video-play-btn" aria-label="Play video">&#9654;</button>
+                                </div>
+                                <div class="note-content">
+                                    <h3>Why Participation Fell</h3>
+                                    <p>Participation has fallen about five points since 2000, which is often read as a sign that fewer adults want to work. Hold the age mix fixed at its 2000 composition and nearly the whole decline, 4.7 of 5.1 points, is population aging. The 55-and-older group is the single largest drag even though both its population share and its own participation rate rose, because a group that participates below the average pulls that average down as its share grows. Data through February 2026. Explore the decomposition on the <a href="data.html#aging-participation">demographic composition dashboard</a>, or see <a href="#video-breakeven-payrolls">How Much Hiring Is Enough?</a> for what slower labor force growth means for payrolls.</p>
+                                    <p class="note-date">September 2026 &middot; Labor Market Insights</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="video-tile" id="video-breakeven-payrolls">
                             <div class="video-tile-top">
                                 <div class="video-tile-media">
@@ -465,7 +196,7 @@
                                 </div>
                                 <div class="note-content">
                                     <h3>How Much Hiring Is Enough?</h3>
-                                    <p>Payrolls fell in July 2026, yet unemployment eased to 4.1%. The bar for &ldquo;enough&rdquo; job growth is not fixed: as labor force growth slowed, from fewer new arrivals from abroad and less participation growth at home, the hiring needed just to hold unemployment steady dropped from about 193,000 a month to 11,000. A 12-month hiring average of 26,000 is weak by any standard, and still above that much lower bar. Explore the underlying estimates on the <a href="data.html#breakeven-payrolls">breakeven payrolls dashboard</a>.</p>
+                                    <p>Payrolls fell in July 2026, yet unemployment eased to 4.1%. The bar for &ldquo;enough&rdquo; job growth is not fixed: as labor force growth slowed, from fewer new arrivals from abroad and less participation growth at home, the hiring needed just to hold unemployment steady dropped from about 193,000 a month to 11,000. A 12-month hiring average of 26,000 is weak by any standard, and still above that much lower bar. Explore the underlying estimates on the <a href="data.html#breakeven-payrolls">breakeven payrolls dashboard</a>, or see <a href="#video-aging-participation">Why Participation Fell</a> for the slower labor force growth behind that falling bar.</p>
                                     <p class="note-date">August 2026 &middot; Labor Market Insights</p>
                                 </div>
                             </div>
@@ -787,85 +518,6 @@
             initMobileDropdowns();
         }
 
-        // Tiles scroll functionality
-        function initTilesScroll() {
-            const tilesScroll = document.querySelector('.tiles-scroll');
-            const leftArrow = document.querySelector('.tile-nav .tile-arrow-left');
-            const rightArrow = document.querySelector('.tile-nav .tile-arrow-right');
-
-            if (!tilesScroll || !leftArrow || !rightArrow) return;
-
-            const scrollAmount = tilesScroll.offsetWidth * 0.85; // Scroll by ~1 tile width
-
-            // Helper: get currently visible tile title
-            function getVisibleTileTitle() {
-                const tiles = tilesScroll.querySelectorAll('.note-tile');
-                for (const tile of tiles) {
-                    const rect = tile.getBoundingClientRect();
-                    const containerRect = tilesScroll.getBoundingClientRect();
-                    if (rect.left >= containerRect.left - 10) {
-                        return tile.querySelector('h3')?.textContent || 'unknown';
-                    }
-                }
-                return 'unknown';
-            }
-
-            // Left arrow - scroll backward
-            leftArrow.addEventListener('click', () => {
-                tilesScroll.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-                gtag('event', 'tiles_scroll', {
-                    'direction': 'left',
-                    'from_tile': getVisibleTileTitle()
-                });
-            });
-
-            // Right arrow - scroll forward
-            rightArrow.addEventListener('click', () => {
-                tilesScroll.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-                gtag('event', 'tiles_scroll', {
-                    'direction': 'right',
-                    'from_tile': getVisibleTileTitle()
-                });
-            });
-
-            // Keyboard navigation (Left/Right arrow keys)
-            document.addEventListener('keydown', (e) => {
-                if (!document.querySelector('.tiles-container')) return;
-                if (e.key === 'ArrowLeft') {
-                    tilesScroll.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-                    gtag('event', 'tiles_scroll', { 'direction': 'left', 'method': 'keyboard' });
-                } else if (e.key === 'ArrowRight') {
-                    tilesScroll.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-                    gtag('event', 'tiles_scroll', { 'direction': 'right', 'method': 'keyboard' });
-                }
-            });
-
-            // Track tile views as user scrolls
-            const tiles = tilesScroll.querySelectorAll('.note-tile');
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const tileTitle = entry.target.querySelector('h3')?.textContent;
-                        const tileIndex = Array.from(tiles).indexOf(entry.target) + 1;
-                        if (tileTitle) {
-                            gtag('event', 'tile_view', {
-                                'tile_title': tileTitle,
-                                'tile_index': tileIndex
-                            });
-                        }
-                    }
-                });
-            }, { threshold: 0.5 });
-
-            tiles.forEach(tile => observer.observe(tile));
-        }
-
-        // Initialize tiles on load
-        if (document.querySelector('.tiles-container')) {
-            initTilesScroll();
-        }
-
-        // Video tiles scroll navigation
         (function initVideoTilesScroll() {
             const tilesScroll = document.querySelector('.video-tiles-scroll');
             const nav = document.querySelector('.video-tile-nav');

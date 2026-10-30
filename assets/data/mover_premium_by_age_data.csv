@@ -1,0 +1,57 @@
+# Wage Growth of Job Movers and Stayers, Ages 25 to 54, and the Gap by Age
+# Nicolas Petrosky-Nadeau, October 2026
+#
+# Monthly, January 2024 to August 2026. Wage growth is the 12-month change in the hourly wage
+# of the same workers observed a year apart, in percent. Each month pools the 12 months ending
+# in it and takes a smoothed median (Gaussian kernel, bandwidth 1 percentage point). Unweighted.
+# Movers reported a new employer, or changed both their major occupation and their major
+# industry, over the year. Stayers are the tracker’s job stayers: no new employer, no new
+# duties, and the same major occupation and industry as a year earlier. Ages 25 to 54.
+#
+# gap_pp is movers minus stayers. The last three columns split it, to a first-order
+# approximation, into contributions from movers aged 25 to 34, movers aged 35 to 54, and age
+# mix (movers being younger than stayers); they sum to roughly gap_pp. October 2025 is blank
+# because the Current Population Survey was not collected that month.
+#
+# 2000-2019 averages, over the windows ending December 2000 to December 2019: gap 0.72;
+# within ages 25-34 0.26; within ages 35-54 0.26; age mix 0.17.
+#
+# Small samples, about 1,400 prime-age movers a year: read the split as a direction.
+#
+# Source: author’s calculations on Current Population Survey microdata, following the method
+# of the Atlanta Fed Wage Growth Tracker (Daly, Hobijn and Wiles 2012, “Dissecting Aggregate
+# Real Wage Fluctuations: Individual Wage Growth and the Composition Effect,” FRBSF Working
+# Paper 2011-23).
+date,movers,stayers,gap_pp,within_25_34_pp,within_35_54_pp,age_mix_pp
+2024-01,7.33,5.53,1.80,1.15,0.42,0.20
+2024-02,6.76,5.48,1.28,0.89,0.16,0.18
+2024-03,6.60,5.42,1.18,0.73,0.23,0.17
+2024-04,6.84,5.51,1.32,0.83,0.24,0.16
+2024-05,6.66,5.30,1.36,0.75,0.39,0.14
+2024-06,6.61,5.25,1.36,0.67,0.48,0.12
+2024-07,6.72,5.16,1.56,0.83,0.57,0.08
+2024-08,6.43,5.17,1.26,0.71,0.42,0.08
+2024-09,6.36,5.23,1.13,0.71,0.29,0.08
+2024-10,6.34,5.22,1.12,0.59,0.42,0.08
+2024-11,6.11,5.14,0.97,0.47,0.41,0.08
+2024-12,5.99,5.06,0.93,0.40,0.44,0.08
+2025-01,5.76,4.94,0.83,0.31,0.41,0.09
+2025-02,5.67,4.88,0.80,0.27,0.42,0.10
+2025-03,5.63,4.81,0.82,0.37,0.33,0.11
+2025-04,5.48,4.64,0.84,0.26,0.45,0.11
+2025-05,5.28,4.71,0.57,0.41,0.07,0.09
+2025-06,4.98,4.62,0.36,0.36,-0.09,0.09
+2025-07,4.81,4.55,0.26,0.20,-0.04,0.10
+2025-08,4.73,4.43,0.30,0.20,0.01,0.09
+2025-09,4.76,4.32,0.44,0.39,-0.05,0.10
+2025-10,,,,,,
+2025-11,4.41,4.22,0.19,0.26,-0.20,0.12
+2025-12,4.24,4.09,0.15,0.41,-0.36,0.10
+2026-01,4.64,4.15,0.49,0.41,-0.02,0.10
+2026-02,4.73,4.11,0.63,0.32,0.21,0.08
+2026-03,5.07,4.07,1.00,0.39,0.52,0.06
+2026-04,4.95,4.00,0.95,0.36,0.52,0.06
+2026-05,4.81,3.90,0.91,0.04,0.80,0.07
+2026-06,5.04,3.88,1.15,0.19,0.88,0.08
+2026-07,4.93,3.86,1.07,0.12,0.83,0.10
+2026-08,5.05,3.89,1.16,0.19,0.84,0.11
