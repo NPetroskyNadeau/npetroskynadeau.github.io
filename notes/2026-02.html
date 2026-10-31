@@ -137,15 +137,74 @@
             initMobileDropdowns();
         }
 
+        // Track external links (journals, DOI, frbsf.org, Scholar, LinkedIn, etc.)
+        document.querySelectorAll('a[target="_blank"]').forEach(link => {
+            link.addEventListener('click', function() {
+                const url = this.href;
+                let category = 'external_link';
+
+                if (url.includes('scholar.google.com')) category = 'google_scholar';
+                else if (url.includes('orcid.org')) category = 'orcid';
+                else if (url.includes('linkedin.com')) category = 'linkedin';
+                else if (url.includes('aeaweb.org')) category = 'journal_link_aer';
+                else if (url.includes('sciencedirect.com')) category = 'journal_link_elsevier';
+                else if (url.includes('journals.uchicago.edu')) category = 'journal_link_uchicago';
+                else if (url.includes('federalreserve.gov')) category = 'journal_link_fed';
+                else if (url.includes('onlinelibrary.wiley.com')) category = 'journal_link_wiley';
+                else if (url.includes('doi.org')) category = 'journal_link';
+                else if (url.includes('frbsf.org')) category = 'working_paper';
+
+                gtag('event', 'click', {
+                    'event_category': category,
+                    'event_label': url,
+                    'link_text': this.textContent.trim(),
+                    'page': 'economic_note', 'item_id': '2026-02'
+                });
+            });
+        });
+
+        // Track CV downloads
+        document.querySelectorAll('a[href*="CV_PetroskyNadeau.pdf"]').forEach(link => {
+            link.addEventListener('click', function() {
+                gtag('event', 'file_download', {
+                    'file_name': 'CV_PetroskyNadeau.pdf',
+                    'link_text': this.textContent.trim()
+                });
+            });
+        });
+
         // Track chart data downloads
         document.querySelectorAll('.data-download').forEach(link => {
             link.addEventListener('click', function() {
                 gtag('event', 'file_download', {
                     'file_name': this.getAttribute('href').split('/').pop(),
                     'file_type': 'csv',
-                    'link_text': this.textContent.trim()
+                    'link_text': this.textContent.trim(),
+                    'page': 'economic_note', 'item_id': '2026-02'
                 });
             });
+        });
+
+        // Track scroll depth
+        let scrollDepths = [25, 50, 75, 100];
+        let scrollTracked = [];
+        window.addEventListener('scroll', function() {
+            const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+            if (scrollable <= 0) return;
+            const scrollPercent = Math.round((window.scrollY / scrollable) * 100);
+            scrollDepths.forEach(depth => {
+                if (scrollPercent >= depth && !scrollTracked.includes(depth)) {
+                    scrollTracked.push(depth);
+                    gtag('event', 'scroll_depth', { 'percent': depth, 'page': 'economic_note', 'item_id': '2026-02' });
+                }
+            });
+        });
+
+        // Track time spent on page before leaving
+        let pageStartTime = Date.now();
+        window.addEventListener('beforeunload', function() {
+            const timeSpent = Math.round((Date.now() - pageStartTime) / 1000);
+            gtag('event', 'page_engagement', { 'time_seconds': timeSpent, 'page': 'economic_note', 'item_id': '2026-02' });
         });
         // Which card was opened, from the landing page or an archive.
         document.addEventListener('click', function (e) {
