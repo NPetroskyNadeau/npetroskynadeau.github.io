@@ -702,6 +702,7 @@ var CATEGORIES = [
     },
     charts: [{
         id: 'benchmark',
+        renderer: 'plotly',
         title: 'Estimates of Benchmark Rates of Unemployment',
         rangeSlider: true,
         // Two-tier progressive disclosure (matches Breakeven): the coarse presets
@@ -751,18 +752,18 @@ var CATEGORIES = [
         },
         source: function (country) {
             return country === 'CA'
-                ? 'Source: author&rsquo;s estimates following Bok, Crump, Nekarda, and Petrosky-Nadeau (2023), applied to Statistics Canada and Bank of Canada data through 2026:Q1. U-SP begins 2000:Q1; U-LR is the model estimate.'
+                ? 'Source: author&rsquo;s estimates following Bok, Crump, Nekarda, and Petrosky-Nadeau (2023), applied to Statistics Canada and Bank of Canada data through 2026:Q3. U-SP begins 2000:Q1; U-LR is the model estimate.'
                 // Keep this to one clause per plotted series. The potential minimum's
-                // method, its 2018:Q2 cutoff and the carry-forward all live in the
+                // method, its 2018:Q3 cutoff and the carry-forward all live in the
                 // "Potential minimum" technical box instead (NPN's call).
-                : 'Source: U-SP follows Bok, Crump, Nekarda, and Petrosky-Nadeau, "Estimating Natural Rates of Unemployment: A Primer" (2023), updated through 2026:Q1. The potential minimum is the author&rsquo;s calculation applying that paper&rsquo;s method; see Technical Details. CBO NROU from the Congressional Budget Office.';
+                : 'Source: U-SP follows Bok, Crump, Nekarda, and Petrosky-Nadeau, "Estimating Natural Rates of Unemployment: A Primer" (2023), updated through 2026:Q3. The potential minimum is the author&rsquo;s calculation applying that paper&rsquo;s method; see Technical Details. CBO NROU from the Congressional Budget Office.';
         }
     }],
     download: { href: 'assets/data/unemployment_benchmarks_data.csv', label: 'Download data (CSV)', note: 'includes United States and Canada, with suggested citation in the file header; the potential-minimum column is United States only.' },
     technical: [
         { label: 'Model', html: '<p>The estimate comes from a Phillips curve relationship embedded in a state-space model. The observation equation links changes in inflation to the unemployment gap&mdash;the difference between the actual unemployment rate and the unobserved natural rate&mdash;which follows a random walk. Parameters are estimated by maximum likelihood over 1985:Q1&ndash;2019:Q4 (excluding the pandemic), and the Kalman filter tracks the natural rate through the latest quarter. One parameter, the volatility of the natural-rate random walk, is calibrated to avoid a well-known identification problem.</p><p><strong>Canada.</strong> The Canadian stable-price rate uses the same model estimated over 2000:Q1&ndash;2019:Q4 (the exchange-rate control&rsquo;s data begin in 1999). The Canadian long-run rate is a demographic decomposition weighting each group&rsquo;s unemployment rate by its labor-force share.' },
-        { label: 'Potential minimum', html: '<p><strong>United States only.</strong> This series is the author&rsquo;s calculation, applying the method set out in the working paper referenced above to data through 2026:Q1. It is not an estimate reported in that paper, whose own figures end in 2021:Q4 and treat the closing quarters differently, as described below. The potential minimum takes a different approach to a benchmark, adapting to unemployment a method DeLong and Summers (1988) developed for potential output. The labor force is divided into 120 groups by sex, age, education, and race or ethnicity. Within each group, the estimate traces a floor forward through the sample. In any given quarter that floor declines at the slowest rate consistent with the lowest unemployment rate the group goes on to record over the following eight years. The benchmark is the sum of those group floors, weighted by labor-force shares. Dividing the labor force into groups rather than treating it as a whole lowers the resulting benchmark a touch, as each group&rsquo;s minimum is not always reached in the same quarter.</p><p><strong>End of sample.</strong> The eight-year look-ahead means that on data ending in 2026:Q1, the last quarter the method can estimate is 2018:Q2. Each group keeps its estimated floor from that quarter thereafter, so the benchmark moves only with the changing composition of the labor force. That amounts to a net 0.02 percentage point through 2026:Q1, though the path is not flat: it declines about a tenth of a percentage point in 2020, when the pandemic changed who was in the labor force. The line is drawn solid throughout, but its closing quarters carry the last estimate forward rather than adding new ones.</p><p><strong>Unemployment has run below it.</strong> The unemployment rate averaged 3.5% from mid-2022 through mid-2023, a few hundredths of a percentage point below this benchmark. That is not a contradiction. The benchmark is built from each group&rsquo;s lowest recorded rate, not from a bound on what any group can achieve next, and in these closing quarters each group&rsquo;s floor is fixed at its 2018:Q2 value. Groups that went on to better their own records can therefore pull the aggregate below it.</p>' },
-        { label: 'Data', html: '<p>The model takes three inputs as quarterly averages of monthly BLS/FRED data: the civilian unemployment rate, core PCE inflation (year-over-year), and the broad trade-weighted dollar index (year-over-year). The preferred specification uses a counterfactual unemployment rate that removes excess temporary layoffs relative to their 2019:Q4 share, so the pandemic spike is not read as a jump in the natural rate. The estimation sample runs 1985:Q1&ndash;2019:Q4; the filter extends the estimate through 2026:Q1.</p><p><strong>Canada.</strong> Canadian estimates use Labour Force Survey unemployment, the Bank of Canada&rsquo;s CPI-trim core inflation, and the Canadian effective exchange rate, with the same temporary-layoff adjustment.</p><p><strong>Potential minimum.</strong> The 120-group panel of unemployment rates and labor-force shares is built from Current Population Survey (CPS) microdata. The group series are seasonally adjusted with X-13ARIMA-SEATS. October 2025 is missing from the survey and is imputed as the average of September and November. The panel begins in 1976; the chart starts in 1985 to match the other two series.</p>' }
+        { label: 'Potential minimum', html: '<p><strong>United States only.</strong> This series is the author&rsquo;s calculation, applying the method set out in the working paper referenced above to data through 2026:Q2. It is not an estimate reported in that paper, whose own figures end in 2021:Q4 and treat the closing quarters differently, as described below. The potential minimum takes a different approach to a benchmark, adapting to unemployment a method DeLong and Summers (1988) developed for potential output. The labor force is divided into 120 groups by sex, age, education, and race or ethnicity. Within each group, the estimate traces a floor forward through the sample. In any given quarter that floor declines at the slowest rate consistent with the lowest unemployment rate the group goes on to record over the following eight years. The benchmark is the sum of those group floors, weighted by labor-force shares. Dividing the labor force into groups rather than treating it as a whole lowers the resulting benchmark a touch, as each group&rsquo;s minimum is not always reached in the same quarter.</p><p><strong>End of sample.</strong> The eight-year look-ahead means that on data ending in 2026:Q2, the last quarter the method can estimate is 2018:Q3. Each group keeps its estimated floor from that quarter thereafter, so the benchmark moves only with the changing composition of the labor force. That amounts to a net 0.04 percentage point through 2026:Q2, though the path is not flat: it declines about a tenth of a percentage point in 2020, when the pandemic changed who was in the labor force. The line is drawn solid throughout, but its closing quarters carry the last estimate forward rather than adding new ones.</p><p><strong>Unemployment has run below it.</strong> The unemployment rate averaged 3.5% from mid-2022 through mid-2023, about a hundredth of a percentage point below this benchmark. That is not a contradiction. The benchmark is built from each group&rsquo;s lowest recorded rate, not from a bound on what any group can achieve next, and in these closing quarters each group&rsquo;s floor is fixed at its 2018:Q3 value. Groups that went on to better their own records can therefore pull the aggregate below it.</p>' },
+        { label: 'Data', html: '<p>The model takes three inputs as quarterly averages of monthly BLS/FRED data: the civilian unemployment rate, core PCE inflation (year-over-year), and the broad trade-weighted dollar index (year-over-year). The preferred specification uses a counterfactual unemployment rate that removes excess temporary layoffs relative to their 2019:Q4 share, so the pandemic spike is not read as a jump in the natural rate. The estimation sample runs 1985:Q1&ndash;2019:Q4; the filter extends the estimate through 2026:Q3.</p><p><strong>Canada.</strong> Canadian estimates use Labour Force Survey unemployment, the Bank of Canada&rsquo;s CPI-trim core inflation, and the Canadian effective exchange rate, with the same temporary-layoff adjustment.</p><p><strong>Potential minimum.</strong> The 120-group panel of unemployment rates and labor-force shares is built from Current Population Survey (CPS) microdata. The group series are seasonally adjusted with X-13ARIMA-SEATS. October 2025 is missing from the survey and is imputed as the average of September and November. The panel begins in 1976; the chart starts in 1985 to match the other two series.</p>' }
     ]
 },
 
@@ -812,6 +813,16 @@ var CATEGORIES = [
     charts: [{
         id: 'breakeven',
         title: 'Estimates of Breakeven Payroll Growth',
+        // Drawn with Plotly (stage 1 of the Plotly move, NPN 2026-11-10); falls back to
+        // the Chart.js path below if Plotly does not load. See plotlyBreakeven().
+        renderer: 'plotly',
+        plotly: function (spec, ctx) { return plotlyBreakeven(spec, ctx); },
+        note: function (country, st, spec) { return breakevenNote(country, st, spec); },
+        plotlySource: function (country) {
+            return country === 'CA'
+                ? 'Source: Statistics Canada (LFS 14-10-0287; SEPH 14-10-0223) and author&rsquo;s calculations, following Petrosky-Nadeau and Stewart (2024).'
+                : 'Source: BLS via FRED and author&rsquo;s calculations, based on Petrosky-Nadeau and Stewart (2024). The projection splices a Census-based demographic labor-force projection onto the actual series; see Technical details.';
+        },
         // Range presets FILTER the data to a trailing HISTORY window measured back
         // from the last actual month (not the projection end), and ALWAYS keep the
         // full projection tail. So '3Y' shows 3 years of history + projection to
@@ -819,10 +830,10 @@ var CATEGORIES = [
         // The shell honors `rangeAnchor: 'histEnd'` to cut relative to histEnd.
         rangeSlider: false,
         rangeAnchor: 'histEnd',
-        // Default to 5Y: the full 'All' (2016+) view is dominated by the COVID
-        // swing in the raw 12-month payroll average, which blows out the y-axis;
-        // 5Y lands post-COVID and keeps the breakeven lines + projection readable.
-        defaultYears: 5,
+        // Default to 3Y, as on the LAMP page (NPN, 2026-11-10). With the y-axis fitted
+        // to the window, 3Y shows the recent months at a readable scale; 'All' is
+        // still dominated by 2020, which runs off the +/-1,000 cap.
+        defaultYears: 3,
         rangePresets: [
             { label: '3Y', years: 3 },
             { label: '5Y', years: 5 },
@@ -1017,6 +1028,7 @@ var CATEGORIES = [
     charts: [
         {
             id: 'lfpr',
+            renderer: 'plotly',
             title: 'Labor Force Participation Rate',
             viewLabel: 'Participation rate',
             // Discrete range presets that filter the data (no axis clamp). 'Recent'
@@ -1045,6 +1057,7 @@ var CATEGORIES = [
         },
         {
             id: 'lflvl',
+            renderer: 'plotly',
             title: 'Labor Force Level',
             viewLabel: 'Level',
             rangeSlider: false,
@@ -1155,6 +1168,7 @@ var CATEGORIES = [
     charts: [
         {
             id: 'counterfactual',
+            renderer: 'plotly',
             title: 'Actual vs. Counterfactual Participation',
             viewLabel: 'Actual vs. counterfactual',
             rangeSlider: false,
@@ -1190,6 +1204,7 @@ var CATEGORIES = [
         },
         {
             id: 'drivers',
+            renderer: 'plotly',
             title: 'What’s Driving the Change in Participation',
             viewLabel: 'What’s driving it',
             rangeSlider: false,
@@ -1208,6 +1223,7 @@ var CATEGORIES = [
                 {
                     id: 'contrib',
                     caption: 'Contribution to the change',
+                    xTitle: function (spec) { return 'Contribution to total change since ' + spec.baseYear + ' (pp)'; },
                     build: function () {
                         var st = state['aging-participation'];
                         var yr = st.anchor || 2000, bd = st.breakdown || 'age', fr = st.framing || 'relative';
@@ -1257,6 +1273,7 @@ var CATEGORIES = [
                 {
                     id: 'change',
                     caption: 'What changed',
+                    xTitle: function (spec) { return 'Change since ' + spec.baseYear + ' (pp)'; },
                     build: function () {
                         var st = state['aging-participation'];
                         var yr = st.anchor || 2000, bd = st.breakdown || 'age', fr = st.framing || 'relative';
@@ -1313,6 +1330,7 @@ var CATEGORIES = [
         },
         {
             id: 'rates',
+            renderer: 'plotly',
             title: 'Group Participation Rates',
             viewLabel: 'Group rates',
             rangeSlider: false,
@@ -1342,6 +1360,7 @@ var CATEGORIES = [
         },
         {
             id: 'shares',
+            renderer: 'plotly',
             title: 'Group Population Shares',
             viewLabel: 'Group shares',
             rangeSlider: false,
@@ -1408,6 +1427,7 @@ var CATEGORIES = [
     rateDefault: 'out', detailDefault: 'total',
     charts: [{
         id: 'urate',
+        renderer: 'plotly',
         viewLabel: 'Unemployment rate',
         title: 'Unemployment Rate and Its Flows Steady State Approximation',
         rangeSlider: true,
@@ -1452,6 +1472,7 @@ var CATEGORIES = [
         }
     }, {
         id: 'flows',
+        renderer: 'plotly',
         viewLabel: 'Flow rates',
         title: 'Flows Into and Out of Unemployment',
         rangeSlider: true,
@@ -1518,6 +1539,539 @@ var CATEGORIES = [
 /* =====================================================================
    RENDERING
    ===================================================================== */
+/* ---------- Plotly renderer (stage 1: Breakeven Payrolls, NPN 2026-11-10) ----------
+   A chart opts in with renderer:'plotly' and a plotly(spec, ctx) -> {data, layout}
+   function. It receives the same buildSpec() output the Chart.js path draws (range
+   window, smoothing, drift and projection already applied), so the shell's state,
+   controls, deep links and analytics are shared. Layout after the LAMP data pages
+   (Oct 27): figure on the page, units label above the plot, a legend fitted so it
+   never covers that label, direct end labels, one hover readout per month. */
+var PL = { ink: '#333333', muted: '#666666', axis: '#b5b5b5', grid: '#ececec' };
+function usesPlotly(chartSpec) { return chartSpec.renderer === 'plotly' && typeof window.Plotly !== 'undefined'; }
+function plNarrow() { return window.matchMedia('(max-width: 640px)').matches; }
+function plOk(v) { return v !== null && v !== undefined && !isNaN(v); }
+
+/* Legend rows on wide screens, measured in the page font against the plot width:
+   entries a fixed width apart when they fit on one row, packed to their text when
+   they do not. Plotly does not grow the top margin when a legend wraps, so the
+   caller adds a row's height per extra row (LAMP's legendFit, Oct 27). */
+var PL_ENTRY = 190, PL_SWATCH = 48, PL_ROW = 22, plMeasure = null;
+function plTextWidth(t) {
+    if (!plMeasure) plMeasure = document.createElement('canvas').getContext('2d');
+    plMeasure.font = '13px ' + FONT;
+    return plMeasure.measureText(t).width;
+}
+function plLegendFit(names, plotW) {
+    var fitsEntry = names.every(function (nm) { return plTextWidth(nm) <= PL_ENTRY - 12; });
+    if (fitsEntry && names.length * (PL_ENTRY + PL_SWATCH) <= plotW) return { rows: 1, entrywidth: PL_ENTRY };
+    var rows = 1, used = 0;
+    names.forEach(function (n) {
+        var w = plTextWidth(n) + PL_SWATCH;
+        if (used && used + w > plotW) { rows++; used = 0; }
+        used += w;
+    });
+    return { rows: rows, entrywidth: 0 };
+}
+function plDash(d) { return (!d || !d.length) ? 'solid' : (d[0] <= 3 ? 'dot' : 'dash'); }
+function plDateShift(iso, days) { return new Date(new Date(iso).getTime() + days * 864e5).toISOString().slice(0, 10); }
+
+/* Breakeven figure. Series are recognised by the flags build() sets on its datasets
+   (isPayroll, isPrior, isMA, isProjection, isDriftOverlay); colors are build()'s own. */
+function breakevenLegendName(ds, isCA) {
+    if (ds.isPayroll) return isCA ? 'SEPH employment, monthly' : 'Payrolls, monthly';
+    if (ds.isPrior) return 'Prior estimate';
+    if (ds.isMA) return ds.maWindow + '-month average';
+    var lr = ds.label.indexOf('Long-run') === 0;
+    return ds.isDriftOverlay ? (lr ? 'Long-run, 36-month drift' : 'Short-run, 36-month drift')
+                             : (lr ? 'Long-run breakeven' : 'Short-run breakeven');
+}
+function plotlyBreakeven(spec, ctx) {
+    var narrow = ctx.narrow, isCA = ctx.country === 'CA';
+    var X = spec.dates, n = X.length;
+    var nowIdx = spec.histEnd ? X.indexOf(spec.histEnd) : n - 1;
+    var ds = spec.datasets;
+    var find = function (f) { return ds.filter(f)[0] || null; };
+    var pay = find(function (d) { return d.isPayroll; });
+    var prior = find(function (d) { return d.isPrior; });
+    var ma = find(function (d) { return d.isMA; });
+    var lrH = find(function (d) { return d.label === 'Long-run breakeven'; });
+    var srH = find(function (d) { return d.label === 'Short-run breakeven'; });
+    var lrP = find(function (d) { return d.label === 'Long-run breakeven (projected)'; });
+    var srP = find(function (d) { return d.label === 'Short-run breakeven (projected)'; });
+    var hasProj = !!(lrP && lrP.data.some(plOk));
+    var drift = ds.filter(function (d) { return d.isDriftOverlay; });
+
+    /* traces: bars first, then lines drawn back to front (Chart.js `order`: lower = on top) */
+    var data = [];
+    /* bars colored per point (blue, red when negative); the legend swatch is a separate
+       legend-only trace, since Plotly would otherwise take the first bar's color */
+    var payName = breakevenLegendName(pay, isCA);
+    data.push({ type: 'bar', name: payName, x: X, y: pay.data, hoverinfo: 'skip', showlegend: false, legendgroup: 'pay',
+                marker: { color: pay.backgroundColor, line: { color: pay.borderColor, width: 1 } } });
+    data.push({ type: 'bar', name: payName, x: [X[0]], y: [null], hoverinfo: 'skip', legendgroup: 'pay', legendrank: 1,
+                marker: { color: 'rgba(44,90,160,' + (ma ? 0.18 : 0.3) + ')', line: { color: 'rgba(44,90,160,0.45)', width: 1 } } });
+    if (prior) {
+        data.push({ type: 'bar', name: 'Prior estimate', x: X, y: prior.data, hoverinfo: 'skip', legendrank: 2,
+                    marker: { color: 'rgba(0,0,0,0)', line: { color: 'rgba(120,120,120,0.9)', width: 1.25 } } });
+    }
+    var lines = ds.filter(function (d) { return d.type === 'line'; }).slice()
+        .sort(function (a, b) { return (b.order || 0) - (a.order || 0); });
+    lines.forEach(function (d) {
+        var name = breakevenLegendName(d, isCA);
+        var projected = d.isProjection || /projected/.test(d.label);
+        var rank = d.isMA ? 3 : d.isDriftOverlay ? (d.label.indexOf('Long-run') === 0 ? 7 : 6) : (d.label.indexOf('Long-run') === 0 ? 5 : 4);
+        data.push({ type: 'scatter', mode: 'lines', name: name, x: X, y: d.data, legendgroup: name, legendrank: rank,
+                    showlegend: !projected, hoverinfo: 'skip', connectgaps: false,
+                    line: { color: d.borderColor, width: d.borderWidth || 2, dash: plDash(d.borderDash), shape: 'spline', smoothing: 0.3 } });
+    });
+
+    /* one hover readout per month: a colored square for identity, values in ink */
+    var fmt = spec.valueFmt;
+    var sq = function (c) { return '<span style="color:' + c + '">&#9632;</span> '; };
+    var row = function (c, name, v, tag) { return plOk(v) ? '<br>' + sq(c) + name + ': ' + fmt(v) + (tag || '') : ''; };
+    var barKey = 'rgba(44,90,160,0.55)';
+    var text = X.map(function (d, i) {
+        var after = i > nowIdx, tag = after ? ' (projected)' : '';
+        var s = '<b>' + fmtMonthYear(d) + '</b>';
+        if (!after) {
+            var pv = pay.data[i];
+            s += row(barKey, isCA ? 'SEPH employment' : 'Payrolls', pv);
+            if (prior && plOk(prior.data[i]) && plOk(pv)) {
+                var dlt = pv - prior.data[i];
+                s += '<br><span style="color:' + PL.muted + '">&nbsp;&nbsp;&nbsp;revised from ' + fmt(prior.data[i]) +
+                     ' (' + (dlt >= 0 ? '+' : '') + fmt(dlt) + ')</span>';
+            }
+            if (ma) s += row(ma.borderColor, ma.maWindow + '-month average', ma.data[i]);
+        }
+        s += row(COL.gold, 'Short-run breakeven', (after && srP ? srP : srH).data[i], tag);
+        s += row(COL.navy, 'Long-run breakeven', (after && lrP ? lrP : lrH).data[i], tag);
+        drift.forEach(function (dd) {
+            var proj = /projected/.test(dd.label);
+            if (proj === after && plOk(dd.data[i])) s += row(dd.borderColor, breakevenLegendName(dd, isCA), dd.data[i], tag);
+        });
+        return s;
+    });
+    var anchorY = X.map(function (d, i) {
+        var v = (i > nowIdx && lrP) ? lrP.data[i] : lrH.data[i];
+        return plOk(v) ? v : 0;
+    });
+    data.push({ type: 'scatter', mode: 'markers', x: X, y: anchorY, text: text, showlegend: false,
+                hovertemplate: '%{text}<extra></extra>', marker: { opacity: 0, size: 1 } });
+
+    /* y range: the visible data, padded; the US never extends past +/-1,000 (2020 runs off in All) */
+    var vis = [];
+    data.forEach(function (t) { if (t.type !== 'scatter' || t.mode === 'lines') t.y.forEach(function (v) { if (plOk(v)) vis.push(v); }); });   // skips the hover-anchor markers
+    var capLo = spec.yCapMin != null ? spec.yCapMin : -Infinity, capHi = spec.yCapMax != null ? spec.yCapMax : Infinity;
+    var lo = Math.max(capLo, Math.min(0, Math.min.apply(null, vis))), hi = Math.min(capHi, Math.max.apply(null, vis));
+    var span = hi - lo, pad = span * 0.08;
+    var mag = Math.pow(10, Math.floor(Math.log10(span / 5 || 1)));
+    var step = [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).filter(function (s) { return span / s <= 8; })[0] || 10 * mag;
+    var yr = [Math.max(capLo, lo - pad), Math.min(capHi, hi + pad)];
+
+    var names = data.filter(function (t) { return t.showlegend !== false && t.name; }).map(function (t) { return t.name; })
+        .filter(function (v, i, a) { return a.indexOf(v) === i; });
+    var fit = plLegendFit(names, (ctx.width || 1100) - 56 - 84);
+    var extra = narrow ? 0 : (fit.rows - 1) * PL_ROW;
+    var xr = [plDateShift(X[0], -15.5), plDateShift(X[n - 1], 15.5)];
+    var years = (new Date(xr[1]) - new Date(xr[0])) / 3.156e10;
+
+    var shapes = [], ann = [{ text: spec.yLabel, xref: 'paper', yref: 'paper', x: 0, y: 1, xanchor: 'left', yanchor: 'bottom',
+                             yshift: narrow ? 8 : 34 + extra, showarrow: false, font: { color: PL.muted, size: narrow ? 12 : 13 } }];
+    if (hasProj) {
+        shapes.push({ type: 'line', xref: 'x', yref: 'paper', x0: spec.histEnd, x1: spec.histEnd, y0: 0, y1: 1,
+                      line: { color: PL.axis, width: 1, dash: 'dot' }, layer: 'below' });
+        ann.push({ text: 'Projection', xref: 'x', yref: 'paper', x: spec.histEnd, y: 0, xanchor: 'left', yanchor: 'bottom',
+                   xshift: 6, yshift: 4, showarrow: false, font: { color: PL.muted, size: narrow ? 11 : 12 } });
+    }
+    /* direct labels at the line ends (wide screens), nudged apart when the lines meet */
+    if (!narrow) {
+        var last = function (d) { if (!d) return null; for (var i = n - 1; i >= 0; i--) if (plOk(d.data[i])) return { i: i, v: d.data[i] }; return null; };
+        var srE = last(hasProj ? srP : srH), lrE = last(hasProj ? lrP : lrH);
+        if (srE && lrE) {
+            var gap = (yr[1] - yr[0]) * 0.05, nudge = Math.abs(srE.v - lrE.v) < gap ? 8 : 0;
+            ann.push({ text: 'Short-run', x: X[srE.i], y: srE.v, xanchor: 'left', xshift: 8, yshift: srE.v < lrE.v ? -nudge : nudge,
+                       showarrow: false, font: { color: COL.gold, size: 12 } },
+                     { text: 'Long-run', x: X[lrE.i], y: lrE.v, xanchor: 'left', xshift: 8, yshift: lrE.v <= srE.v ? -nudge : nudge,
+                       showarrow: false, font: { color: COL.navy, size: 12 } });
+        }
+    }
+
+    var layout = {
+        font: { family: FONT, size: narrow ? 12 : 13, color: PL.ink },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        height: narrow ? 340 + 24 * names.length : 460 + extra,
+        margin: narrow ? { l: 44, r: 10, t: 34, b: 40 + 24 * names.length } : { l: 56, r: 84, t: 64 + extra, b: 36 },
+        hovermode: 'x', dragmode: false, bargap: 0.25, barmode: 'overlay',
+        hoverlabel: { bgcolor: 'white', bordercolor: PL.axis, align: 'left', font: { family: FONT, size: 13, color: PL.ink } },
+        showlegend: true,
+        legend: narrow
+            ? { orientation: 'v', x: 0, y: -0.08, yanchor: 'top', font: { size: 12, color: PL.ink }, tracegroupgap: 2,
+                itemclick: false, itemdoubleclick: false }
+            : { orientation: 'h', x: 0, y: 1, yanchor: 'bottom', entrywidth: fit.entrywidth, entrywidthmode: 'pixels', font: { color: PL.ink },
+                itemclick: false, itemdoubleclick: false },
+        xaxis: { type: 'date', range: xr, fixedrange: true, showgrid: false, linecolor: PL.axis, ticks: 'outside', tickcolor: PL.axis,
+                 tickfont: { color: PL.muted }, tickformat: '%Y', dtick: years > 8 ? 'M24' : 'M12', ticklabelmode: 'period',
+                 showspikes: true, spikemode: 'across', spikesnap: 'cursor', spikecolor: PL.axis, spikethickness: 1, spikedash: 'solid',
+                 hoverformat: '%B %Y' },
+        yaxis: { range: yr, dtick: step, fixedrange: true, gridcolor: PL.grid, gridwidth: 1, zeroline: true, zerolinecolor: PL.axis,
+                 zerolinewidth: 1, showline: false, tickfont: { color: PL.muted } },
+        shapes: shapes, annotations: ann
+    };
+    return { data: data, layout: layout, legendRows: narrow ? 0 : fit.rows };
+}
+
+/* ---------- Generic Plotly figures (stage 2, NPN 2026-11-10) ----------
+   plotlyLines(): any time-series line chart from its buildSpec() output.
+   plotlyBars():  the categorical horizontal-bar panels. Colors, labels and data are the
+   chart's own; only the drawing changes. */
+var PL_CFG = { responsive: true, displayModeBar: false, scrollZoom: false };
+function plNiceStep(span) {
+    var mag = Math.pow(10, Math.floor(Math.log10(span / 5 || 1)));
+    return [1, 2, 2.5, 5, 10].map(function (m) { return m * mag; }).filter(function (s) { return span / s <= 9; })[0] || 10 * mag;
+}
+function plYearTicks(years) { return years > 45 ? 'M120' : years > 22 ? 'M60' : years > 9 ? 'M24' : 'M12'; }
+function plRow(color, name, txt) { return '<br><span style="color:' + color + '">&#9632;</span> ' + name + ': ' + txt; }
+
+function plotlyLines(spec, ctx, chartSpec) {
+    var narrow = ctx.narrow, X = spec.dates, n = X.length;
+    var ds = spec.datasets.filter(function (d) { return d && d.data; });
+    var useEnd = !!spec.endLabels && !narrow;
+    var fmt = spec.valueFmt || function (v) { return String(v); };
+    var titleFmt = spec.titleFmt || fmtMonthYear;
+
+    /* x window: the slider's, else the data's, padded half a period each side */
+    var halfDays = n > 1 ? (new Date(X[1]) - new Date(X[0])) / 864e5 / 2 : 15;
+    var xr = ctx.xRange ? [ctx.xRange[0], ctx.xRange[1]] : [plDateShift(X[0], -halfDays), plDateShift(X[n - 1], halfDays)];
+    var t0 = new Date(xr[0]).getTime(), t1 = new Date(xr[1]).getTime();
+    var inWin = X.map(function (d) { var t = new Date(d).getTime(); return t >= t0 && t <= t1; });
+
+    /* traces: drawn back to front by Chart.js `order` (lower = on top), stable */
+    var idx = ds.map(function (d, i) { return i; }).sort(function (a, b) { return ((ds[b].order || 0) - (ds[a].order || 0)) || (a - b); });
+    var data = [], srcOf = [];
+    idx.forEach(function (i) {
+        var d = ds[i];
+        var t = { type: 'scatter', mode: 'lines', name: d.label, x: X, y: d.data, hoverinfo: 'skip', legendrank: i + 1,
+                  connectgaps: !!d.spanGaps, showlegend: !useEnd,
+                  line: { color: d.borderColor, width: d.borderWidth || 2, dash: plDash(d.borderDash) } };
+        if (d.fill === '-1' && srcOf.length && srcOf[srcOf.length - 1] === i - 1) {
+            t.fill = 'tonexty'; t.fillcolor = d.backgroundColor || 'rgba(0,0,0,0.06)';
+        }
+        data.push(t); srcOf.push(i);
+    });
+
+    /* y range: fixed when the chart sets both bounds, else the visible window, padded */
+    var yr;
+    if (spec.yMin != null && spec.yMax != null) {
+        yr = [spec.yMin, spec.yMax];
+    } else {
+        var vis = [];
+        ds.forEach(function (d) { d.data.forEach(function (v, k) { if (inWin[k] && plOk(v)) vis.push(v); }); });
+        if (!vis.length) vis = [0, 1];
+        var lo = Math.min.apply(null, vis), hi = Math.max.apply(null, vis), pad = (hi - lo || 1) * 0.07;
+        var lo2 = (lo >= 0 && lo - pad < 0) ? 0 : lo - pad;   /* a non-negative series never dips below 0 */
+        yr = [spec.yMin != null ? spec.yMin : lo2, spec.yMax != null ? spec.yMax : hi + pad];
+    }
+    var step = plNiceStep(yr[1] - yr[0]);
+
+    /* one hover readout per period, in legend order */
+    var text = X.map(function (d, k) {
+        var s = '<b>' + titleFmt(d) + '</b>';
+        ds.forEach(function (dd) { if (plOk(dd.data[k])) s += plRow(dd.borderColor, dd.label, fmt(dd.data[k])); });
+        return s;
+    });
+    var anchorY = X.map(function (d, k) {
+        for (var q = 0; q < ds.length; q++) if (plOk(ds[q].data[k])) return Math.min(yr[1], Math.max(yr[0], ds[q].data[k]));
+        return (yr[0] + yr[1]) / 2;
+    });
+    data.push({ type: 'scatter', mode: 'markers', x: X, y: anchorY, text: text, showlegend: false,
+                hovertemplate: '%{text}<extra></extra>', marker: { opacity: 0, size: 1 } });
+
+    var names = data.filter(function (t) { return t.showlegend !== false && t.name; }).map(function (t) { return t.name; });
+    var legendOn = names.length > 0;
+    var right = useEnd ? 118 : 24;
+    var fit = plLegendFit(names, (ctx.width || 1100) - 56 - right);
+    var extra = (narrow || !legendOn) ? 0 : (fit.rows - 1) * PL_ROW;
+    var top = narrow ? 34 : (legendOn ? 64 + extra : 34);
+    var height = narrow ? 340 + 24 * names.length : 460 + extra;
+    var bottom = narrow ? 40 + 24 * names.length : 36;
+
+    var shapes = [], ann = [{ text: spec.yLabel || '', xref: 'paper', yref: 'paper', x: 0, y: 1, xanchor: 'left', yanchor: 'bottom',
+                             yshift: (narrow || !legendOn) ? 8 : 34 + extra, showarrow: false, font: { color: PL.muted, size: narrow ? 12 : 13 } }];
+    (spec.recession || []).forEach(function (b) {
+        if (new Date(b[1]).getTime() < t0 || new Date(b[0]).getTime() > t1) return;
+        shapes.push({ type: 'rect', xref: 'x', yref: 'paper', x0: b[0], x1: b[1], y0: 0, y1: 1,
+                      fillcolor: 'rgba(90,90,90,0.10)', line: { width: 0 }, layer: 'below' });
+    });
+    /* a dashed series named "Projection..." starts a projection: mark it once, as on breakeven */
+    ds.forEach(function (d) {
+        if (!/^Projection/.test(d.label) || !d.borderDash) return;
+        for (var k = 0; k < n; k++) if (plOk(d.data[k])) {
+            if (!inWin[k]) break;
+            shapes.push({ type: 'line', xref: 'x', yref: 'paper', x0: X[k], x1: X[k], y0: 0, y1: 1, line: { color: PL.axis, width: 1, dash: 'dot' }, layer: 'below' });
+            var late = (new Date(X[k]).getTime() - t0) / (t1 - t0) > 0.75 && narrow;   /* keep the label inside a phone-width plot */
+            ann.push({ text: 'Projection', xref: 'x', yref: 'paper', x: X[k], y: 0, xanchor: late ? 'right' : 'left', yanchor: 'bottom',
+                       xshift: late ? -6 : 6, yshift: 4, showarrow: false, font: { color: PL.muted, size: narrow ? 11 : 12 } });
+            break;
+        }
+    });
+    /* direct end labels (dense views, desktop): each series' last visible point, pushed apart */
+    if (useEnd) {
+        var plotH = height - top - bottom, gap = 14, pts = [];
+        ds.forEach(function (d) {
+            for (var k = n - 1; k >= 0; k--) if (inWin[k] && plOk(d.data[k])) {
+                pts.push({ py: (1 - (d.data[k] - yr[0]) / (yr[1] - yr[0])) * plotH, text: d.label, color: d.borderColor }); break;
+            }
+        });
+        pts.sort(function (a, b) { return a.py - b.py; });
+        for (var q = 1; q < pts.length; q++) if (pts[q].py - pts[q - 1].py < gap) pts[q].py = pts[q - 1].py + gap;
+        var over = pts.length ? pts[pts.length - 1].py - plotH : 0;
+        if (over > 0) pts.forEach(function (p) { p.py -= over; });
+        pts.forEach(function (p) {
+            ann.push({ text: p.text, xref: 'paper', yref: 'paper', x: 1, y: 1 - p.py / plotH, xanchor: 'left', yanchor: 'middle', xshift: 6,
+                       showarrow: false, font: { color: p.color, size: 12 } });
+        });
+    }
+
+    var years = (t1 - t0) / 3.156e10;
+    var layout = {
+        font: { family: FONT, size: narrow ? 12 : 13, color: PL.ink },
+        paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+        height: height, margin: narrow ? { l: 44, r: 10, t: top, b: bottom } : { l: 56, r: right, t: top, b: bottom },
+        hovermode: 'x', dragmode: false,
+        hoverlabel: { bgcolor: 'white', bordercolor: PL.axis, align: 'left', font: { family: FONT, size: 13, color: PL.ink } },
+        showlegend: legendOn,
+        legend: narrow
+            ? { orientation: 'v', x: 0, y: -0.08, yanchor: 'top', font: { size: 12, color: PL.ink }, tracegroupgap: 2, itemclick: false, itemdoubleclick: false, traceorder: 'normal' }
+            : { orientation: 'h', x: 0, y: 1, yanchor: 'bottom', entrywidth: fit.entrywidth, entrywidthmode: 'pixels', font: { color: PL.ink },
+                itemclick: false, itemdoubleclick: false, traceorder: 'normal' },
+        xaxis: { type: 'date', range: xr, fixedrange: true, showgrid: false, linecolor: PL.axis, ticks: 'outside', tickcolor: PL.axis,
+                 tickfont: { color: PL.muted }, tickformat: '%Y', dtick: plYearTicks(years), tick0: '2000-01-01',
+                 showspikes: true, spikemode: 'across', spikesnap: 'cursor', spikecolor: PL.axis, spikethickness: 1, spikedash: 'solid' },
+        yaxis: { range: yr, dtick: step, fixedrange: true, gridcolor: PL.grid, gridwidth: 1, zeroline: yr[0] < 0 && yr[1] > 0,
+                 zerolinecolor: PL.axis, zerolinewidth: 1, showline: false, tickfont: { color: PL.muted } },
+        shapes: shapes, annotations: ann
+    };
+    return { data: data, layout: layout, legendRows: (narrow || !legendOn) ? 0 : fit.rows };
+}
+
+/* Horizontal bar panel (categories top to bottom in the spec's order). Stacked when the
+   datasets carry a `stack`, grouped otherwise. One readout per group. */
+function plotlyBars(spec, ctx, panel, panelIndex) {
+    var narrow = ctx.narrow, stacked = spec.datasets.some(function (d) { return d.stack; });
+    /* Chart.js `order` sets the legend, readout and bar order (lower first); match it */
+    var cats = spec.labels, ds = spec.datasets.slice().sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+    var sgn = function (v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + ' pp'; };
+    var data = ds.map(function (d, i) {
+        return { type: 'bar', orientation: 'h', name: d.label, y: cats, x: d.data, hoverinfo: 'skip', legendrank: i + 1,
+                 marker: { color: d.backgroundColor } };
+    });
+    var text = cats.map(function (c, k) {
+        var s = '<b>' + c + '</b>', tot = 0;
+        ds.forEach(function (d) { s += plRow(d.backgroundColor, d.label.replace(/ \(.*\)$/, ''), sgn(d.data[k])); tot += d.data[k]; });
+        if (stacked) s += '<br>Total: ' + sgn(tot);
+        return s;
+    });
+    data.push({ type: 'scatter', mode: 'markers', y: cats, x: cats.map(function () { return 0; }), text: text,
+                showlegend: false, hovertemplate: '%{text}<extra></extra>', marker: { opacity: 0, size: 1 } });
+    var vals = [];
+    if (stacked) {
+        cats.forEach(function (c, k) {
+            var pos = 0, neg = 0;
+            ds.forEach(function (d) { var v = d.data[k] || 0; if (v >= 0) pos += v; else neg += v; });
+            vals.push(pos, neg);
+        });
+    } else ds.forEach(function (d) { d.data.forEach(function (v) { if (plOk(v)) vals.push(v); }); });
+    var lo = Math.min(0, Math.min.apply(null, vals)), hi = Math.max(0, Math.max.apply(null, vals)), pad = (hi - lo || 1) * 0.08;
+    var xr = [lo - pad, hi + pad];
+    var names = ds.map(function (d) { return d.label; });
+    var showCats = panelIndex === 0 || ctx.stacked;
+    var fit = plLegendFit(names, (ctx.width || 520) - 16);
+    var legendH = narrow ? 24 * names.length : 22 * fit.rows;
+    var rowsH = Math.max(150, cats.length * (cats.length > 6 ? 30 : 40));
+    return {
+        data: data, legendRows: fit.rows,
+        layout: {
+            font: { family: FONT, size: narrow ? 12 : 13, color: PL.ink },
+            paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
+            height: rowsH + legendH + 80,
+            margin: { l: showCats ? 96 : 16, r: 16, t: legendH + 14, b: 56 },
+            barmode: stacked ? 'relative' : 'group', bargap: 0.3, bargroupgap: 0.08,
+            hovermode: 'y', dragmode: false,
+            hoverlabel: { bgcolor: 'white', bordercolor: PL.axis, align: 'left', font: { family: FONT, size: 13, color: PL.ink } },
+            showlegend: true,
+            legend: { orientation: 'h', x: 0, y: 1, yanchor: 'bottom', entrywidth: narrow ? 0 : fit.entrywidth, entrywidthmode: 'pixels',
+                      font: { size: 12, color: PL.ink }, itemclick: false, itemdoubleclick: false, traceorder: 'normal' },
+            xaxis: { range: xr, fixedrange: true, dtick: plNiceStep(xr[1] - xr[0]), gridcolor: PL.grid, zeroline: true, zerolinecolor: PL.axis,
+                     zerolinewidth: 1, tickfont: { color: PL.muted }, ticksuffix: '',
+                     title: { text: panel.xTitle ? panel.xTitle(spec) : '', font: { size: 12, color: PL.muted }, standoff: 8 } },
+            yaxis: { type: 'category', autorange: 'reversed', fixedrange: true, showgrid: false, showticklabels: showCats,
+                     tickfont: { color: PL.ink }, ticks: '' }
+        }
+    };
+}
+
+/* Adapter: the dual-handle range slider sets chart.options.scales.x.min/max and calls
+   chart.update(); for a Plotly entry that becomes a redraw at the new x window. */
+function plotlySliderShim(cat, chartSpec, entry) {
+    return {
+        options: { scales: { x: {} } },
+        update: function () {
+            var x = this.options.scales.x;
+            entry.xRange = (x.min && x.max) ? [x.min, x.max] : null;
+            renderPlotlyEntry(cat, chartSpec, entry);
+        }
+    };
+}
+function plotlySetupSlider(cat, chartSpec, entry) {
+    var sp = buildSpec(cat, chartSpec);
+    entry.histEnd = sp.histEnd;
+    entry.applyPreset = setupRangeSlider(entry.prefix, plotlySliderShim(cat, chartSpec, entry), sp.dates, sp.histEnd, entry);
+}
+
+/* Create a Plotly entry: panels, slider charts (the slider and its preset buttons are wired
+   as on the Chart.js path), or a plain chart. */
+function buildPlotlyChart(cat, chartSpec, prefix) {
+    var pEntry = { plotly: true, spec: chartSpec, prefix: prefix, applyPreset: null };
+    if (chartSpec.panels) pEntry.panelIds = chartSpec.panels.map(function (p) { return p.id; });
+    state[cat.id].charts[chartSpec.id] = pEntry;
+    if (!chartSpec.rangeSlider) { renderPlotlyEntry(cat, chartSpec, pEntry); return; }
+    var pCard = document.querySelector('#panel-' + cat.id + ' .dashboard-chart-card[data-chart="' + chartSpec.id + '"]');
+    pEntry.clearPresets = function () {
+        pCard.querySelectorAll('.dash-preset').forEach(function (b) { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+    };
+    plotlySetupSlider(cat, chartSpec, pEntry);   /* draws */
+    pCard.querySelectorAll('.dash-preset').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            var y = btn.dataset.years;
+            if (y === 'null') pEntry.applyPreset(null);
+            else if (y === 'HIST') pEntry.applyPreset('HIST');
+            else pEntry.applyPreset(parseInt(y, 10));
+            pCard.querySelectorAll('.dash-preset').forEach(function (b) {
+                b.classList.toggle('active', b === btn);
+                b.setAttribute('aria-pressed', b === btn ? 'true' : 'false');
+            });
+        });
+    });
+}
+
+/* Note line under the breakeven figure (the Source line stays chartSpec.source). */
+function breakevenNote(country, st, spec) {
+    var isCA = country === 'CA';
+    var avg = st.smoothing ? '; the line is their ' + st.smoothing + '-month average' : '';
+    var has2020 = spec.dates.some(function (d) { return d.slice(0, 4) === '2020'; });
+    if (isCA) {
+        var revised = spec.datasets.some(function (d) { return d.isPrior; });
+        return 'Note: Bars are monthly changes in SEPH employment, Statistics Canada&rsquo;s establishment survey and the closest analogue to U.S. nonfarm payrolls' + avg +
+            '. Breakeven holds the unemployment rate at 6.0 percent. There is no projection for Canada.' +
+            (revised ? ' Outlined bars show the prior estimate for revised months.' : '');
+    }
+    var proj = spec.datasets.some(function (d) { return d.isProjection && d.data.some(plOk); });
+    return 'Note: ' + (proj ? 'Dashed lines are projections through 2028. ' : '') +
+        'Bars are monthly changes in total nonfarm payrolls' + avg +
+        '. Breakeven holds the unemployment rate at 4.4 percent (CBO longer-run natural rate).' +
+        (has2020 ? ' In 2020, payroll changes run beyond the chart&rsquo;s range of &plusmn;1,000 thousand jobs.' : '');
+}
+
+/* Draw (or redraw) a Plotly entry from the current state. A chart whose view is hidden
+   (behind the View switch) is marked dirty and drawn when shown, so it sizes correctly. */
+function renderPlotlyEntry(cat, chartSpec, entry) {
+    var st = state[cat.id];
+    var src = document.getElementById('source_' + entry.prefix);
+    if (entry.panelIds) {
+        if (src) src.innerHTML = chartSpec.source(st.country);
+        var stackedRow = window.matchMedia('(max-width: 700px)').matches;   /* .dash-panel-row stacks here */
+        var figs = [];
+        chartSpec.panels.forEach(function (p, i) {
+            var pel = document.getElementById('plot_' + entry.prefix + '__' + p.id);
+            if (!pel) return;
+            if (pel.offsetParent === null) { entry.dirty = true; return; }
+            figs.push({ el: pel, f: plotlyBars(p.build(), { narrow: plNarrow(), width: pel.clientWidth || 520, stacked: stackedRow }, p, i) });
+        });
+        if (!stackedRow && figs.length > 1) {   /* side by side: align the rows across panels */
+            var tMax = Math.max.apply(null, figs.map(function (g) { return g.f.layout.margin.t; }));
+            figs.forEach(function (g) { g.f.layout.height += tMax - g.f.layout.margin.t; g.f.layout.margin.t = tMax; });
+        }
+        figs.forEach(function (g) { Plotly.react(g.el, g.f.data, g.f.layout, PL_CFG); });
+        entry.narrow = plNarrow(); entry.stackedRow = stackedRow;
+        return;
+    }
+    var spec = buildSpec(cat, chartSpec);
+    entry.histEnd = spec.histEnd;
+    if (src) src.innerHTML = (chartSpec.plotlySource || chartSpec.source)(st.country);
+    var note = document.getElementById('note_' + entry.prefix);
+    if (note && chartSpec.note) note.innerHTML = chartSpec.note(st.country, st, spec);
+    var el = document.getElementById('plot_' + entry.prefix);
+    if (!el) return;
+    el.setAttribute('aria-label', ariaFor(chartSpec, spec));
+    if (el.offsetParent === null) { entry.dirty = true; return; }
+    entry.dirty = false;
+    var ctx = { country: st.country, narrow: plNarrow(), width: el.clientWidth || 1100, xRange: entry.xRange || null };
+    var f = (chartSpec.plotly || plotlyLines)(spec, ctx, chartSpec);
+    entry.legendRows = f.legendRows; entry.narrow = ctx.narrow;
+    Plotly.react(el, f.data, f.layout, PL_CFG);
+}
+
+/* Redraw a Plotly entry on resize only when the layout would change: the phone
+   breakpoint flips, or the wide-screen legend needs a different number of rows. */
+function maybeRelayoutPlotly(cat, chartSpec, entry) {
+    if (entry.panelIds) {
+        if (plNarrow() !== entry.narrow || window.matchMedia('(max-width: 700px)').matches !== entry.stackedRow) renderPlotlyEntry(cat, chartSpec, entry);
+        return;
+    }
+    var el = document.getElementById('plot_' + entry.prefix);
+    if (!el || el.offsetParent === null) return;
+    var narrow = plNarrow();
+    if (narrow !== entry.narrow) { renderPlotlyEntry(cat, chartSpec, entry); return; }
+    if (!narrow) {
+        var names = Array.prototype.map.call(el.querySelectorAll('.legend .traces .legendtext'), function (t) { return t.textContent; });
+        if (names.length && plLegendFit(names, el.clientWidth - 56 - 84).rows !== entry.legendRows) renderPlotlyEntry(cat, chartSpec, entry);
+    }
+}
+
+/* The figure markup for a Plotly chart: on the page rather than in a card, the title
+   and the everyday controls on one row, then the chart, Note, Source, Chart options,
+   and the share row. */
+function plotlyFigureHtml(cat, chartSpec, hidden) {
+    var prefix = chartPrefix(cat, chartSpec);
+    var plot, recNote = '', slider = '', advSlider = '';
+    if (chartSpec.panels) {
+        plot = '<div class="dash-panel-row">' + chartSpec.panels.map(function (p) {
+            return '<div class="dash-panel">' + (p.caption ? '<p class="dash-panel-caption">' + p.caption + '</p>' : '') +
+                '<div class="dashboard-plot dashboard-plot-panel" id="plot_' + prefix + '__' + p.id + '" role="img" aria-label="' +
+                (chartSpec.title + ' — ' + (p.caption || p.id)).replace(/"/g, '&quot;') + '"></div></div>';
+        }).join('') + '</div>';
+    } else {
+        var spec0 = chartSpec.build('US');
+        var dates = spec0.dates || [];
+        plot = '<div class="dashboard-plot" id="plot_' + prefix + '" role="img" aria-label="' + ariaFor(chartSpec, spec0).replace(/"/g, '&quot;') + '"></div>';
+        if (chartSpec.rangeSlider && dates.length) {
+            var sm = rangeSliderHtml(prefix, fmtShortMY(dates[0]), fmtShortMY(dates[dates.length - 1]));
+            if (chartSpec.sliderInAdvanced) advSlider = sm; else slider = sm;
+        }
+        if (spec0.recession && spec0.recession.length) {
+            recNote = '<p class="dashboard-source dashboard-rec-note">Shaded vertical bands mark ' +
+                (cat.hasCountry ? 'recessions (NBER for the United States; standard dating for Canada)' : 'recessions (NBER)') + '.</p>';
+        }
+    }
+    var share = '<div class="dash-share-row">' +
+        (chartSpec.panels ? '' :
+        '<button class="dash-share dash-share-link" data-cat="' + cat.id + '" data-chart="' + chartSpec.id + '" ' +
+        'title="Copy a link that reopens this chart with the same country, range, and view">' +
+        '<span class="dash-share-text">Copy link to this view</span></button>') +
+        '<button class="dash-share dash-share-png" data-cat="' + cat.id + '" data-chart="' + chartSpec.id + '" ' +
+        'title="Download this chart as a PNG image">Download PNG</button>' +
+        '</div>';
+    return '<figure class="dashboard-chart-card dashboard-figure" data-chart="' + chartSpec.id + '"' + (hidden ? ' hidden' : '') + '>' +
+        '<div class="dashboard-figure-head"><h3>' + chartSpec.title + '</h3>' + controlsHtml(cat, chartSpec) + '</div>' +
+        plot + slider +
+        (chartSpec.note ? '<p class="dashboard-source dashboard-note" id="note_' + prefix + '"></p>' : '') +
+        recNote +
+        '<p class="dashboard-source" id="source_' + prefix + '"></p>' +
+        advancedControlsHtml(cat, chartSpec, prefix, advSlider) +
+        share +
+        '</figure>';
+}
+
 var state = {}; // per-category: { country, charts: {id: {chart, spec, applyPreset}} }
 
 // Tooltip label for the payroll/revision datasets. On a "prior estimate" bar
@@ -1762,6 +2316,7 @@ function ariaFor(chartSpec, spec) {
 }
 
 function chartCardHtml(cat, chartSpec, hidden) {
+    if (usesPlotly(chartSpec)) return plotlyFigureHtml(cat, chartSpec, hidden);
     var prefix = chartPrefix(cat, chartSpec);
     // Two-panel view (chartSpec.panels): render side-by-side canvases (stacking on
     // mobile via CSS) instead of a single canvas. Controls + source + share row are
@@ -1933,6 +2488,7 @@ function buildPanelChart(canvasId, spec, optionsFor) {
 function buildChart(cat, chartSpec) {
     var prefix = chartPrefix(cat, chartSpec);
     var country = state[cat.id].country;
+    if (usesPlotly(chartSpec)) { buildPlotlyChart(cat, chartSpec, prefix); return; }
 
     // Two-panel view: build one Chart per panel; the entry carries `charts` (the
     // list of panel Chart instances) instead of a single `chart`.
@@ -1999,6 +2555,11 @@ function updateCountry(cat, country) {
     // update each chart
     cat.charts.forEach(function (chartSpec) {
         var entry = st.charts[chartSpec.id];
+        if (entry && entry.plotly) {
+            if (chartSpec.rangeSlider) { plotlySetupSlider(cat, chartSpec, entry); if (entry.clearPresets) entry.clearPresets(); }
+            else renderPlotlyEntry(cat, chartSpec, entry);
+            return;
+        }
         var spec = buildSpec(cat, chartSpec);
         entry.chart.data.labels = spec.dates;
         // replace datasets wholesale (labels/colors/data may all differ)
@@ -2052,6 +2613,7 @@ function updateSmoothing(cat, window) {
         if (!chartSpec.smoothing) return;
         var entry = st.charts[chartSpec.id];
         if (!entry) return;
+        if (entry.plotly) { renderPlotlyEntry(cat, chartSpec, entry); return; }
         // buildSpec applies smoothing AND the current range window, so the two
         // controls compose. Swap labels + datasets and repaint.
         var spec = buildSpec(cat, chartSpec);
@@ -2079,6 +2641,7 @@ function updateDrift(cat, drift) {
         if (!chartSpec.driftOptions) return;
         var entry = st.charts[chartSpec.id];
         if (!entry) return;
+        if (entry.plotly) { renderPlotlyEntry(cat, chartSpec, entry); return; }
         var spec = buildSpec(cat, chartSpec);
         entry.chart.data.labels = spec.dates;
         entry.chart.data.datasets = spec.datasets;
@@ -2104,6 +2667,7 @@ function updateProjection(cat, showProj) {
         if (!chartSpec.projectionToggle) return;
         var entry = st.charts[chartSpec.id];
         if (!entry) return;
+        if (entry.plotly) { renderPlotlyEntry(cat, chartSpec, entry); return; }
         var spec = buildSpec(cat, chartSpec);
         entry.chart.data.labels = spec.dates;
         entry.chart.data.datasets = spec.datasets;
@@ -2123,6 +2687,7 @@ function updateProjection(cat, showProj) {
    shared source line too. */
 function rebuildChartEntry(cat, chartSpec, entry) {
     if (!entry) return;
+    if (entry.plotly) { renderPlotlyEntry(cat, chartSpec, entry); return; }
     var st = state[cat.id];
     if (chartSpec.panels) {
         chartSpec.panels.forEach(function (p, i) {
@@ -2267,7 +2832,9 @@ function updateRange(cat, chartSpec, range) {
     if (rangeKey(st.rangeYears[chartSpec.id]) === key) return;
     st.rangeYears[chartSpec.id] = parseRangeToken(range);
     var entry = st.charts[chartSpec.id];
-    if (entry) {
+    if (entry && entry.plotly) {
+        renderPlotlyEntry(cat, chartSpec, entry);
+    } else if (entry) {
         var spec = buildSpec(cat, chartSpec);
         entry.chart.data.labels = spec.dates;
         entry.chart.data.datasets = spec.datasets;
@@ -2301,7 +2868,9 @@ function switchChartView(cat, viewId) {
         var show = card.dataset.chart === viewId;
         card.hidden = !show;
         if (show) {
-            entryCharts(state[cat.id].charts[viewId]).forEach(function (c) { c.resize(); });
+            var ve = state[cat.id].charts[viewId];
+            if (ve && ve.plotly) renderPlotlyEntry(cat, cat.charts.find(function (c) { return c.id === viewId; }), ve);
+            else entryCharts(ve).forEach(function (c) { c.resize(); });
         }
     });
     panel.querySelectorAll('.dash-chart-view').forEach(function (b) {
@@ -2434,6 +3003,36 @@ function copyShareLink(btn) {
 }
 function downloadChartPng(catId, chartId) {
     var entry = state[catId] && state[catId].charts[chartId];
+    if (entry && entry.plotly && entry.panelIds) {
+        var els = entry.panelIds.map(function (pid) { return document.getElementById('plot_' + entry.prefix + '__' + pid); });
+        Promise.all(els.map(function (pe) {
+            var lay = JSON.parse(JSON.stringify(pe.layout)); lay.paper_bgcolor = '#ffffff'; lay.plot_bgcolor = '#ffffff';
+            return Plotly.toImage({ data: pe.data, layout: lay }, { format: 'png', width: pe.clientWidth || 520, height: lay.height, scale: 2 });
+        })).then(function (urls) {
+            var imgs = urls.map(function (u) { var im = new Image(); im.src = u; return im; });
+            Promise.all(imgs.map(function (im) { return new Promise(function (ok) { im.onload = ok; }); })).then(function () {
+                var gap = 48, w = imgs.reduce(function (s, im) { return s + im.width; }, 0) + gap * (imgs.length - 1);
+                var h = imgs.reduce(function (m, im) { return Math.max(m, im.height); }, 0);
+                var out = document.createElement('canvas'); out.width = w; out.height = h;
+                var cx = out.getContext('2d'); cx.fillStyle = '#ffffff'; cx.fillRect(0, 0, w, h);
+                var x = 0; imgs.forEach(function (im) { cx.drawImage(im, x, 0); x += im.width + gap; });
+                var a = document.createElement('a'); a.href = out.toDataURL('image/png'); a.download = catId + '-' + chartId + '.png';
+                document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            });
+        });
+        return;
+    }
+    if (entry && entry.plotly) {
+        var el = document.getElementById('plot_' + entry.prefix);
+        var f = { data: el.data, layout: JSON.parse(JSON.stringify(el.layout)) };
+        f.layout.paper_bgcolor = '#ffffff'; f.layout.plot_bgcolor = '#ffffff';
+        Plotly.toImage(f, { format: 'png', width: el.clientWidth || 1100, height: f.layout.height, scale: 2 }).then(function (url) {
+            var a = document.createElement('a');
+            a.href = url; a.download = catId + '-' + chartId + '.png';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        });
+        return;
+    }
     var srcs = entryCharts(entry).map(function (c) { return c.canvas; });
     if (!srcs.length) return;
     // Chart.js canvases are transparent; composite onto white so the PNG isn't
@@ -2480,7 +3079,9 @@ function activate(catId, fromHash) {
     } else if (built[catId]) {
         // ensure correct sizing after being unhidden
         cat.charts.forEach(function (chartSpec) {
-            entryCharts(state[catId].charts[chartSpec.id]).forEach(function (c) { c.resize(); });
+            var pe = state[catId].charts[chartSpec.id];
+            if (pe && pe.plotly) { renderPlotlyEntry(cat, chartSpec, pe); return; }
+            entryCharts(pe).forEach(function (c) { c.resize(); });
         });
     }
     // keep the active tab in view on the horizontally-scrolling mobile tab row
@@ -2700,6 +3301,8 @@ function init() {
         if (!activeId || !built[activeId]) return;
         var cat = CATEGORIES.find(function (c) { return c.id === activeId; });
         cat.charts.forEach(function (cs) {
+            var pe = state[activeId].charts[cs.id];
+            if (pe && pe.plotly) { clearTimeout(pe.resizeTimer); pe.resizeTimer = setTimeout(function () { maybeRelayoutPlotly(cat, cs, pe); }, 150); return; }
             // entryCharts() returns every Chart for the entry — the single canvas
             // or both panels of a two-panel view (which has no e.chart).
             entryCharts(state[activeId].charts[cs.id]).forEach(function (ch) { ch.resize(); });

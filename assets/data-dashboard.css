@@ -579,3 +579,42 @@
     .dashboard-detail-box { animation: none; }
     html { scroll-behavior: auto; }
 }
+
+/* ---- Plotly figure (renderer:'plotly'; stage 1 = Breakeven Payrolls, 2026-11-10) ----
+   On the page rather than in a card, after the LAMP data pages: the title and the
+   everyday controls share one row, then the chart, Note, Source, options, share. */
+.dashboard-chart-card.dashboard-figure {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    margin: 1.75rem 0 1.5rem;
+}
+.dashboard-figure-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.25rem;
+    margin-bottom: 0.5rem;
+}
+.dashboard-figure-head h3 {
+    font-size: 1.15rem;
+    color: #1a2332;
+    margin: 0;
+    text-align: left;
+}
+.dashboard-figure-head .chart-controls { margin: 0; padding: 0; border: 0; }
+.dashboard-plot { width: 100%; min-height: 460px; }
+.dashboard-figure .dashboard-note { margin-top: 0.25rem; }
+.dashboard-figure .dashboard-note + .dashboard-source { margin-top: 0.1rem; }
+.dashboard-figure .dash-advanced { margin-top: 0.75rem; }
+@media (max-width: 640px) {
+    .dashboard-plot { min-height: 400px; }
+    .dashboard-figure-head { flex-direction: column; align-items: flex-start; }
+}
+/* Stage 2: the two "What's driving it" panels and the slider under a figure. */
+.dashboard-figure .dash-panel-row { margin: 0.25rem 0 0.25rem; }
+.dashboard-plot.dashboard-plot-panel { min-height: 280px; }
+.dashboard-figure .dash-range-wrapper { margin-top: 0.25rem; }
+.dashboard-figure .dashboard-rec-note { margin-top: 0.25rem; }
